@@ -1,7 +1,9 @@
 package fr.univcotedazur.simpletcfs.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -22,8 +24,10 @@ public class Order {
     @ElementCollection
     private Set<Item> items;
 
+    @Positive
     private double price;
 
+    @NotBlank
     private String payReceiptId;
 
     @Enumerated(EnumType.STRING)

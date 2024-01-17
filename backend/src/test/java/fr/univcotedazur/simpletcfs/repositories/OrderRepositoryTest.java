@@ -1,6 +1,7 @@
 package fr.univcotedazur.simpletcfs.repositories;
 
 import fr.univcotedazur.simpletcfs.entities.*;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,18 +26,30 @@ class OrderRepositoryTest {
     @Autowired
     private OrderRepository orderRepository;
 
+    private Long johnId;
     private Long orderId;
 
     @BeforeEach
     void setup() {
-        Customer john = new Customer("john", "1234567890");
-        customerRepository.save(john);
+        Customer john = customerRepository.save(new Customer("john", "1234567890"));
+        johnId = john.getId();
         Order createdOrder = new Order(john, new HashSet<>(List.of(new Item(Cookies.CHOCOLALALA, 2))), 20.4, "payReceiptIdOK");
         // The order is normally added to the customer in the Cashier component ->  is normal as it is a business
         // component, and linking the two objects is done only if everything goes well in the business process
         john.addOrder(createdOrder);
         orderRepository.saveAndFlush(createdOrder);
         orderId = createdOrder.getId();
+    }
+
+    @Test
+    void testEmptyPriceAtOrderCreation() {
+        Customer john = customerRepository.findById(johnId).get();
+        Order orderWithZeroPrice = new Order(john, new HashSet<>(List.of(new Item(Cookies.CHOCOLALALA, 5))), 0, "payReceiptIdOK");
+        john.addOrder(orderWithZeroPrice);
+        Assertions.assertThrows(ConstraintViolationException.class, () -> orderRepository.saveAndFlush(orderWithZeroPrice));
+        Order orderWithEmptyReceiptId = new Order(john, new HashSet<>(List.of(new Item(Cookies.CHOCOLALALA, 5))), 20.4, "");
+        john.addOrder(orderWithEmptyReceiptId);
+        Assertions.assertThrows(ConstraintViolationException.class, () -> orderRepository.saveAndFlush(orderWithEmptyReceiptId));
     }
 
     @Test
