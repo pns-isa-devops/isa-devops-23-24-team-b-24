@@ -35,7 +35,7 @@ The following "build and run" documentation is divided in two versions from "eve
 
 While the details and separate build of each subsystem can be found in the following section, we run here the Spring backend with postgres, the CLI, and the external system into docker. It requires to build the three images while the `docker compose` will take care of retrieving an official postgres image and compose everything.
 
-To build all three images, you can directly run the `build-all.sh` script. It actually goes in each of the three directory and run the corresponding `build.sh` script, which itself compiles, if needed, and creates the image. For example the build of the cli docker image corresponds to the command `docker build --build-arg JAR_FILE=target/cli-0.0.1-SNAPSHOT.jar -t pcollet/tcf-spring-cli .`
+To build all three images, you can directly run the `build-all.sh` script. It actually goes in each of the three directory and run the corresponding `build.sh` script, which itself compiles, if needed, and creates the image. For example the build of the cli docker image corresponds to the command `docker build --build-arg JAR_FILE=target/cli-0.0.1-SNAPSHOT.jar -t teamb/w4e-spring-cli .`
 
 As for the postgres database, we reuse its standard image and configure several environment variables that will be used to configure the backend (so that the JPA configuration will connect to the DB, as explained in the [chapter on persistence](chapters/Persistence.md)).
 
