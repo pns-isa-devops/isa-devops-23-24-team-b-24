@@ -1,0 +1,14 @@
+echo "start of demo"
+echo "SCENARIO: simple registration and bank transaction"
+reservations
+register benard 
+customers
+echo "cart content ->"
+show-cart benard
+add-to-cart benard massage 1
+add-to-cart benard patinoire 1
+show-cart benard
+remove-from-cart benard patinoire 1
+show-cart benard
+validate-cart benard
+
