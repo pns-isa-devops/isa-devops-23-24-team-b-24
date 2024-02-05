@@ -9,7 +9,7 @@ import {
 
 import { AppService } from './app.service';
 import { PaymentRequestDto } from './dto/paymentRequest.dto';
-import { PaymentReceiptDto} from "./dto/paymentReceipt.dto";
+import { PaymentReceiptDto } from './dto/paymentReceipt.dto';
 
 @Controller('cctransactions')
 export class AppController {
@@ -21,7 +21,9 @@ export class AppController {
   }
 
   @Post()
-  payByCreditCard(@Body() paymentRequestDto: PaymentRequestDto): PaymentReceiptDto {
+  payByCreditCard(
+    @Body() paymentRequestDto: PaymentRequestDto,
+  ): PaymentReceiptDto {
     try {
       return this.appService.pay(paymentRequestDto);
     } catch (e) {
