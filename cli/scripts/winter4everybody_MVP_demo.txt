@@ -1,4 +1,0 @@
-echo "start MVP demo"
-echo "simple registration and payment submission"
-register bernard 1234567890
-customers
