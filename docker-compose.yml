@@ -51,7 +51,7 @@ services:
       tcf-server:
         condition: service_healthy
     volumes:
-      - ./cli/demo.txt:/opt/app/demo.txt
+      - ./cli/scripts/demo.txt:/opt/app/demo.txt
     stdin_open: true
     tty: true
     healthcheck:

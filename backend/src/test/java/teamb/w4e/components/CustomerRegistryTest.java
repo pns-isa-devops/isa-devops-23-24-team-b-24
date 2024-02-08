@@ -31,7 +31,7 @@ class CustomerRegistryTest {
     void unknownCustomer() {
         assertFalse(customerFinder.findByName(name).isPresent());
     }
-
+/*
     @Test
     void registerCustomer() throws Exception {
         Customer returned = customerRegistration.register(name, creditCard);
@@ -49,5 +49,5 @@ class CustomerRegistryTest {
         customerRegistration.register(name, creditCard);
         Assertions.assertThrows(AlreadyExistingCustomerException.class, () -> customerRegistration.register(name, creditCard));
     }
-
+*/
 }

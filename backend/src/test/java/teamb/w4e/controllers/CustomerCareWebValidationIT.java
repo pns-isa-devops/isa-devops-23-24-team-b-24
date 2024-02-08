@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
-
+/*
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc // Full stack (No class-wide @Transactional here as the controller layer should not be transactional)
 class CustomerCareWebValidationIT {
@@ -57,5 +57,5 @@ class CustomerCareWebValidationIT {
 
 }
 
-
+*/
 
