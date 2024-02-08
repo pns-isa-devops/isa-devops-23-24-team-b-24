@@ -1,0 +1,28 @@
+name: Tag on Merge
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Tag the merge
+        id: tagger
+        run: |
+          TAG=$(date +v%Y%m%d-%H%M%S)
+          git tag $TAG
+          echo "::set-output name=tag::$TAG"
+
+      - name: Push tags
+        run: git push --tags
