@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Configure Git
         run: |
@@ -20,9 +22,28 @@ jobs:
       - name: Tag the merge
         id: tagger
         run: |
-          TAG=$(date +v%Y%m%d-%H%M%S)
-          git tag $TAG
-          echo "::set-output name=tag::$TAG"
+          # Fetch all tags
+          git fetch --tags
+          
+          # Get today's date in YYYY.M.D format
+          TODAY=$(date +'%Y.%m.%d')
+          
+          # Get the latest tag for today (if any)
+          LATEST_TAG=$(git tag --list "${TODAY}-*" | sort -V | tail -n1)
+          
+          # Extract the current counter from the latest tag or default to 0
+          if [[ $LATEST_TAG == "" ]]; then
+            COUNTER=0
+          else
+            COUNTER=$(echo $LATEST_TAG | grep -o -E '[0-9]+$')
+            COUNTER=$((COUNTER+1))
+          fi
+          
+          # Create new tag
+          NEW_TAG="${TODAY}-${COUNTER}"
+          git tag $NEW_TAG
+          echo "tag=$NEW_TAG" >> $GITHUB_OUTPUT
+          echo "New tag $NEW_TAG created."
 
       - name: Push tags
         run: git push --tags
