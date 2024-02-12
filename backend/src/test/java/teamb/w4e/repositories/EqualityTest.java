@@ -1,9 +1,7 @@
 package teamb.w4e.repositories;
 
-import teamb.w4e.entities.Cookies;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Item;
-import teamb.w4e.entities.Order;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,12 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 class EqualityTest {
 
     private Customer john;
-    private Order johnsOrder;
+    //private Order johnsOrder;
 
     @BeforeEach
     void setup() {
         john = new Customer("john", "1234567890");
-        johnsOrder = new Order(john, new HashSet<>(List.of(new Item(Cookies.CHOCOLALALA, 2))), 20.4, "payReceiptIdOK");
+        //johnsOrder = new Order(john, new HashSet<>(List.of(new Item(Cookies.CHOCOLALALA, 2))), 20.4, "payReceiptIdOK");
     }
 
     @Test
@@ -42,7 +40,7 @@ class EqualityTest {
         assertNotEquals(john, anotherJohn);
         assertNotEquals(anotherJohn, john);
     }
-
+/*
     @Test
     void testOrderEquals() {
         assertEquals(johnsOrder, johnsOrder);
@@ -50,5 +48,7 @@ class EqualityTest {
         assertEquals(johnsOrder, otherOrder);
         assertEquals(otherOrder, johnsOrder);
     }
+
+ */
 
 }
