@@ -10,6 +10,7 @@ import teamb.w4e.entities.Group;
 import teamb.w4e.exceptions.AlreadyExistingCustomerException;
 import teamb.w4e.exceptions.group.AlreadyLeaderException;
 import teamb.w4e.exceptions.group.NotEnoughMembersException;
+import teamb.w4e.exceptions.group.SameMemberInGroupException;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.CustomerRegistration;
 
@@ -57,7 +58,7 @@ class GrouperTest {
     }
 
     @Test
-    void alreadyLeader() throws AlreadyExistingCustomerException, AlreadyLeaderException, NotEnoughMembersException {
+    void alreadyLeader() throws AlreadyExistingCustomerException, AlreadyLeaderException, NotEnoughMembersException, SameMemberInGroupException {
         Customer johnCustomer = customerRegistration.register(john, creditCard);
         Customer janeCustomer = customerRegistration.register(jane, creditCard);
         Customer mattCustomer = customerRegistration.register(matt, creditCard);
@@ -77,11 +78,11 @@ class GrouperTest {
         Customer johnCustomer = customerRegistration.register(john, creditCard);
         Customer janeCustomer = customerRegistration.register(jane, creditCard);
 
-        Assertions.assertThrows(AlreadyLeaderException.class, () -> grouper.createGroup(johnCustomer, List.of(janeCustomer, janeCustomer)));
+        Assertions.assertThrows(SameMemberInGroupException.class, () -> grouper.createGroup(johnCustomer, List.of(janeCustomer, janeCustomer)));
     }
 
     @Test
-    void findGroupByLeader() throws AlreadyExistingCustomerException, AlreadyLeaderException, NotEnoughMembersException {
+    void findGroupByLeader() throws AlreadyExistingCustomerException, AlreadyLeaderException, NotEnoughMembersException, SameMemberInGroupException {
         Customer johnCustomer = customerRegistration.register(john, creditCard);
         Customer janeCustomer = customerRegistration.register(jane, creditCard);
         Customer mattCustomer = customerRegistration.register(matt, creditCard);

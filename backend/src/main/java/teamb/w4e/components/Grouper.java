@@ -7,6 +7,7 @@ import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Group;
 import teamb.w4e.exceptions.group.AlreadyLeaderException;
 import teamb.w4e.exceptions.group.NotEnoughMembersException;
+import teamb.w4e.exceptions.group.SameMemberInGroupException;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.GroupCreator;
 import teamb.w4e.repositories.GroupRepository;
@@ -27,28 +28,31 @@ public class Grouper implements GroupCreator {
     }
 
     @Override
-    @Transactional
-    public Group createGroup(Customer leader, List<Customer> members) throws NotEnoughMembersException, AlreadyLeaderException {
-        if (customerFinder.findById(leader.getId()).isEmpty()) {
-            throw new IllegalArgumentException("Leader not found");
-        }
-        for (Customer member : members) {
-            if (customerFinder.findById(member.getId()).isEmpty()) {
-                throw new IllegalArgumentException("Member not found");
+        @Transactional
+        public Group createGroup(Customer leader, List<Customer> members) throws NotEnoughMembersException, AlreadyLeaderException, SameMemberInGroupException {
+            if (customerFinder.findById(leader.getId()).isEmpty()) {
+                throw new IllegalArgumentException("Leader not found");
             }
-        }
+            for (Customer member : members) {
+                if (customerFinder.findById(member.getId()).isEmpty()) {
+                    throw new IllegalArgumentException("Member not found");
+                }
+            }
 
-        if (findGroupByLeader(leader).isPresent()) {
-            throw new AlreadyLeaderException(leader + " is already a leader");
-        }
-        if (members.contains(leader)) {
-            throw new AlreadyLeaderException("This member is already a leader");
-        }
-        if (members.size() < 1) {
-            throw new NotEnoughMembersException("There must be at least one member in the group");
-        }
-        Group newGroup = new Group(leader, members);
-        return groupRepository.save(newGroup);
+            if (findGroupByLeader(leader).isPresent()) {
+                throw new AlreadyLeaderException(leader + " is already a leader");
+            }
+            if (members.contains(leader)) {
+                throw new AlreadyLeaderException("This member is already a leader");
+            }
+            if (members.isEmpty()) {
+                throw new NotEnoughMembersException("There must be at least one member in the group");
+            }
+            if (members.stream().distinct().count() != members.size()) {
+                throw new SameMemberInGroupException("Members must be unique");
+            }
+            Group newGroup = new Group(leader, members);
+            return groupRepository.save(newGroup);
     }
 
     @Override
