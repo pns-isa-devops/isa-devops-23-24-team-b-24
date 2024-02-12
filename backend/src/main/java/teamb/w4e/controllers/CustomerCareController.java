@@ -1,19 +1,23 @@
 package teamb.w4e.controllers;
 
-import teamb.w4e.dto.CustomerDTO;
-import teamb.w4e.dto.ErrorDTO;
-import teamb.w4e.entities.Customer;
-import teamb.w4e.exceptions.AlreadyExistingCustomerException;
-import teamb.w4e.exceptions.CustomerIdNotFoundException;
-import teamb.w4e.interfaces.CustomerFinder;
-import teamb.w4e.interfaces.CustomerRegistration;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import teamb.w4e.dto.CustomerDTO;
+import teamb.w4e.dto.ErrorDTO;
+import teamb.w4e.dto.GroupDTO;
+import teamb.w4e.entities.Customer;
+import teamb.w4e.entities.Group;
+import teamb.w4e.exceptions.AlreadyExistingCustomerException;
+import teamb.w4e.exceptions.CustomerIdNotFoundException;
+import teamb.w4e.interfaces.CustomerFinder;
+import teamb.w4e.interfaces.CustomerRegistration;
+import teamb.w4e.interfaces.GroupCreator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -28,10 +32,13 @@ public class CustomerCareController {
 
     private final CustomerFinder finder;
 
+    private final GroupCreator createGroup;
+
     @Autowired
-    public CustomerCareController(CustomerRegistration registry, CustomerFinder finder) {
+    public CustomerCareController(CustomerRegistration registry, CustomerFinder finder, GroupCreator createGroup) {
         this.registry = registry;
         this.finder = finder;
+        this.createGroup = createGroup;
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -44,7 +51,7 @@ public class CustomerCareController {
         return new ErrorDTO("Cannot process Customer information", e.getMessage());
     }
 
-    @PostMapping(consumes = APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/register", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<CustomerDTO> register(@RequestBody @Valid CustomerDTO cusdto) {
         // Note that there is no validation at all on the CustomerDto mapped
         try {
@@ -69,6 +76,29 @@ public class CustomerCareController {
     private static CustomerDTO convertCustomerToDto(Customer customer) { // In more complex cases, we could use a ModelMapper such as MapStruct
         return new CustomerDTO(customer.getId(), customer.getName(), customer.getCreditCard());
     }
+
+    @PostMapping(path = "/{customerId}/group", consumes = APPLICATION_JSON_VALUE)
+    public ResponseEntity<GroupDTO> createGroup(@RequestBody @Valid GroupDTO groupDTO) {
+        // Récupérer le leader
+        Customer leader = finder.findByName(groupDTO.leaderName()).get();
+
+        // Récupérer les membres
+        List<Customer> members = new ArrayList<>();
+        for (String memberName : groupDTO.membersNames()) {
+            Customer member = finder.findByName(memberName).get();
+            members.add(member);
+        }
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(convertGroupToDto(createGroup.createGroup(leader, members)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+    }
+
+    private static GroupDTO convertGroupToDto(Group group) { // In more complex cases, we could use a ModelMapper such as MapStruct
+        return new GroupDTO(group.getId(), group.getLeader().getName(), group.getMembers().stream().map(Customer::getName).toList());
+    }
+
 
 }
 
