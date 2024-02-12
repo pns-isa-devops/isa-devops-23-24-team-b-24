@@ -1,7 +1,7 @@
 package teamb.w4e.cli;
 
-import teamb.w4e.cli.model.CliCustomer;
 import org.springframework.stereotype.Component;
+import teamb.w4e.cli.model.CliCustomer;
 
 import java.util.HashMap;
 import java.util.Map;
