@@ -2,7 +2,7 @@ package teamb.w4e.entities;
 
 import jakarta.persistence.*;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "customer_groups")
@@ -15,13 +15,13 @@ public class Group {
     private Customer leader;
 
     @ManyToMany
-    private List<Customer> members;
+    private Set<Customer> members;
 
 
     public Group() {
     }
 
-    public Group(Customer leader, List<Customer> members) {
+    public Group(Customer leader, Set<Customer> members) {
         this.leader = leader;
         this.members = members;
     }
@@ -42,11 +42,11 @@ public class Group {
         return leader;
     }
 
-    public void setMembers(List<Customer> members) {
+    public void setMembers(Set<Customer> members) {
         this.members = members;
     }
 
-    public List<Customer> getMembers() {
+    public Set<Customer> getMembers() {
         return members;
     }
 }

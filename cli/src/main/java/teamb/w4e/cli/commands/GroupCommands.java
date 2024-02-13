@@ -29,8 +29,7 @@ public class GroupCommands {
 
     @ShellMethod("Create a group in the backend (create-group LEADER_NAME MEMBER1,MEMBER2,...)")
     public CliGroup createGroup(String leaderName, String member) {
-        String[] members = member.split(",");
-      return restTemplate.postForObject(getUriForCustomer(leaderName), new CliGroup(leaderName, Arrays.asList(members)), CliGroup.class);
+        return restTemplate.postForObject(getUriForCustomer(leaderName), new CliGroup(leaderName, Arrays.stream(member.split(",")).collect(Collectors.toSet())), CliGroup.class);
     }
 
     @ShellMethod("List all known groups")

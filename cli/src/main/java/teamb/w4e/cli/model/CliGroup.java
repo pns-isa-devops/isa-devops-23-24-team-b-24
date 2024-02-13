@@ -1,17 +1,17 @@
 package teamb.w4e.cli.model;
 
-import java.util.List;
+import java.util.Set;
 
 public class CliGroup {
 
     private Long id;
     private String leaderName;
-    private List<String> membersNames;
+    private Set<String> membersNames;
 
     public CliGroup() {
     }
 
-    public CliGroup(String leaderName, List<String> membersNames) {
+    public CliGroup(String leaderName, Set<String> membersNames) {
         this.leaderName = leaderName;
         this.membersNames = membersNames;
     }
@@ -32,11 +32,11 @@ public class CliGroup {
         this.leaderName = leaderName;
     }
 
-    public List<String> getMembersNames() {
+    public Set<String> getMembersNames() {
         return membersNames;
     }
 
-    public void setMembersNames(List<String> membersNames) {
+    public void setMembersNames(Set<String> membersNames) {
         this.membersNames = membersNames;
     }
 

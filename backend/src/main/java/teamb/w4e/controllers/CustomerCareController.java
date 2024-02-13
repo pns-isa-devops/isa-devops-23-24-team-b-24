@@ -17,8 +17,10 @@ import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.CustomerRegistration;
 import teamb.w4e.interfaces.GroupCreator;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.Optional;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -79,15 +81,15 @@ public class CustomerCareController {
 
     @PostMapping(path = "/{customerId}/group", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<GroupDTO> createGroup(@RequestBody @Valid GroupDTO groupDTO) {
-        // Récupérer le leader
+        // Retriever the leader
         Customer leader = finder.findByName(groupDTO.leaderName()).get();
 
-        // Récupérer les membres
-        List<Customer> members = new ArrayList<>();
-        for (String memberName : groupDTO.membersNames()) {
-            Customer member = finder.findByName(memberName).get();
-            members.add(member);
-        }
+        // Retrieve  members
+        Set<Customer> members = groupDTO.membersNames().stream()
+                .map(finder::findByName)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet());
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(convertGroupToDto(createGroup.createGroup(leader, members)));
         } catch (Exception e) {
@@ -96,7 +98,7 @@ public class CustomerCareController {
     }
 
     private static GroupDTO convertGroupToDto(Group group) { // In more complex cases, we could use a ModelMapper such as MapStruct
-        return new GroupDTO(group.getId(), group.getLeader().getName(), group.getMembers().stream().map(Customer::getName).toList());
+        return new GroupDTO(group.getId(), group.getLeader().getName(), group.getMembers().stream().map(Customer::getName).collect(Collectors.toSet()));
     }
 
 
