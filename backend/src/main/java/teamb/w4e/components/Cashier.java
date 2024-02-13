@@ -36,4 +36,5 @@ public class Cashier implements Payment {
         }
         return transaction;
     }
+
 }
