@@ -10,13 +10,14 @@ import teamb.w4e.exceptions.group.NotEnoughMembersException;
 import teamb.w4e.exceptions.group.SameMemberInGroupException;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.GroupCreator;
+import teamb.w4e.interfaces.GroupFinder;
 import teamb.w4e.repositories.GroupRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class Grouper implements GroupCreator {
+public class Grouper implements GroupCreator, GroupFinder {
 
     private final GroupRepository groupRepository;
     private final CustomerFinder customerFinder;
@@ -39,7 +40,7 @@ public class Grouper implements GroupCreator {
                 }
             }
 
-            if (findGroupByLeader(leader).isPresent()) {
+            if (groupRepository.findGroupByLeader(leader).isPresent()) {
                 throw new AlreadyLeaderException(leader + " is already a leader");
             }
             if (members.contains(leader)) {
