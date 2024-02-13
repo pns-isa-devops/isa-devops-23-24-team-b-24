@@ -13,28 +13,23 @@ import teamb.w4e.repositories.TransactionRepository;
 @Service
 public class Cashier implements Payment {
 
-    private final TransactionRepository transactionRepository;
 
     private final Bank bankProxy;
 
 
     public Cashier(TransactionRepository transactionRepository, Bank bankProxy) {
-        this.transactionRepository = transactionRepository;
         this.bankProxy = bankProxy;
     }
 
     @Override
     @Transactional
     public Transaction createTransaction(Customer customer, double amount) throws NegativeAmountTransactionException, PaymentException {
-        if (amount <= 0) {
+        if (amount < 0) {
             throw new NegativeAmountTransactionException(amount);
         }
-        Transaction transaction = new Transaction(customer, amount);
-        transactionRepository.save(transaction);
-        if (bankProxy.pay(customer, amount).isEmpty()) {
-            throw new PaymentException(customer.getName(), amount);
-        }
-        return transaction;
-    }
 
+        String payment = bankProxy.pay(customer, amount).orElseThrow(() -> new PaymentException("Payment failed", amount));
+
+        return new Transaction(customer, amount, payment);
+    }
 }

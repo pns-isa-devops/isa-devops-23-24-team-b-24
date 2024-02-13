@@ -77,7 +77,7 @@ public class TransactionController {
     }
 
     private static TransactionDTO convertTransactionToDto(Transaction transaction) {
-        return new TransactionDTO(transaction.getId(), transaction.getCustomer().getName(), transaction.getAmount());
+        return new TransactionDTO(transaction.getId(), transaction.getCustomer().getName(), transaction.getAmount(), transaction.getPaymentId());
     }
 
 }

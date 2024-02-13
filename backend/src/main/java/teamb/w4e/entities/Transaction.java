@@ -19,12 +19,16 @@ public class Transaction {
     @Pattern(regexp = "\\d{10}+", message = "Invalid amount format")
     private double amount;
 
+    @NotBlank
+    private String paymentId;
+
     public Transaction() {
     }
 
-    public Transaction(Customer customer, double amount) {
+    public Transaction(Customer customer, double amount, String paymentId) {
         this.customer = customer;
         this.amount = amount;
+        this.paymentId = paymentId;
     }
 
     public Long getId() {
@@ -45,6 +49,14 @@ public class Transaction {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public String getPaymentId() {
+        return paymentId;
+    }
+
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
     }
 
 }
