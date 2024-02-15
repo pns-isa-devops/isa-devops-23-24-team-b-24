@@ -11,7 +11,7 @@ public class Group {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     private Customer leader;
 
     @ManyToMany
@@ -26,24 +26,12 @@ public class Group {
         this.members = members;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getId() {
         return id;
     }
 
-    public void setLeader(Customer leader) {
-        this.leader = leader;
-    }
-
     public Customer getLeader() {
         return leader;
-    }
-
-    public void setMembers(Set<Customer> members) {
-        this.members = members;
     }
 
     public Set<Customer> getMembers() {
