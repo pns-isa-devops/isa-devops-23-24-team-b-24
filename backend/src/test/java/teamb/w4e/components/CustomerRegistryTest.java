@@ -1,14 +1,15 @@
 package teamb.w4e.components;
 
-import teamb.w4e.entities.Customer;
-import teamb.w4e.exceptions.AlreadyExistingCustomerException;
-import teamb.w4e.interfaces.CustomerFinder;
-import teamb.w4e.interfaces.CustomerRegistration;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import teamb.w4e.entities.Customer;
+import teamb.w4e.exceptions.AlreadyExistingCustomerException;
+import teamb.w4e.interfaces.CustomerFinder;
+import teamb.w4e.interfaces.CustomerRegistration;
 
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ class CustomerRegistryTest {
     void unknownCustomer() {
         assertFalse(customerFinder.findByName(name).isPresent());
     }
-/*
+
     @Test
     void registerCustomer() throws Exception {
         Customer returned = customerRegistration.register(name, creditCard);
@@ -49,5 +50,6 @@ class CustomerRegistryTest {
         customerRegistration.register(name, creditCard);
         Assertions.assertThrows(AlreadyExistingCustomerException.class, () -> customerRegistration.register(name, creditCard));
     }
-*/
+
 }
+
