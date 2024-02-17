@@ -1,9 +1,6 @@
 package teamb.w4e.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 
@@ -15,6 +12,7 @@ public class Advantage {
     private Long id;
 
     @NotBlank
+    @Column(unique = true)
     private String name;
 
     @Enumerated()
@@ -74,6 +72,4 @@ public class Advantage {
                 ", points='" + points + '\'' +
                 '}';
     }
-
-
 }

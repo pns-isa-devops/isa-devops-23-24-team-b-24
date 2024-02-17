@@ -16,9 +16,9 @@ public interface AdvantageFinder {
 
     Optional<Advantage> findByType(AdvantageType type);
 
-    Optional<Advantage> findById(Long id);
+    Optional<Advantage> findAdvantageById(Long id);
 
     Advantage retrieveAdvantage(Long advantageId) throws IdNotFoundException;
 
-    List<Advantage> findAll();
+    List<Advantage> findAllAdvantages();
 }
