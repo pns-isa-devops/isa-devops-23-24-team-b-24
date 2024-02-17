@@ -8,7 +8,7 @@ import teamb.w4e.entities.AdvantageType;
 import java.util.Optional;
 
 @Repository
-public interface CatalogRepository extends JpaRepository<Advantage, Long> {
+public interface AdvantageCatalogRepository extends JpaRepository<Advantage, Long> {
     Optional<Advantage> findAdvantageByName(String name);
 
     Optional<Advantage> findAdvantageByType(AdvantageType type);
