@@ -12,7 +12,7 @@ import teamb.w4e.dto.GroupDTO;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Group;
 import teamb.w4e.exceptions.AlreadyExistingCustomerException;
-import teamb.w4e.exceptions.CustomerIdNotFoundException;
+import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.CustomerRegistration;
 import teamb.w4e.interfaces.GroupCreator;
@@ -71,7 +71,7 @@ public class CustomerCareController {
     }
 
     @GetMapping(path = "/{customerId}")
-    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable("customerId") Long customerId) throws CustomerIdNotFoundException {
+    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable("customerId") Long customerId) throws IdNotFoundException {
         return ResponseEntity.ok(convertCustomerToDto(finder.retrieveCustomer(customerId)));
     }
 
