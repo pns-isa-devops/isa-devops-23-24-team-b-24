@@ -20,6 +20,9 @@ public class CliCustomer {
     public String getName() {
         return name;
     }
+    public String getCreditCard() {
+        return creditCard;
+    }
 
     @Override
     public String toString() {
