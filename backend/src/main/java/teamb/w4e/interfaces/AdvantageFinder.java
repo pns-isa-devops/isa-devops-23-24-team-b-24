@@ -1,16 +1,20 @@
 package teamb.w4e.interfaces;
 
 import teamb.w4e.entities.Advantage;
+import teamb.w4e.entities.AdvantageType;
 import teamb.w4e.exceptions.IdNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface AdvantageFinder {
 
+    Set<AdvantageType> listAdvantageTypes();
+
     Optional<Advantage> findByName(String name);
 
-    Optional<Advantage> findByType(String type);
+    Optional<Advantage> findByType(AdvantageType type);
 
     Optional<Advantage> findById(Long id);
 

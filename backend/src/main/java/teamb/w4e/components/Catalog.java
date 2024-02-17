@@ -10,8 +10,10 @@ import teamb.w4e.interfaces.AdvantageFinder;
 import teamb.w4e.interfaces.AdvantageRegistration;
 import teamb.w4e.repositories.CatalogRepository;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class Catalog implements AdvantageRegistration, AdvantageFinder {
@@ -32,13 +34,19 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder {
 
     @Override
     @Transactional(readOnly = true)
+    public Set<AdvantageType> listAdvantageTypes() {
+        return EnumSet.allOf(AdvantageType.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Optional<Advantage> findByName(String name) {
         return catalogRepository.findAdvantageByName(name);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Advantage> findByType(String type) {
+    public Optional<Advantage> findByType(AdvantageType type) {
         return catalogRepository.findAdvantageByType(type);
     }
 
