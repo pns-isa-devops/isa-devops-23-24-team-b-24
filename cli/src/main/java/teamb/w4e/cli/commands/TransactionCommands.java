@@ -25,18 +25,23 @@ public class TransactionCommands {
     }
 
     @ShellMethod("Execute a transaction in the CoD backend (transaction CUSTOMER_NAME AMOUNT)")
-    public CliTransaction transaction(String name, double amount) {
+    public CliTransaction makeTransaction(String name, double amount) {
         CliTransaction res = restTemplate.postForObject(BASE_URI, new CliTransaction(name, amount), CliTransaction.class);
         cliContext.getTransactions().put(Objects.requireNonNull(res).getCustomerName(), res);
         return res;
-    }
+    } // This method will remove in the future
 
     @ShellMethod("List all known transactions")
     public String transactions() {
         return cliContext.getTransactions().toString();
     }
 
-    private String getUriForCustomer(String name) {
+    @ShellMethod("Show all known transactions of a customer (show-transactions CUSTOMER_NAME)")
+    public String showTransactions(String name) {
+        return restTemplate.getForEntity(getUriForTransaction(name), String.class).getBody();
+    }
+
+    private String getUriForTransaction(String name) {
         return BASE_URI + "/" + cliContext.getCustomers().get(name).getId() + "/transactions";
     }
 }
