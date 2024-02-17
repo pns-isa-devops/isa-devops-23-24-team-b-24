@@ -6,6 +6,8 @@ public class CliTransaction {
     private CliCustomer customer;
     private double amount;
 
+    private String paymentId;
+
     public CliTransaction() {
     }
 
@@ -38,12 +40,17 @@ public class CliTransaction {
         this.amount = amount;
     }
 
+    public String getPaymentId() {
+        return paymentId;
+    }
+
     @Override
     public String toString() {
         return "CliTransaction{" +
                 "id=" + id +
                 ", customerName='" + customer.getName() + '\'' +
                 ", amount=" + amount + '\'' +
+                ", paymentId=" + paymentId + '\'' +
                 '}';
     }
 }

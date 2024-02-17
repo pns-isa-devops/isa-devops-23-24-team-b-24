@@ -5,5 +5,5 @@ import teamb.w4e.entities.Transaction;
 
 public interface TransactionCreator {
 
-    Transaction createTransaction(Customer customer, double amount);
+    Transaction createTransaction(Customer customer, double amount, String paymentId);
 }

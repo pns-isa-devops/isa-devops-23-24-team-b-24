@@ -44,8 +44,8 @@ public class TransactionRegistry implements TransactionFinder, TransactionCreato
     }
 
     @Override
-    public Transaction createTransaction(Customer customer, double amount) {
-       Transaction transaction = new Transaction(customer, amount);
+    public Transaction createTransaction(Customer customer, double amount, String payReceiptId) {
+       Transaction transaction = new Transaction(customer, amount, payReceiptId);
         return transactionRepository.save(transaction);
     }
 }
