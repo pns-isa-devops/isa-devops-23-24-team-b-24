@@ -34,6 +34,9 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
     @Override
     @Transactional
     public Advantage register(String name, AdvantageType type, int points) {
+        if (type == null || points < 1) {
+            throw new IllegalArgumentException("Invalid Advantage");
+        }
         Advantage newAdvantage = new Advantage(name, type, points);
         return advantageCatalogRepository.save(newAdvantage);
     }
@@ -79,6 +82,11 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
     public Activity register(String name, String description, Set<Advantage> advantages) {
         Activity newActivity = new Activity(name, description, advantages);
         return activityCatalogRepository.save(newActivity);
+    }
+
+    @Override
+    public Optional<Activity> findActivityByName(String name) {
+        return activityCatalogRepository.findActivityByName(name);
     }
 
     @Override

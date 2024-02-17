@@ -7,8 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import teamb.w4e.dto.ActivityDTO;
+import teamb.w4e.dto.AdvantageDTO;
 import teamb.w4e.dto.ErrorDTO;
 import teamb.w4e.entities.Activity;
+
 import teamb.w4e.entities.Advantage;
 import teamb.w4e.entities.AdvantageType;
 import teamb.w4e.exceptions.IdNotFoundException;
@@ -50,18 +52,18 @@ public class LeisureController {
     }
 
     @PostMapping(path = "/advantages", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Advantage> register(@RequestBody @Valid Advantage advantage) {
+    public ResponseEntity<AdvantageDTO> register(@RequestBody @Valid AdvantageDTO advantage) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(advantageRegistry.register(advantage.getName(), advantage.getType(), advantage.getPoints()));
+                    .body(convertAdvantageToDto(advantageRegistry.register(advantage.name(), advantage.type(), advantage.points())));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
         }
     }
 
     @GetMapping(path = "/advantages")
-    public ResponseEntity<List<Advantage>> advantages() {
-        return ResponseEntity.ok(advantageFinder.findAllAdvantages());
+    public ResponseEntity<List<AdvantageDTO>> advantages() {
+        return ResponseEntity.ok(advantageFinder.findAllAdvantages().stream().map(LeisureController::convertAdvantageToDto).toList());
     }
 
     @GetMapping(path = "/advantages/types")
@@ -70,8 +72,8 @@ public class LeisureController {
     }
 
     @GetMapping(path = "/advantages/types/{type}")
-    public ResponseEntity<List<Advantage>> advantagesOfType(@PathVariable AdvantageType type) {
-        return ResponseEntity.ok(advantageFinder.findByType(type).stream().toList());
+    public ResponseEntity<List<AdvantageDTO>> advantagesOfType(@PathVariable AdvantageType type) {
+        return ResponseEntity.ok(advantageFinder.findByType(type).stream().map(LeisureController::convertAdvantageToDto).toList());
     }
 
     @PostMapping(path = "/activities", consumes = APPLICATION_JSON_VALUE)
@@ -96,6 +98,10 @@ public class LeisureController {
     @GetMapping(path = "/activities/{activityId}")
     public ResponseEntity<ActivityDTO> getActivity(@PathVariable Long activityId) throws IdNotFoundException {
         return ResponseEntity.ok(convertActivityToDto(activityFinder.retrieveActivity(activityId)));
+    }
+
+    private static AdvantageDTO convertAdvantageToDto(Advantage advantage) {
+        return new AdvantageDTO(advantage.getId(), advantage.getName(), advantage.getType(), advantage.getPoints());
     }
 
     private static ActivityDTO convertActivityToDto(Activity activity) {
