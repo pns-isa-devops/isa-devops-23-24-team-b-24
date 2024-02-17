@@ -1,15 +1,15 @@
 package teamb.w4e.cli.model;
 
-public class CLITransaction {
+public class CliTransaction {
 
     private Long id;
     private String customerName;
     private double amount;
 
-    public CLITransaction() {
+    public CliTransaction() {
     }
 
-    public CLITransaction(String customerName, double amount) {
+    public CliTransaction(String customerName, double amount) {
         this.customerName = customerName;
         this.amount = amount;
     }
