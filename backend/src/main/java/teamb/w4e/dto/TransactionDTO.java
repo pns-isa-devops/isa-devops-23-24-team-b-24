@@ -1,11 +1,10 @@
 package teamb.w4e.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 public record TransactionDTO(
         Long id,
-        @NotBlank(message = "name should not be blank") String customerName,
-        @NotBlank(message = "amount should not be blank") Double amount,
-        @NotBlank(message = "paymentId should not be blank") String paymentId)
-{
+        @NotNull CustomerDTO customer,
+        @Positive double amount) {
 }

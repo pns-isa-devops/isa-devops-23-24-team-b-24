@@ -3,6 +3,7 @@ package teamb.w4e.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 
 @Entity
 @Table(name = "transactions")
@@ -12,23 +13,20 @@ public class Transaction {
     @GeneratedValue
     private Long id;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @NotBlank
-    @Pattern(regexp = "\\d{10}+", message = "Invalid amount format")
+    @Positive
     private double amount;
 
-    @NotBlank
-    private String paymentId;
 
     public Transaction() {
     }
 
-    public Transaction(Customer customer, double amount, String paymentId) {
+    public Transaction(Customer customer, double amount) {
         this.customer = customer;
         this.amount = amount;
-        this.paymentId = paymentId;
     }
 
     public Long getId() {
@@ -51,12 +49,5 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public String getPaymentId() {
-        return paymentId;
-    }
-
-    public void setPaymentId(String paymentId) {
-        this.paymentId = paymentId;
-    }
 
 }
