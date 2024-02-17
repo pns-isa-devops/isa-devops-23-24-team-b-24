@@ -1,6 +1,7 @@
 package teamb.w4e.cli;
 
 import org.springframework.stereotype.Component;
+import teamb.w4e.cli.model.CliActivity;
 import teamb.w4e.cli.model.CliCustomer;
 
 import java.util.HashMap;
@@ -11,13 +12,19 @@ import java.util.stream.Collectors;
 public class CliContext {
 
     private Map<String, CliCustomer> customers;
+    private Map<String, CliActivity> activities;
 
     public Map<String, CliCustomer> getCustomers() {
         return customers;
     }
 
+    public Map<String, CliActivity> getActivities() {
+        return activities;
+    }
+
     public CliContext() {
         customers = new HashMap<>();
+        activities = new HashMap<>();
     }
 
     @Override
