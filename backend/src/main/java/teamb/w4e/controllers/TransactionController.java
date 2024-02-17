@@ -1,20 +1,25 @@
 package teamb.w4e.controllers;
 
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import teamb.w4e.components.Cashier;
 import teamb.w4e.components.TransactionRegistry;
+import teamb.w4e.dto.CustomerDTO;
 import teamb.w4e.dto.ErrorDTO;
 import teamb.w4e.dto.TransactionDTO;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Transaction;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.Payment;
+import teamb.w4e.interfaces.TransactionCreator;
 import teamb.w4e.interfaces.TransactionFinder;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -25,17 +30,14 @@ public class TransactionController {
 
     public static final String BASE_URI = "/customers/transactions";
 
-    private final TransactionRegistry registry;
-
+    private final TransactionCreator creator;
     private final TransactionFinder transactionFinder;
-
     private final CustomerFinder customerFinder;
-
     private final Payment payment;
 
     @Autowired
-    public TransactionController(TransactionRegistry registry, TransactionFinder transactionFinder, CustomerFinder customerFinder, Payment payment) {
-        this.registry = registry;
+    public TransactionController(TransactionCreator creator, TransactionFinder transactionFinder, CustomerFinder customerFinder, Payment payment) {
+        this.creator = creator;
         this.transactionFinder = transactionFinder;
         this.customerFinder = customerFinder;
         this.payment = payment;
@@ -47,25 +49,22 @@ public class TransactionController {
         return new ErrorDTO("Cannot process Transaction information", e.getMessage());
     }
 
-    @PostMapping(consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<TransactionDTO> transaction(@RequestBody TransactionDTO transactionDTO) {
-        Customer customer = customerFinder.findByName(transactionDTO.customerName()).get();
-
+    @PostMapping(path = "/{id_customer}/transactions", consumes = APPLICATION_JSON_VALUE)
+    public ResponseEntity<TransactionDTO> transaction(@RequestBody @Valid TransactionDTO transactionDTO) {
+        Customer customer = customerFinder.findById(transactionDTO.customer().id()).orElseThrow();
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(convertTransactionToDto(payment.createTransaction(customer, transactionDTO.amount())));
+                    .body(convertTransactionToDto(payment.pay(customer, transactionDTO.amount())));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
 
-    @GetMapping(path = "/{id_customer}/{id_transaction}")
-    public ResponseEntity<TransactionDTO> getTransaction(@PathVariable Long id_customer, @PathVariable Long id_transaction) {
-        return transactionFinder.findTransactionById(id_transaction)
-                .filter(transaction -> transaction.getCustomer().getId().equals(id_customer))
-                .map(TransactionController::convertTransactionToDto)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping(path = "/{id_customer}/transactions")
+    public ResponseEntity<List<TransactionDTO>> getTransactionOfCustomer(@PathVariable Long id_customer) {
+        Customer customer = customerFinder.findById(id_customer).orElseThrow();
+        List<TransactionDTO> transactionDTOs = transactionFinder.findTransactionsByCustomer(customer).stream().map(TransactionController::convertTransactionToDto).toList();
+        return ResponseEntity.ok(transactionDTOs);
     }
 
     @GetMapping
@@ -77,7 +76,11 @@ public class TransactionController {
     }
 
     private static TransactionDTO convertTransactionToDto(Transaction transaction) {
-        return new TransactionDTO(transaction.getId(), transaction.getCustomer().getName(), transaction.getAmount(), transaction.getPaymentId());
+        return new TransactionDTO(transaction.getId(), convertCustomerToDto(transaction.getCustomer()), transaction.getAmount());
+    }
+
+    private static CustomerDTO convertCustomerToDto(Customer customer) {
+        return new CustomerDTO(customer.getId(), customer.getName(), customer.getCreditCard());
     }
 
 }

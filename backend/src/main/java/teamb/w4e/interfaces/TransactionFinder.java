@@ -13,4 +13,6 @@ public interface TransactionFinder {
     Optional<Transaction> findTransactionById(Long id);
 
     List<Transaction> findAllTransactions();
+
+    List<Transaction> findTransactionsByCustomer(Customer customer);
 }

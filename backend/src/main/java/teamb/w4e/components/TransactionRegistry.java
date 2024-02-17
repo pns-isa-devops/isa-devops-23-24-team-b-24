@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Transaction;
+import teamb.w4e.interfaces.TransactionCreator;
 import teamb.w4e.interfaces.TransactionFinder;
 import teamb.w4e.repositories.TransactionRepository;
 
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TransactionRegistry implements TransactionFinder {
+public class TransactionRegistry implements TransactionFinder, TransactionCreator {
 
     private final TransactionRepository transactionRepository;
 
@@ -35,5 +36,16 @@ public class TransactionRegistry implements TransactionFinder {
     @Transactional
     public List<Transaction> findAllTransactions() {
         return transactionRepository.findAll();
+    }
+
+    @Override
+    public List<Transaction> findTransactionsByCustomer(Customer customer) {
+        return transactionRepository.findTransactionsByCustomer(customer);
+    }
+
+    @Override
+    public Transaction createTransaction(Customer customer, double amount) {
+       Transaction transaction = new Transaction(customer, amount);
+        return transactionRepository.save(transaction);
     }
 }

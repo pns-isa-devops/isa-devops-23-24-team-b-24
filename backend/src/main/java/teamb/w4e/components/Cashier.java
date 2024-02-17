@@ -1,35 +1,39 @@
 package teamb.w4e.components;
 
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Transaction;
+import teamb.w4e.exceptions.CustomerIdNotFoundException;
 import teamb.w4e.exceptions.NegativeAmountTransactionException;
 import teamb.w4e.exceptions.PaymentException;
-import teamb.w4e.interfaces.Bank;
-import teamb.w4e.interfaces.Payment;
-import teamb.w4e.repositories.TransactionRepository;
+import teamb.w4e.interfaces.*;
 
 @Service
 public class Cashier implements Payment {
-
-
     private final Bank bankProxy;
+    private final CustomerFinder finder;
+    private final TransactionCreator transactionCreator;
 
-
-    public Cashier(TransactionRepository transactionRepository, Bank bankProxy) {
+    @Autowired
+    public Cashier(Bank bankProxy, CustomerFinder finder, TransactionCreator transactionCreator) {
         this.bankProxy = bankProxy;
+        this.finder = finder;
+        this.transactionCreator = transactionCreator;
     }
 
     @Override
     @Transactional
-    public Transaction createTransaction(Customer customer, double amount) throws NegativeAmountTransactionException, PaymentException {
+    public Transaction pay(Customer customer, double amount) throws NegativeAmountTransactionException, PaymentException, CustomerIdNotFoundException {
         if (amount < 0) {
             throw new NegativeAmountTransactionException(amount);
         }
+        if (finder.findById(customer.getId()).isEmpty()) {
+            throw new CustomerIdNotFoundException(customer.getId());
+        }
+        String payment = bankProxy.pay(customer, amount).orElseThrow(() -> new PaymentException(customer.getName(), amount));
 
-        String payment = bankProxy.pay(customer, amount).orElseThrow(() -> new PaymentException("Payment failed", amount));
-
-        return new Transaction(customer, amount, payment);
+        return transactionCreator.createTransaction(customer, amount);
     }
 }
