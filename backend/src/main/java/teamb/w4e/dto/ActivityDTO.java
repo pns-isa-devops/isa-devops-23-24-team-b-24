@@ -1,7 +1,6 @@
 package teamb.w4e.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import teamb.w4e.entities.Advantage;
 
 import java.util.Set;
 
@@ -9,6 +8,6 @@ public record ActivityDTO(
         Long id,
         @NotBlank(message = "name should not be blank") String name,
         @NotBlank(message = "name should not be blank") String description,
-        Set<Advantage> advantages
+        Set<AdvantageDTO> advantages
 ) {
 }

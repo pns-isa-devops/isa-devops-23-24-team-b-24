@@ -10,7 +10,6 @@ import teamb.w4e.dto.ActivityDTO;
 import teamb.w4e.dto.AdvantageDTO;
 import teamb.w4e.dto.ErrorDTO;
 import teamb.w4e.entities.Activity;
-
 import teamb.w4e.entities.Advantage;
 import teamb.w4e.entities.AdvantageType;
 import teamb.w4e.exceptions.IdNotFoundException;
@@ -19,7 +18,6 @@ import teamb.w4e.interfaces.ActivityRegistration;
 import teamb.w4e.interfaces.AdvantageFinder;
 import teamb.w4e.interfaces.AdvantageRegistration;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -79,7 +77,7 @@ public class LeisureController {
     @PostMapping(path = "/activities", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<ActivityDTO> register(@RequestBody @Valid ActivityDTO activityDTO) {
         Set<Advantage> advantages = activityDTO.advantages().stream()
-                .map(advantage -> advantageFinder.findByName(advantage.getName()).orElseThrow())
+                .map(advantage -> advantageFinder.findByName(advantage.name()).orElseThrow())
                 .collect(Collectors.toSet());
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -105,7 +103,8 @@ public class LeisureController {
     }
 
     private static ActivityDTO convertActivityToDto(Activity activity) {
-        return new ActivityDTO(activity.getId(), activity.getName(), activity.getDescription(), new HashSet<>(activity.getAdvantages()));
+        return new ActivityDTO(activity.getId(), activity.getName(), activity.getDescription(), activity.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
+
     }
 
 }
