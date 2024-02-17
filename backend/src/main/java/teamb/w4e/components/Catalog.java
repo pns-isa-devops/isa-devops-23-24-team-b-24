@@ -3,12 +3,16 @@ package teamb.w4e.components;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Advantage;
 import teamb.w4e.entities.AdvantageType;
 import teamb.w4e.exceptions.IdNotFoundException;
+import teamb.w4e.interfaces.ActivityFinder;
+import teamb.w4e.interfaces.ActivityRegistration;
 import teamb.w4e.interfaces.AdvantageFinder;
 import teamb.w4e.interfaces.AdvantageRegistration;
-import teamb.w4e.repositories.CatalogRepository;
+import teamb.w4e.repositories.ActivityCatalogRepository;
+import teamb.w4e.repositories.AdvantageCatalogRepository;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -16,20 +20,22 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-public class Catalog implements AdvantageRegistration, AdvantageFinder {
+public class Catalog implements AdvantageRegistration, AdvantageFinder, ActivityRegistration, ActivityFinder {
 
-    private final CatalogRepository catalogRepository;
+    private final AdvantageCatalogRepository advantageCatalogRepository;
+    private final ActivityCatalogRepository activityCatalogRepository;
 
     @Autowired
-    public Catalog(CatalogRepository catalogRepository) {
-        this.catalogRepository = catalogRepository;
+    public Catalog(AdvantageCatalogRepository catalogRepository, ActivityCatalogRepository activityCatalogRepository) {
+        this.advantageCatalogRepository = catalogRepository;
+        this.activityCatalogRepository = activityCatalogRepository;
     }
 
     @Override
     @Transactional
     public Advantage register(String name, AdvantageType type, int points) {
         Advantage newAdvantage = new Advantage(name, type, points);
-        return catalogRepository.save(newAdvantage);
+        return advantageCatalogRepository.save(newAdvantage);
     }
 
     @Override
@@ -41,30 +47,54 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder {
     @Override
     @Transactional(readOnly = true)
     public Optional<Advantage> findByName(String name) {
-        return catalogRepository.findAdvantageByName(name);
+        return advantageCatalogRepository.findAdvantageByName(name);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<Advantage> findByType(AdvantageType type) {
-        return catalogRepository.findAdvantageByType(type);
+        return advantageCatalogRepository.findAdvantageByType(type);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Advantage> findById(Long id) {
-        return catalogRepository.findById(id);
+    public Optional<Advantage> findAdvantageById(Long id) {
+        return advantageCatalogRepository.findById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Advantage retrieveAdvantage(Long advantageId) throws IdNotFoundException {
-        return findById(advantageId).orElseThrow(() -> new IdNotFoundException(advantageId));
+        return findAdvantageById(advantageId).orElseThrow(() -> new IdNotFoundException(advantageId));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Advantage> findAll() {
-        return catalogRepository.findAll();
+    public List<Advantage> findAllAdvantages() {
+        return advantageCatalogRepository.findAll();
     }
+
+    @Override
+    @Transactional
+    public Activity register(String name, String description, Set<Advantage> advantages) {
+        Activity newActivity = new Activity(name, description, advantages);
+        return activityCatalogRepository.save(newActivity);
+    }
+
+    @Override
+    public Optional<Activity> findActivityById(Long id)  {
+        return activityCatalogRepository.findById(id);
+    }
+
+    @Override
+    public Activity retrieveActivity(Long activityId) throws IdNotFoundException {
+        return findActivityById(activityId).orElseThrow(() -> new IdNotFoundException(activityId));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Activity> findAllActivities() {
+        return activityCatalogRepository.findAll();
+    }
+
 }
