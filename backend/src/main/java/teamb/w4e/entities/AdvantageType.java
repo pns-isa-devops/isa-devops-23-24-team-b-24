@@ -14,6 +14,4 @@ public enum AdvantageType {
     public String getName() {
         return name;
     }
-
-
 }
