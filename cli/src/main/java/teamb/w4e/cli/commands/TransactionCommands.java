@@ -5,14 +5,18 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.web.client.RestTemplate;
 import teamb.w4e.cli.CliContext;
+import teamb.w4e.cli.model.CliCustomer;
 import teamb.w4e.cli.model.CliTransaction;
 
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @ShellComponent
 public class TransactionCommands {
 
-    public static final String BASE_URI = "/customers";
+    public static final String BASE_URI = "/customers/transactions";
 
     private final RestTemplate restTemplate;
 
@@ -26,14 +30,14 @@ public class TransactionCommands {
 
     @ShellMethod("Execute a transaction in the CoD backend (transaction CUSTOMER_NAME AMOUNT)")
     public CliTransaction makeTransaction(String name, double amount) {
-        CliTransaction res = restTemplate.postForObject(BASE_URI, new CliTransaction(name, amount), CliTransaction.class);
-        cliContext.getTransactions().put(Objects.requireNonNull(res).getCustomerName(), res);
-        return res;
+        CliCustomer customer = cliContext.getCustomers().get(name);
+        return restTemplate.postForObject(getUriForTransaction(name) , new CliTransaction(customer, amount), CliTransaction.class);
     } // This method will remove in the future
 
     @ShellMethod("List all known transactions")
-    public String transactions() {
-        return cliContext.getTransactions().toString();
+    public Set<CliTransaction> transactions() {
+        return Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(BASE_URI, CliTransaction[].class)
+                .getBody())).collect(Collectors.toSet());
     }
 
     @ShellMethod("Show all known transactions of a customer (show-transactions CUSTOMER_NAME)")

@@ -3,14 +3,14 @@ package teamb.w4e.cli.model;
 public class CliTransaction {
 
     private Long id;
-    private String customerName;
+    private CliCustomer customer;
     private double amount;
 
     public CliTransaction() {
     }
 
-    public CliTransaction(String customerName, double amount) {
-        this.customerName = customerName;
+    public CliTransaction(CliCustomer customerName, double amount) {
+        this.customer = customerName;
         this.amount = amount;
     }
 
@@ -22,12 +22,12 @@ public class CliTransaction {
         this.id = id;
     }
 
-    public String getCustomerName() {
-        return customerName;
+    public CliCustomer getCustomer() {
+        return customer;
     }
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
+    public void setCustomer(CliCustomer customer) {
+        this.customer = customer;
     }
 
     public double getAmount() {
@@ -40,10 +40,10 @@ public class CliTransaction {
 
     @Override
     public String toString() {
-        return "CLITransaction{" +
+        return "CliTransaction{" +
                 "id=" + id +
-                ", customerName='" + customerName + '\'' +
-                ", amount=" + amount +
+                ", customerName='" + customer.getName() + '\'' +
+                ", amount=" + amount + '\'' +
                 '}';
     }
 }
