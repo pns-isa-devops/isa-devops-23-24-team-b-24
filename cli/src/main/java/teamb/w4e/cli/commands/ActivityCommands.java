@@ -10,9 +10,11 @@ import org.springframework.web.client.RestTemplate;
 import teamb.w4e.cli.CliContext;
 import teamb.w4e.cli.model.CliActivity;
 import teamb.w4e.cli.model.CliAdvantage;
-import teamb.w4e.cli.model.CliCustomer;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -35,8 +37,7 @@ public class ActivityCommands {
         if (!advantageNames.isEmpty()) {
             String[] advantageNameArray = advantageNames.split(",");
             for (String advantageName : advantageNameArray) {
-                // Appel de l'API REST pour obtenir l'avantage par son nom
-                ResponseEntity<CliAdvantage> response = restTemplate.getForEntity(getUriForActivity(advantageName), CliAdvantage.class);
+                ResponseEntity<CliAdvantage> response = restTemplate.getForEntity(getUriForAdvantage(advantageName), CliAdvantage.class);
                 if (response.getStatusCode() == HttpStatus.OK) {
                     advantagesSet.add(convertToCliAdvantage(Objects.requireNonNull(response.getBody())));
                 }
@@ -53,7 +54,7 @@ public class ActivityCommands {
         return Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(BASE_URI, CliActivity[].class).getBody())).collect(Collectors.toSet());
     }
 
-    private String getUriForActivity(String name) {
+    private String getUriForAdvantage(String name) {
         return BASE_URI + "/advantages/" + cliContext.getActivities().get(name).getId();
     }
 
