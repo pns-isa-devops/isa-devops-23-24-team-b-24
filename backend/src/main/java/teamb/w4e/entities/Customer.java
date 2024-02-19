@@ -1,9 +1,6 @@
 package teamb.w4e.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
@@ -23,9 +20,10 @@ public class Customer {
     @Pattern(regexp = "\\d{10}+", message = "Invalid creditCardNumber")
     private String creditCard;
 
-//    @OneToMany(cascade = {CascadeType.REMOVE}, fetch = FetchType.LAZY, mappedBy = "customer")
-//    private Set<Order> orders = new HashSet<>();
     private Caddy caddy = new Caddy();
+
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Card card = new Card();
 
     public Customer() {
     }
@@ -55,17 +53,17 @@ public class Customer {
         this.creditCard = creditCard;
     }
 
-//    public void addOrder(Order o) {
-//        this.orders.add(o);
-//    }
-//
-//    public Set<Order> getOrders() {
-//        return orders;
-//    }
-//
-//    public void setOrders(Set<Order> orders) {
-//            this.orders = orders;
-//    }
+    public Card getCard() {
+        return card;
+    }
+
+    public void setCard(Card card) {
+        this.card = card;
+    }
+
+    public void addReservation(Reservation r) {
+        this.card.addReservation(r);
+    }
 
     public Caddy getCaddy() {
         return caddy;
