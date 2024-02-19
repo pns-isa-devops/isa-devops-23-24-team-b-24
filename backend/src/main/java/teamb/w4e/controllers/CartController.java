@@ -17,6 +17,7 @@ import teamb.w4e.interfaces.CartProcessor;
 
 import java.util.Date;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -46,9 +47,9 @@ public class CartController {
         return ResponseEntity.ok(convertToCartElementDTO(cart.update(customerId, activity, cartDTO.getDate())));
     }
 
-    @GetMapping(path = CART_URI, consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Set<Item>> getCustomerCartContents(@PathVariable("customerId") Long customerId) throws IdNotFoundException {
-        return ResponseEntity.ok(cart.cartContent(customerId));
+    @GetMapping(path = CART_URI)
+    public ResponseEntity<Set<CartElementDTO>> getCustomerCartContents(@PathVariable("customerId") Long customerId) throws IdNotFoundException {
+        return ResponseEntity.ok(cart.cartContent(customerId).stream().map(CartController::convertToCartElementDTO).collect(Collectors.toSet()));
     }
 
 //    @PostMapping(path = CART_URI + "/validate", consumes = APPLICATION_JSON_VALUE)
