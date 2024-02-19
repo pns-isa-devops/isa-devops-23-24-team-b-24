@@ -50,6 +50,7 @@ public class CliAdvantage {
     @Override
     public String toString() {
         return "CliAdvantage{" +
+                "id=" + id + '\'' +
                 "advantageName='" + name + '\'' +
                 ", advantageType=" + type +
                 ", points=" + points +
