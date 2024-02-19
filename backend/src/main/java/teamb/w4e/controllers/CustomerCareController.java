@@ -75,8 +75,8 @@ public class CustomerCareController {
         return ResponseEntity.ok(convertCustomerToDto(finder.retrieveCustomer(customerId)));
     }
 
-    private static CustomerDTO convertCustomerToDto(Customer customer) { // In more complex cases, we could use a ModelMapper such as MapStruct
-        return new CustomerDTO(customer.getId(), customer.getName(), customer.getCreditCard());
+    public static CustomerDTO convertCustomerToDto(Customer customer) { // In more complex cases, we could use a ModelMapper such as MapStruct
+        return new CustomerDTO(customer.getId(), customer.getName(), customer.getCreditCard(), customer.getCard().getId());
     }
 
     @PostMapping(path = "/{customerId}/group", consumes = APPLICATION_JSON_VALUE)

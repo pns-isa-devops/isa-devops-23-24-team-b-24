@@ -5,7 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import teamb.w4e.dto.CustomerDTO;
 import teamb.w4e.dto.ReservationDTO;
+import teamb.w4e.entities.Card;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Reservation;
 import teamb.w4e.exceptions.IdNotFoundException;
@@ -35,8 +37,9 @@ public class ReservationController {
 
     @RequestMapping(path = RESERVATION_URI)
     public ResponseEntity<List<ReservationDTO>> getCustomerReservations(@PathVariable("customerId") Long customerId) throws IdNotFoundException {
-        Customer customer = customerFinder.retrieveCustomer(customerId);
-        return ResponseEntity.ok(reservationFinder.findReservationByCard(customer.getCard()).stream().map(ReservationController::convertReservationToDTO).toList());
+        CustomerDTO customerDTO = CustomerCareController.convertCustomerToDto(customerFinder.retrieveCustomer(customerId));
+
+        return ResponseEntity.ok(reservationFinder.findReservationByCard(customerDTO.cardId()).stream().map(ReservationController::convertReservationToDTO).toList());
     }
 
 

@@ -37,7 +37,7 @@ public class Booker implements ReservationCreator, ReservationFinder {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Reservation> findReservationByCard(Card card) {
-        return reservationRepository.findReservationByCard(card);
+    public List<Reservation> findReservationByCard(Long cardId) {
+        return reservationRepository.findReservationByCard(cardId);
     }
 }
