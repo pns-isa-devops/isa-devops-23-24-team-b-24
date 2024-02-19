@@ -36,7 +36,7 @@ public class CartHandler implements CartProcessor, CartModifier {
 
     @Override
     @Transactional
-    public Item update(Long customerId, Activity activity, Date date) throws IdNotFoundException, NonValidDateForActivity {
+    public Item update(Long customerId, Activity activity, String date) throws IdNotFoundException, NonValidDateForActivity {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         Set<Item> items = customer.getCaddy().getActivities();
         if (!scheduler.checkAvailability(activity, date)) {
@@ -44,7 +44,7 @@ public class CartHandler implements CartProcessor, CartModifier {
         }
         Optional<Item> existingItem = items.stream().filter(it -> it.getActivity().equals(activity)).findFirst();
         if (existingItem.isPresent()) {
-            existingItem.get().setReservationDate(date);
+            existingItem.get().setDate(date);
         } else {
             items.add(new Item(activity, date));
         }
@@ -69,7 +69,7 @@ public class CartHandler implements CartProcessor, CartModifier {
             throw new PaymentException(customer.getName(),0);
         }
         Set<Reservation> reservations = customer.getCaddy().getActivities().stream()
-                .map(item -> scheduler.reserve(item.getActivity(), item.getReservationDate()))
+                .map(item -> scheduler.reserve(item.getActivity(), item.getDate()))
                 .collect(Collectors.toSet());
         customer.getCaddy().getActivities().clear();
         return reservations;

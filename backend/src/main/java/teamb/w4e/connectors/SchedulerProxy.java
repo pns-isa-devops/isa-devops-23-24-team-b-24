@@ -10,12 +10,12 @@ import java.util.Date;
 @Component
 public class SchedulerProxy implements Scheduler {
     @Override
-    public boolean checkAvailability(Activity activity, Date date) {
+    public boolean checkAvailability(Activity activity, String date) {
         return true;
     }
 
     @Override
-    public Reservation reserve(Activity activity, Date date) {
+    public Reservation reserve(Activity activity, String date) {
         return new Reservation(activity, date);
     }
 }

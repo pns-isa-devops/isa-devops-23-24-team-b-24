@@ -10,7 +10,7 @@ import java.util.Set;
 
 public interface CartModifier {
 
-    Item update(Long customerId, Activity activity, Date date) throws IdNotFoundException, NonValidDateForActivity;
+    Item update(Long customerId, Activity activity, String date) throws IdNotFoundException, NonValidDateForActivity;
 
     Set<Item> cartContent(Long customerId) throws IdNotFoundException;
 }

@@ -4,11 +4,14 @@ public class CartElement {
 
     private CliActivity activity;
 
+    private String date;
+
     public CartElement() {
     }
 
-    public CartElement(CliActivity activity) {
+    public CartElement(CliActivity activity, String date) {
         this.activity = activity;
+        this.date = date;
     }
 
     public CliActivity getActivity() {
@@ -19,10 +22,19 @@ public class CartElement {
         this.activity = activity;
     }
 
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
     @Override
     public String toString() {
-        return "CartElement{" +
-                "activity=" + activity +
+        return "CartElement{" + '\'' +
+                "activity=" + activity + '\'' +
+                ", date=" + date + '\'' +
                 "}";
     }
 }

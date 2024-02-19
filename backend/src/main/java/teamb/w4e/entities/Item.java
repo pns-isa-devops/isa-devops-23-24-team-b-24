@@ -1,6 +1,7 @@
 package teamb.w4e.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
@@ -13,16 +14,15 @@ public class Item {
     @ManyToOne
     private Activity activity;
 
-    @NotNull
-    @Temporal(TemporalType.DATE)
-    private Date reservationDate;
+    @NotBlank
+    private String date;
 
     public Item() {
     }
 
-    public Item(Activity activity, Date reservationDate) {
+    public Item(Activity activity, String reservationDate) {
         this.activity = activity;
-        this.reservationDate = reservationDate;
+        this.date = reservationDate;
     }
 
     public Activity getActivity() {
@@ -33,19 +33,19 @@ public class Item {
         this.activity = activity;
     }
 
-    public Date getReservationDate() {
-        return reservationDate;
+    public String getDate() {
+        return date;
     }
 
-    public void setReservationDate(Date reservationDate) {
-        this.reservationDate = reservationDate;
+    public void setDate(String reservationDate) {
+        this.date = reservationDate;
     }
 
     @Override
     public String toString() {
         return "Item{" +
                 "activity=" + activity +
-                ", reservationDate=" + reservationDate +
+                ", reservationDate=" + date +
                 '}';
     }
 
@@ -54,11 +54,11 @@ public class Item {
         if (this == o) return true;
         if (!(o instanceof Item)) return false;
         Item item = (Item) o;
-        return activity.equals(item.activity) && reservationDate.equals(item.reservationDate);
+        return activity.equals(item.activity) && date.equals(item.date);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(activity, reservationDate);
+        return Objects.hash(activity, date);
     }
 }
