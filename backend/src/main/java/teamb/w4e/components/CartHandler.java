@@ -13,10 +13,8 @@ import teamb.w4e.exceptions.NonValidDateForActivity;
 import teamb.w4e.exceptions.PaymentException;
 import teamb.w4e.interfaces.*;
 
-import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class CartHandler implements CartProcessor, CartModifier {
@@ -60,18 +58,13 @@ public class CartHandler implements CartProcessor, CartModifier {
 
     @Override
     @Transactional
-    public Set<Reservation> validate(Long customerId) throws IdNotFoundException, EmptyCartException, PaymentException {
+    public Reservation validate(Long customerId, Item item) throws IdNotFoundException, EmptyCartException, PaymentException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         if (customer.getCaddy().getActivities().isEmpty()) {
             throw new EmptyCartException(customer.getName());
         }
-        if (!payment.pay(customer)) {
-            throw new PaymentException(customer.getName(),0);
-        }
-        Set<Reservation> reservations = customer.getCaddy().getActivities().stream()
-                .map(item -> scheduler.reserve(item.getActivity(), item.getDate()))
-                .collect(Collectors.toSet());
-        customer.getCaddy().getActivities().clear();
-        return reservations;
+        Reservation reservation = payment.payReservationFromCart(customer, item);
+        customer.getCaddy().getActivities().remove(item);
+        return reservation;
     }
 }

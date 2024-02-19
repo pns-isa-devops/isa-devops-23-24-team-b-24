@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import teamb.w4e.dto.CartElementDTO;
+import teamb.w4e.dto.ReservationDTO;
 import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Item;
 import teamb.w4e.exceptions.EmptyCartException;
@@ -15,7 +16,6 @@ import teamb.w4e.interfaces.ActivityFinder;
 import teamb.w4e.interfaces.CartModifier;
 import teamb.w4e.interfaces.CartProcessor;
 
-import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,7 +33,6 @@ public class CartController {
     private final ActivityFinder finder;
 
 
-
     @Autowired
     public CartController(CartProcessor processor, CartModifier cart, ActivityFinder finder) {
         this.processor = processor;
@@ -44,20 +43,20 @@ public class CartController {
     @PostMapping(path = CART_URI, consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<CartElementDTO> updateCustomerCart(@PathVariable("customerId") Long customerId, @RequestBody @Valid CartElementDTO cartDTO) throws IdNotFoundException, NonValidDateForActivity {
         Activity activity = finder.findActivityById(cartDTO.getActivity().id()).orElseThrow(() -> new IdNotFoundException(cartDTO.getActivity().id()));
-        return ResponseEntity.ok(convertToCartElementDTO(cart.update(customerId, activity, cartDTO.getDate())));
+        return ResponseEntity.ok(convertCartElementToDTO(cart.update(customerId, activity, cartDTO.getDate())));
     }
 
     @GetMapping(path = CART_URI)
     public ResponseEntity<Set<CartElementDTO>> getCustomerCartContents(@PathVariable("customerId") Long customerId) throws IdNotFoundException {
-        return ResponseEntity.ok(cart.cartContent(customerId).stream().map(CartController::convertToCartElementDTO).collect(Collectors.toSet()));
+        return ResponseEntity.ok(cart.cartContent(customerId).stream().map(CartController::convertCartElementToDTO).collect(Collectors.toSet()));
     }
 
-//    @PostMapping(path = CART_URI + "/validate", consumes = APPLICATION_JSON_VALUE)
-//    public ResponseEntity<OrderDTO> reserve(@PathVariable("customerId") Long customerId) throws EmptyCartException, PaymentException, IdNotFoundException {
-//        return ResponseEntity.ok().body(OrderController.convertOrderToDto(processor.validate(customerId)));
-//    }
+    @PostMapping(path = CART_URI + "/reservation", consumes = APPLICATION_JSON_VALUE)
+    public ResponseEntity<ReservationDTO> reserve(@PathVariable("customerId") Long customerId, @RequestBody @Valid Item item) throws EmptyCartException, PaymentException, IdNotFoundException {
+        return ResponseEntity.ok().body(ReservationController.convertReservationToDTO(processor.validate(customerId, item)));
+    }
 
-    private static CartElementDTO convertToCartElementDTO(Item item) {
+    private static CartElementDTO convertCartElementToDTO(Item item) {
         return new CartElementDTO(LeisureController.convertActivityToDto(item.getActivity()), item.getDate());
     }
 
