@@ -1,6 +1,7 @@
 package teamb.w4e.cli.commands;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -11,6 +12,7 @@ import teamb.w4e.cli.model.CliActivity;
 import teamb.w4e.cli.model.CliReservation;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -44,14 +46,13 @@ public class ReservationCommands {
         return restTemplate.postForObject(getUriForCustomer(customerName), element, CartElement.class);
     }
 
-//    @ShellMethod("Validate cart of customer (validate CUSTOMER_NAME)")
-//    public CliOrder validateCart(String name) {
-//        return restTemplate.postForObject(getUriForCustomer(name) + "/validate", null, CliOrder.class);
-//    }
-
     @ShellMethod("Reserve an activity (reserve CUSTOMER_NAME)")
-    public CliReservation reserve(String customerName) {
-        return restTemplate.postForObject(getUriForCustomer(customerName) + "/reserve", null, CliReservation.class);
+    public Set<CliReservation> reserve(String customerName) {
+        Set<CliReservation> reservations = new HashSet<>();
+        for (CartElement element : showCart(customerName)) {
+            reservations.add(restTemplate.postForObject(getUriForCustomer(customerName) + "/reservation", element, CliReservation.class));
+        }
+        return reservations;
     }
 
     private String getUriForActivity(String name) {
