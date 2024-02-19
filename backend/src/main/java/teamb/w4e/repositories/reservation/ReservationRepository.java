@@ -5,10 +5,10 @@ import org.springframework.stereotype.Repository;
 import teamb.w4e.entities.Card;
 import teamb.w4e.entities.Reservation;
 
-import java.util.Optional;
+import java.util.List;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
-    Optional<Reservation> findReservationByCard(Card card);
+    List<Reservation> findReservationByCard(Card card);
 
 }
