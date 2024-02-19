@@ -6,19 +6,8 @@ import java.util.Set;
 
 @Embeddable
 public class Caddy {
-    @Id
-    private Long id;
-
     @ElementCollection
     private Set<Item> activities;
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
 
     public Set<Item> getActivities() {
         return activities;
@@ -35,7 +24,6 @@ public class Caddy {
     @Override
     public String toString() {
         return "Caddy{" +
-                "id='" + id + '\'' +
                 ", activities=" + activities +
                 '}';
     }
@@ -43,8 +31,7 @@ public class Caddy {
     public Caddy() {
     }
 
-    public Caddy(Long id, Set<Item> activities) {
-        this.id = id;
+    public Caddy(Set<Item> activities) {
         this.activities = activities;
     }
 }

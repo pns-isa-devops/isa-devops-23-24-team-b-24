@@ -25,7 +25,7 @@ public class Customer {
 
 //    @OneToMany(cascade = {CascadeType.REMOVE}, fetch = FetchType.LAZY, mappedBy = "customer")
 //    private Set<Order> orders = new HashSet<>();
-    private Caddy caddy;
+    private Caddy caddy = new Caddy();
 
     public Customer() {
     }
