@@ -64,6 +64,11 @@ public class LeisureController {
         return ResponseEntity.ok(advantageFinder.findAllAdvantages().stream().map(LeisureController::convertAdvantageToDto).toList());
     }
 
+    @GetMapping(path = "/advantages/{advantageId}")
+    public ResponseEntity<AdvantageDTO> getAdvantage(@PathVariable Long advantageId) throws IdNotFoundException {
+        return ResponseEntity.ok(convertAdvantageToDto(advantageFinder.retrieveAdvantage(advantageId)));
+    }
+
     @GetMapping(path = "/advantages/types")
     public ResponseEntity<Set<AdvantageType>> showAdvantageTypes() {
         return ResponseEntity.ok(advantageFinder.listAdvantageTypes());
@@ -102,7 +107,7 @@ public class LeisureController {
         return new AdvantageDTO(advantage.getId(), advantage.getName(), advantage.getType(), advantage.getPoints());
     }
 
-    private static ActivityDTO convertActivityToDto(Activity activity) {
+    public static ActivityDTO convertActivityToDto(Activity activity) {
         return new ActivityDTO(activity.getId(), activity.getName(), activity.getDescription(), activity.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
 
     }

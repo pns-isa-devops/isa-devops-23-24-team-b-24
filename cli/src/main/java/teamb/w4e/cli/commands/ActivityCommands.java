@@ -10,12 +10,13 @@ import org.springframework.web.client.RestTemplate;
 import teamb.w4e.cli.CliContext;
 import teamb.w4e.cli.model.CliActivity;
 import teamb.w4e.cli.model.CliAdvantage;
+import teamb.w4e.cli.model.CliCustomer;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toMap;
 
 
 @ShellComponent
@@ -54,8 +55,17 @@ public class ActivityCommands {
         return Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(BASE_URI, CliActivity[].class).getBody())).collect(Collectors.toSet());
     }
 
+    @ShellMethod("Update all known activities from server")
+    public String updateActivities() {
+        Map<String, CliActivity> activityMap = cliContext.getActivities();
+        activityMap.clear();
+        activityMap.putAll(Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(BASE_URI, CliActivity[].class)
+                .getBody())).collect(toMap(CliActivity::getName, Function.identity())));
+        return activityMap.toString();
+    }
+
     private String getUriForAdvantage(String name) {
-        return BASE_URI + "/advantages/" + cliContext.getActivities().get(name).getId();
+        return AdvantageCommands.BASE_URI + "/" + cliContext.getAdvantages().get(name).getId();
     }
 
 

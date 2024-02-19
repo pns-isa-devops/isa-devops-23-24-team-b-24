@@ -8,6 +8,6 @@ import teamb.w4e.entities.AdvantageType;
 public record AdvantageDTO(
         Long id,
         @NotBlank(message = "name should not be blank") String name,
-        @NotEmpty AdvantageType type,
+        AdvantageType type,
         @Positive int points) {
 }
