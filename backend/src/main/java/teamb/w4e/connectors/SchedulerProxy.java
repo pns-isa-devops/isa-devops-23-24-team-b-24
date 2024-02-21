@@ -1,17 +1,53 @@
 package teamb.w4e.connectors;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientResponseException;
+import org.springframework.web.client.RestTemplate;
+import teamb.w4e.connectors.externaldto.AvailabilityReceiptDTO;
+import teamb.w4e.connectors.externaldto.AvailabilityRequestDTO;
+import teamb.w4e.connectors.externaldto.PaymentReceiptDTO;
+import teamb.w4e.connectors.externaldto.PaymentRequestDTO;
 import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Reservation;
 import teamb.w4e.interfaces.Scheduler;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 public class SchedulerProxy implements Scheduler {
+
+    @Value("${scheduler.host.baseurl}")
+    private String schedulerHostandPort;
+
+    private final RestTemplate restTemplate = new RestTemplate();
+
     @Override
+    @Transactional(propagation = Propagation.MANDATORY)
     public boolean checkAvailability(Activity activity, String date) {
-        return true;
+        try {
+            ResponseEntity<AvailabilityReceiptDTO> result = restTemplate.postForEntity(
+                    schedulerHostandPort + "/ccavailabilities",
+                    new AvailabilityRequestDTO(activity.getId(), date),
+                    PaymentReceiptDTO.class
+            );
+            if (result.getStatusCode().equals(HttpStatus.CREATED) && result.hasBody()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        catch (RestClientResponseException errorException) {
+            if (errorException.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+                return false;
+            }
+            throw errorException;
+        }
     }
 
     @Override

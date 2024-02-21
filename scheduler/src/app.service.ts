@@ -1,42 +1,41 @@
 import { Injectable } from '@nestjs/common';
 
-import { PaymentRequestDto } from './dto/paymentRequest.dto';
-import { PaymentReceiptDto } from './dto/paymentReceipt.dto';
-import { PaymentRejectedException } from './exceptions/payment-rejected-exception';
+import { AvailabilityRequestDto } from './dto/availabilityRequest.dto';
+import {AvailabilityReceiptDto, AvailabilityReceiptDto} from './dto/availabilityReceipt.dto';
 import { randomUUID } from 'crypto';
+import {DateAlreadyScheduledException} from "./exceptions/date-already-scheduled-exception";
 
 @Injectable()
 export class AppService {
-  private static readonly magicKey: string = '896983'; // ASCII code for 'YES'
 
-  private transactions: Array<PaymentReceiptDto>;
+  private availabilities: Array<AvailabilityReceiptDTO>;
 
   constructor() {
-    this.transactions = [];
+    this.availabilities = [];
   }
 
-  findAll(): PaymentReceiptDto[] {
-    return this.transactions;
+  findAll(): AvailabilityReceiptDto[] {
+    return this.availabilities;
   }
 
-  pay(paymentRequestDto: PaymentRequestDto): PaymentReceiptDto {
-    let paymentReceiptDto: PaymentReceiptDto;
-    if (paymentRequestDto.creditCard.includes(AppService.magicKey)) {
-      paymentReceiptDto = new PaymentReceiptDto(
+  checkAvailabilities(availabilityRequestDto: AvailabilityRequestDto): AvailabilityReceiptDto {
+    let availabilityReceiptDto: AvailabilityReceiptDto;
+    availabilityReceiptDto = new AvailabilityReceiptDto(
         'RECEIPT:' + randomUUID(),
-        paymentRequestDto.amount,
-      );
-      this.transactions.push(paymentReceiptDto);
+        availabilityRequestDto.isAvailable);
+    if (availabilityRequestDto.isAvailable) {
+      this.availabilities.push(availabilityReceiptDto);
       console.log(
-        'Payment accepted(' +
-          paymentReceiptDto.payReceiptId +
+          'Schedulation number : ' +
+          availabilityReceiptDto.schedulerReceiptId +
           '): ' +
-          paymentReceiptDto.amount,
+          availabilityReceiptDto.isAvailable,
       );
-      return paymentReceiptDto;
+      return availabilityReceiptDto;
     } else {
-      console.log('Payment rejected: ' + paymentRequestDto.amount);
-      throw new PaymentRejectedException(paymentRequestDto.amount);
+      console.log('Date ' + availabilityRequestDto.date + ' already scheduled.');
+      throw new DateAlreadyScheduledException(availabilityRequestDto.date);
     }
   }
+
 }
