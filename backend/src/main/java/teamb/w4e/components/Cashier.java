@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Transaction;
 import teamb.w4e.exceptions.CustomerIdNotFoundException;
+import teamb.w4e.exceptions.NegativeAmountTransactionException;
 import teamb.w4e.exceptions.PaymentException;
 import teamb.w4e.interfaces.Bank;
 import teamb.w4e.interfaces.CustomerFinder;
@@ -27,9 +28,12 @@ public class Cashier implements Payment {
 
     @Override
     @Transactional
-    public Transaction pay(Customer customer, double amount) throws PaymentException, CustomerIdNotFoundException {
+    public Transaction pay(Customer customer, double amount) throws PaymentException, CustomerIdNotFoundException, NegativeAmountTransactionException {
         if (finder.findById(customer.getId()).isEmpty()) {
             throw new CustomerIdNotFoundException(customer.getId());
+        }
+        if (amount < 0) {
+            throw new NegativeAmountTransactionException(amount);
         }
         String payment = bankProxy.pay(customer, amount).orElseThrow(() -> new PaymentException(customer.getName(), amount));
         return transactionCreator.createTransaction(customer, amount, payment);
