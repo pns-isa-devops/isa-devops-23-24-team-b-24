@@ -1,72 +1,64 @@
 package teamb.w4e.entities;
 
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.Date;
 import java.util.Objects;
 
 @Embeddable
 public class Item {
 
-    /*
-    @Enumerated(EnumType.STRING)
     @NotNull
-    private Cookies cookie;
-     */
+    @ManyToOne
+    private Activity activity;
 
-    @NotNull
-    private int quantity;
+    @NotBlank
+    private String date;
 
-    public Item() {}
-
-    /*
-    public Item(Cookies cookie, int quantity) {
-        this.cookie = cookie;
-        this.quantity = quantity;
+    public Item() {
     }
 
-    public Cookies getCookie() {
-        return cookie;
-    }
-    public void setCookie(Cookies cookie) {
-        this.cookie = cookie;
+    public Item(Activity activity, String reservationDate) {
+        this.activity = activity;
+        this.date = reservationDate;
     }
 
-     */
-
-    public Item(int quantity) {
-        this.quantity = quantity;
+    public Activity getActivity() {
+        return activity;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public void setActivity(Activity activity) {
+        this.activity = activity;
     }
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String reservationDate) {
+        this.date = reservationDate;
     }
 
     @Override
-    public String toString() { return quantity + "x"; }
-
-
-/*
-    @Override
-    public String toString() { return quantity + "x" + cookie.toString(); }
-
- */
+    public String toString() {
+        return "Item{" +
+                "activity=" + activity +
+                ", reservationDate=" + date +
+                '}';
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Item)) return false;
         Item item = (Item) o;
-        return quantity == item.quantity;
+        return activity.equals(item.activity) && date.equals(item.date);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(quantity);
+        return Objects.hash(activity, date);
     }
 }

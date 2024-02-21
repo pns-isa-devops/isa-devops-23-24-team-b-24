@@ -1,14 +1,14 @@
 package teamb.w4e.exceptions;
 
-public class CustomerIdNotFoundException extends Exception {
+public class IdNotFoundException extends Exception {
 
     private Long id;
 
-    public CustomerIdNotFoundException(Long id) {
+    public IdNotFoundException(Long id) {
         this.id = id;
     }
 
-    public CustomerIdNotFoundException() {
+    public IdNotFoundException() {
     }
 
     public Long getId() {
