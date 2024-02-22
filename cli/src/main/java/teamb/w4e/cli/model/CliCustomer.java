@@ -7,6 +7,7 @@ public class CliCustomer {
     private Long id;
     private String name;
     private String creditCard;
+    private Long cardId;
 
     public CliCustomer(String name, String creditCard) {
         this.name = name;
@@ -24,12 +25,25 @@ public class CliCustomer {
         return creditCard;
     }
 
+    public String getCreditCard() {
+        return creditCard;
+    }
+
+    public Long getCardId() {
+        return cardId;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "Customer{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", creditCard='" + creditCard + '\'' +
+                ", cardId='" + cardId + '\'' +
                 '}';
     }
 }
