@@ -1,8 +1,9 @@
 package teamb.w4e.components;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Transaction;
 import teamb.w4e.exceptions.CustomerIdNotFoundException;
@@ -27,7 +28,7 @@ public class Cashier implements Payment {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.MANDATORY)
     public Transaction pay(Customer customer, double amount) throws PaymentException, CustomerIdNotFoundException, NegativeAmountTransactionException {
         if (finder.findById(customer.getId()).isEmpty()) {
             throw new CustomerIdNotFoundException(customer.getId());
