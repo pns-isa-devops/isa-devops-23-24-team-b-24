@@ -40,7 +40,7 @@ class TransactionRegistryTest {
     void unknownTransaction() {
         Customer customer = new Customer("John", "1234567890");
         customerRepository.save(customer);
-        assertFalse(transactionFinder.findTransactionByCustomer(customer).isPresent());
+        assertFalse(transactionFinder.findTransactionByCustomer(customer.getId()).isPresent());
     }
 
     @Test
@@ -48,7 +48,7 @@ class TransactionRegistryTest {
         Customer customer = new Customer("John", "1234567890");
         customerRepository.save(customer);
         transactionCreator.createTransaction(customer, amount, payReceiptId);
-        assertTrue(transactionFinder.findTransactionByCustomer(customer).isPresent());
+        assertTrue(transactionFinder.findTransactionByCustomer(customer.getId()).isPresent());
     }
 
     @Test
@@ -78,10 +78,10 @@ class TransactionRegistryTest {
         customerRepository.save(customer);
         transactionCreator.createTransaction(customer, amount, payReceiptId);
         transactionCreator.createTransaction(customer, amount2, payReceiptId2);
-        assertFalse(transactionFinder.findTransactionsByCustomer(customer).isEmpty());
-        assertEquals(2, transactionFinder.findTransactionsByCustomer(customer).size());
+        assertFalse(transactionFinder.findTransactionsByCustomer(customer.getId()).isEmpty());
+        assertEquals(2, transactionFinder.findTransactionsByCustomer(customer.getId()).size());
         // delete all transactions
-        transactionRepository.deleteAll(transactionFinder.findTransactionsByCustomer(customer));
-        assertNull(transactionFinder.findTransactionByCustomer(customer).orElse(null));
+        transactionRepository.deleteAll(transactionFinder.findTransactionsByCustomer(customer.getId()));
+        assertNull(transactionFinder.findTransactionByCustomer(customer.getId()).orElse(null));
     }
 }
