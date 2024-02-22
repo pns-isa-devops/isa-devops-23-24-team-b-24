@@ -24,7 +24,7 @@
 
 ## Description
 
-Simple bank service built with  [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Simple Ski Pass service built with  [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 ## Installation
 
