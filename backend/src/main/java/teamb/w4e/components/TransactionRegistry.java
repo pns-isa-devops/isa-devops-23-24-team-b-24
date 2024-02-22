@@ -23,8 +23,8 @@ public class TransactionRegistry implements TransactionFinder, TransactionCreato
     }
 
     @Override
-    public Optional<Transaction> findTransactionByCustomer(Customer customer) {
-        return transactionRepository.findTransactionByCustomer(customer);
+    public Optional<Transaction> findTransactionByCustomer(Long customerId) {
+        return transactionRepository.findTransactionByCustomer(customerId);
     }
 
     @Override
@@ -39,8 +39,8 @@ public class TransactionRegistry implements TransactionFinder, TransactionCreato
     }
 
     @Override
-    public List<Transaction> findTransactionsByCustomer(Customer customer) {
-        return transactionRepository.findTransactionsByCustomer(customer);
+    public List<Transaction> findTransactionsByCustomer(Long customerId) {
+        return transactionRepository.findTransactionsByCustomer(customerId);
     }
 
     @Override
