@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-echo "Compiling the NestJS Bank system within a multi-stage docker build"
+echo "Compiling the NestJS Ski Pass system within a multi-stage docker build"
 
-docker build -t teamb/w4e-bank-service .
+docker build -t teamb/w4e-skipass-service .
