@@ -1,9 +1,6 @@
 package teamb.w4e.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -22,6 +19,9 @@ public class Reservation {
     @Fetch(FetchMode.JOIN)
     private Card card;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    private Transaction transaction;
+
     public Reservation() {
     }
 
@@ -30,10 +30,11 @@ public class Reservation {
         this.date = date;
     }
 
-    public Reservation(Activity activity, String date, Card card) {
+    public Reservation(Activity activity, String date, Card card, Transaction transaction) {
         this.activity = activity;
         this.date = date;
         this.card = card;
+        this.transaction = transaction;
     }
 
     public void setId(Long id) {
@@ -66,6 +67,14 @@ public class Reservation {
 
     public void setCard(Card card) {
         this.card = card;
+    }
+
+    public Transaction getTransaction() {
+        return transaction;
+    }
+
+    public void setTransaction(Transaction transaction) {
+        this.transaction = transaction;
     }
 
 }
