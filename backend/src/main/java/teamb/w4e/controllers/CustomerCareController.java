@@ -6,12 +6,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import teamb.w4e.dto.CardDTO;
 import teamb.w4e.dto.CustomerDTO;
 import teamb.w4e.dto.ErrorDTO;
 import teamb.w4e.dto.GroupDTO;
+import teamb.w4e.entities.Card;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Group;
 import teamb.w4e.exceptions.AlreadyExistingCustomerException;
+import teamb.w4e.exceptions.CustomerIdNotFoundException;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.CustomerRegistration;
@@ -54,11 +57,11 @@ public class CustomerCareController {
     }
 
     @PostMapping(path = "/register", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<CustomerDTO> register(@RequestBody @Valid CustomerDTO cusdto) {
+    public ResponseEntity<CustomerDTO> register(@RequestBody @Valid CustomerDTO customerDTO) {
         // Note that there is no validation at all on the CustomerDto mapped
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(convertCustomerToDto(registry.register(cusdto.name(), cusdto.creditCard())));
+                    .body(convertCustomerToDto(registry.register(customerDTO.name(), customerDTO.creditCard())));
         } catch (AlreadyExistingCustomerException e) {
             // Note: Returning 409 (Conflict) can also be seen a security/privacy vulnerability, exposing a service for account enumeration
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -71,12 +74,8 @@ public class CustomerCareController {
     }
 
     @GetMapping(path = "/{customerId}")
-    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable("customerId") Long customerId) throws IdNotFoundException {
+    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable("customerId") Long customerId) throws CustomerIdNotFoundException {
         return ResponseEntity.ok(convertCustomerToDto(finder.retrieveCustomer(customerId)));
-    }
-
-    public static CustomerDTO convertCustomerToDto(Customer customer) { // In more complex cases, we could use a ModelMapper such as MapStruct
-        return new CustomerDTO(customer.getId(), customer.getName(), customer.getCreditCard(), customer.getCard().getId());
     }
 
     @PostMapping(path = "/{customerId}/group", consumes = APPLICATION_JSON_VALUE)
@@ -97,10 +96,17 @@ public class CustomerCareController {
         }
     }
 
+    public static CustomerDTO convertCustomerToDto(Customer customer) { // In more complex cases, we could use a ModelMapper such as MapStruct
+
+        return new CustomerDTO(customer.getId(), customer.getName(), customer.getCreditCard(), convertCardToDto(customer.getCard()));
+    }
+
+    private static CardDTO convertCardToDto(Card card) { // In more complex cases, we could use a ModelMapper such as MapStruct
+        return new CardDTO(card.getId());
+    }
+
     private static GroupDTO convertGroupToDto(Group group) { // In more complex cases, we could use a ModelMapper such as MapStruct
         return new GroupDTO(group.getId(), group.getLeader().getName(), group.getMembers().stream().map(Customer::getName).collect(Collectors.toSet()));
     }
-
-
 }
 
