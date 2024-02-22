@@ -108,7 +108,7 @@ public class LeisureController {
     }
 
     public static ActivityDTO convertActivityToDto(Activity activity) {
-        return new ActivityDTO(activity.getId(), activity.getName(), activity.getDescription(), activity.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
+        return new ActivityDTO(activity.getId(), activity.getName(), activity.getDescription(), activity.getPrice(), activity.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
 
     }
 
