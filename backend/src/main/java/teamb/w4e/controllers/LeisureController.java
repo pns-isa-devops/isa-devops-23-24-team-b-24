@@ -86,7 +86,7 @@ public class LeisureController {
                 .collect(Collectors.toSet());
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(convertActivityToDto(activityRegistry.register(activityDTO.name(), activityDTO.description(), advantages)));
+                    .body(convertActivityToDto(activityRegistry.register(activityDTO.name(), activityDTO.description(), activityDTO.price(), advantages)));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
         }
