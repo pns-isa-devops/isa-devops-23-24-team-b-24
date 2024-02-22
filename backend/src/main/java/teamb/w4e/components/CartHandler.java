@@ -7,10 +7,7 @@ import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Item;
 import teamb.w4e.entities.Reservation;
-import teamb.w4e.exceptions.EmptyCartException;
-import teamb.w4e.exceptions.IdNotFoundException;
-import teamb.w4e.exceptions.NonValidDateForActivity;
-import teamb.w4e.exceptions.PaymentException;
+import teamb.w4e.exceptions.*;
 import teamb.w4e.interfaces.*;
 
 import java.util.Optional;
@@ -34,7 +31,7 @@ public class CartHandler implements CartProcessor, CartModifier {
 
     @Override
     @Transactional
-    public Item update(Long customerId, Activity activity, String date) throws IdNotFoundException, NonValidDateForActivity {
+    public Item update(Long customerId, Activity activity, String date) throws NonValidDateForActivity, CustomerIdNotFoundException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         Set<Item> items = customer.getCaddy().getActivities();
         if (!scheduler.checkAvailability(activity, date)) {
@@ -52,13 +49,13 @@ public class CartHandler implements CartProcessor, CartModifier {
 
     @Override
     @Transactional
-    public Set<Item> cartContent(Long customerId) throws IdNotFoundException {
+    public Set<Item> cartContent(Long customerId) throws CustomerIdNotFoundException {
         return customerFinder.retrieveCustomer(customerId).getCaddy().getActivities();
     }
 
     @Override
     @Transactional
-    public Reservation validate(Long customerId, Item item) throws IdNotFoundException, EmptyCartException, PaymentException {
+    public Reservation validate(Long customerId, Item item) throws EmptyCartException, PaymentException, CustomerIdNotFoundException, NegativeAmountTransactionException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         if (customer.getCaddy().getActivities().isEmpty()) {
             throw new EmptyCartException(customer.getName());
