@@ -12,7 +12,7 @@ import teamb.w4e.dto.GroupDTO;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Group;
 import teamb.w4e.exceptions.AlreadyExistingCustomerException;
-import teamb.w4e.exceptions.CustomerIdNotFoundException;
+import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.CustomerRegistration;
 import teamb.w4e.interfaces.GroupCreator;
@@ -71,12 +71,12 @@ public class CustomerCareController {
     }
 
     @GetMapping(path = "/{customerId}")
-    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable("customerId") Long customerId) throws CustomerIdNotFoundException {
+    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable("customerId") Long customerId) throws IdNotFoundException {
         return ResponseEntity.ok(convertCustomerToDto(finder.retrieveCustomer(customerId)));
     }
 
-    private static CustomerDTO convertCustomerToDto(Customer customer) { // In more complex cases, we could use a ModelMapper such as MapStruct
-        return new CustomerDTO(customer.getId(), customer.getName(), customer.getCreditCard());
+    public static CustomerDTO convertCustomerToDto(Customer customer) { // In more complex cases, we could use a ModelMapper such as MapStruct
+        return new CustomerDTO(customer.getId(), customer.getName(), customer.getCreditCard(), customer.getCard().getId());
     }
 
     @PostMapping(path = "/{customerId}/group", consumes = APPLICATION_JSON_VALUE)

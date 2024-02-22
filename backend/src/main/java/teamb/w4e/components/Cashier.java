@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import teamb.w4e.entities.Customer;
+import teamb.w4e.entities.Item;
+import teamb.w4e.entities.Reservation;
 import teamb.w4e.entities.Transaction;
 import teamb.w4e.exceptions.CustomerIdNotFoundException;
 import teamb.w4e.exceptions.NegativeAmountTransactionException;
@@ -13,6 +15,7 @@ import teamb.w4e.interfaces.Bank;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.Payment;
 import teamb.w4e.interfaces.TransactionCreator;
+import teamb.w4e.interfaces.reservation.ReservationCreator;
 
 @Service
 public class Cashier implements Payment {
@@ -20,11 +23,14 @@ public class Cashier implements Payment {
     private final CustomerFinder finder;
     private final TransactionCreator transactionCreator;
 
+    private final ReservationCreator reservationCreator;
+
     @Autowired
-    public Cashier(Bank bankProxy, CustomerFinder finder, TransactionCreator transactionCreator) {
+    public Cashier(Bank bankProxy, CustomerFinder finder, TransactionCreator transactionCreator, ReservationCreator reservationCreator) {
         this.bankProxy = bankProxy;
         this.finder = finder;
         this.transactionCreator = transactionCreator;
+        this.reservationCreator = reservationCreator;
     }
 
     @Override
@@ -38,5 +44,10 @@ public class Cashier implements Payment {
         }
         String payment = bankProxy.pay(customer, amount).orElseThrow(() -> new PaymentException(customer.getName(), amount));
         return transactionCreator.createTransaction(customer, amount, payment);
+    }
+
+    @Override
+    public Reservation payReservationFromCart(Customer customer, Item item) throws PaymentException {
+        return reservationCreator.createReservation(customer,item);
     }
 }
