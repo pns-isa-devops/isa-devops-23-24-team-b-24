@@ -1,20 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PaymentRequestDto } from './dto/paymentRequest.dto';
+import { AvailabilityRequestDto } from './dto/availabilityRequest.dto';
 import { HttpException } from '@nestjs/common';
 
 describe('AppController', () => {
   let appController: AppController;
 
-  const goodPaymentDto: PaymentRequestDto = {
-    creditCard: '1230896983',
-    amount: 43.7,
+  const goodDateFormat: AvailabilityRequestDto = {
+    activityId: 1,
+    date: '07/11/2023',
   };
 
-  const badPaymentDto: PaymentRequestDto = {
-    creditCard: '1234567890',
-    amount: 43.7,
+  const wrongDateFormat: AvailabilityRequestDto = {
+    activityId: 2,
+    date: '29/01/2024',
   };
 
   beforeEach(async () => {
@@ -27,27 +27,29 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return no transactions at startup', () => {
-      expect(appController.getAllTransactions().length).toBe(0);
+    it('should return no availabilities at startup', () => {
+      expect(appController.getAllAvailabilities().length).toBe(0);
     });
   });
 
-  describe('payByCredit()', () => {
-    it('should return a PaymentReceiptDto (generated UUID and input amount) with transaction success', () => {
-      const paymentReceiptDto = appController.payByCreditCard(goodPaymentDto);
-      expect(paymentReceiptDto.amount).toBe(goodPaymentDto.amount);
-      expect(paymentReceiptDto.payReceiptId.substring(0, 8)).toBe('RECEIPT:');
-      expect(paymentReceiptDto.payReceiptId.length).toBe(44);
-      expect(appController.getAllTransactions().length).toBe(1);
+  describe('isAvailable()', () => {
+    it('should return a AvailabilityReceiptDto (generated UUID and input date) with transaction success', () => {
+      const availabilityReceiptDto = appController.isAvailable(goodDateFormat);
+      expect(availabilityReceiptDto.isAvailable).toBe(true);
+      expect(availabilityReceiptDto.schedulerReceiptId.substring(0, 8)).toBe(
+        'RECEIPT:',
+      );
+      expect(availabilityReceiptDto.schedulerReceiptId.length).toBe(44);
+      expect(appController.getAllAvailabilities().length).toBe(1);
     });
   });
 
   describe('payByCredit()', () => {
     it('should throw exception transaction failure', () => {
-      expect(() => appController.payByCreditCard(badPaymentDto)).toThrow(
+      expect(() => appController.isAvailable(wrongDateFormat)).toThrow(
         HttpException,
       );
-      expect(appController.getAllTransactions().length).toBe(0);
+      expect(appController.getAllAvailabilities().length).toBe(0);
     });
   });
 });

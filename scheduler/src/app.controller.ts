@@ -8,24 +8,24 @@ import {
 } from '@nestjs/common';
 
 import { AppService } from './app.service';
-import { PaymentRequestDto } from './dto/paymentRequest.dto';
-import { PaymentReceiptDto } from './dto/paymentReceipt.dto';
+import { AvailabilityRequestDto } from './dto/availabilityRequest.dto';
+import { AvailabilityReceiptDto } from './dto/availabilityReceipt.dto';
 
-@Controller('cctransactions')
+@Controller('ccavailabilities')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getAllTransactions(): PaymentReceiptDto[] {
+  getAllAvailabilities(): AvailabilityReceiptDto[] {
     return this.appService.findAll();
   }
 
   @Post()
-  payByCreditCard(
-    @Body() paymentRequestDto: PaymentRequestDto,
-  ): PaymentReceiptDto {
+  isAvailable(
+    @Body() availabilityRequestDto: AvailabilityRequestDto,
+  ): AvailabilityReceiptDto {
     try {
-      return this.appService.pay(paymentRequestDto);
+      return this.appService.checkAvailabilities(availabilityRequestDto);
     } catch (e) {
       throw new HttpException(
         'business error: ' + e.message,

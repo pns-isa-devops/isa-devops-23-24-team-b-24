@@ -1,16 +1,16 @@
-import { IsNotEmpty, IsPositive, IsString } from 'class-validator';
+import { IsNotEmpty, IsPositive, IsString, IsNumber } from 'class-validator';
 
 export class AvailabilityReceiptDto {
-    constructor(payReceiptId: string, isAvailable: boolean) {
-        this.schedulerReceiptId = payReceiptId;
-        this.isAvailable = isAvailable;
-    }
+  constructor(payReceiptId: string, isAvailable: boolean) {
+    this.schedulerReceiptId = payReceiptId;
+    this.isAvailable = isAvailable;
+  }
 
-    @IsNotEmpty()
-    @IsString()
-    schedulerReceiptId: string;
+  @IsNotEmpty()
+  @IsString()
+  schedulerReceiptId: string;
 
-    @IsNotEmpty()
-    @IsPositive()
-    isAvailable: boolean;
+  @IsNotEmpty()
+  @IsPositive()
+  isAvailable: boolean;
 }

@@ -8,16 +8,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
-import teamb.w4e.connectors.externaldto.AvailabilityReceiptDTO;
 import teamb.w4e.connectors.externaldto.AvailabilityRequestDTO;
-import teamb.w4e.connectors.externaldto.PaymentReceiptDTO;
-import teamb.w4e.connectors.externaldto.PaymentRequestDTO;
+import teamb.w4e.connectors.externaldto.AvailabilityReceiptDTO;
 import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Reservation;
 import teamb.w4e.interfaces.Scheduler;
-
-import java.util.Date;
-import java.util.Optional;
 
 @Component
 public class SchedulerProxy implements Scheduler {
@@ -34,7 +29,7 @@ public class SchedulerProxy implements Scheduler {
             ResponseEntity<AvailabilityReceiptDTO> result = restTemplate.postForEntity(
                     schedulerHostandPort + "/ccavailabilities",
                     new AvailabilityRequestDTO(activity.getId(), date),
-                    PaymentReceiptDTO.class
+                    AvailabilityReceiptDTO.class
             );
             if (result.getStatusCode().equals(HttpStatus.CREATED) && result.hasBody()) {
                 return true;
