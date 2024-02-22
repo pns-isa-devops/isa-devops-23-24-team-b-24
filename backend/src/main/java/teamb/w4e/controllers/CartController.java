@@ -42,7 +42,7 @@ public class CartController {
 
     @PostMapping(path = CART_URI, consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<CartElementDTO> updateCustomerCart(@PathVariable("customerId") Long customerId, @RequestBody @Valid CartElementDTO cartDTO) throws IdNotFoundException, NonValidDateForActivity {
-        Activity activity = finder.findActivityById(cartDTO.getActivity().id()).orElseThrow(() -> new IdNotFoundException(cartDTO.getActivity().id()));
+        Activity activity = finder.retrieveActivity(cartDTO.getActivity().id());
         return ResponseEntity.ok(convertCartElementToDTO(cart.update(customerId, activity, cartDTO.getDate())));
     }
 
