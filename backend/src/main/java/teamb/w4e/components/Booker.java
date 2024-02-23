@@ -3,10 +3,7 @@ package teamb.w4e.components;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import teamb.w4e.entities.Card;
-import teamb.w4e.entities.Customer;
-import teamb.w4e.entities.Item;
-import teamb.w4e.entities.Reservation;
+import teamb.w4e.entities.*;
 import teamb.w4e.interfaces.reservation.ReservationCreator;
 import teamb.w4e.interfaces.reservation.ReservationFinder;
 import teamb.w4e.repositories.reservation.ReservationRepository;
@@ -25,8 +22,8 @@ public class Booker implements ReservationCreator, ReservationFinder {
     }
 
     @Override
-    public Reservation createReservation(Customer customer, Item item) {
-        return reservationRepository.save(new Reservation(item.getActivity(), item.getDate(), customer.getCard()));
+    public Reservation createReservation(Customer customer, Item item, Transaction transaction) {
+        return reservationRepository.save(new Reservation(item.getActivity(), item.getDate(), customer.getCard(), transaction));
     }
 
     @Override

@@ -2,6 +2,7 @@ package teamb.w4e.components;
 
 import teamb.w4e.entities.Customer;
 import teamb.w4e.exceptions.AlreadyExistingCustomerException;
+import teamb.w4e.exceptions.CustomerIdNotFoundException;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.CustomerRegistration;
@@ -47,8 +48,8 @@ public class CustomerRegistry implements CustomerRegistration, CustomerFinder {
 
     @Override
     @Transactional(readOnly = true)
-    public Customer retrieveCustomer(Long customerId) throws IdNotFoundException {
-        return findById(customerId).orElseThrow(() -> new IdNotFoundException(customerId));
+    public Customer retrieveCustomer(Long customerId) throws CustomerIdNotFoundException {
+        return findById(customerId).orElseThrow(() -> new CustomerIdNotFoundException(customerId));
     }
 
     @Override

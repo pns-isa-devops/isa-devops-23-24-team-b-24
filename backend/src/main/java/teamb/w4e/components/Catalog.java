@@ -79,8 +79,8 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
 
     @Override
     @Transactional
-    public Activity register(String name, String description, Set<Advantage> advantages) {
-        Activity newActivity = new Activity(name, description, advantages);
+    public Activity register(String name, String description, double price, Set<Advantage> advantages) {
+        Activity newActivity = new Activity(name, description,price, advantages);
         return activityCatalogRepository.save(newActivity);
     }
 

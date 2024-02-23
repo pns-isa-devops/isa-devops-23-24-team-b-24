@@ -48,7 +48,7 @@ class CatalogTest {
     void registerAdvantageFailure() {
         assertThrows(Exception.class, () -> catalog.register("name", AdvantageType.VIP, -10));
         assertThrows(Exception.class, () -> catalog.register("name", AdvantageType.VIP, 0));
-        assertThrows(Exception.class, () -> catalog.register("name", null , 1001));
+        assertThrows(Exception.class, () -> catalog.register("name", null, 1001));
     }
 
     @Test
@@ -60,14 +60,14 @@ class CatalogTest {
     @Test
     void registerActivityWithAdvantageSuccess() {
         Advantage advantage = advantageRegistration.register("name", AdvantageType.VIP, 10);
-        Activity activity = activityRegistration.register("name", "description", Set.of(advantage));
+        Activity activity = activityRegistration.register("name", "description", 10.0, Set.of(advantage));
         Optional<Activity> found = activityFinder.findActivityByName(activity.getName());
         assertTrue(found.isPresent());
     }
 
     @Test
     void registerActivityWithAdvantageFailure() {
-        Activity activity = activityRegistration.register("name", "description", Collections.emptySet());
+        Activity activity = activityRegistration.register("name", "description", 10.0, Collections.emptySet());
         Optional<Activity> found = activityFinder.findActivityByName(activity.getName());
         assertTrue(found.isPresent());
     }

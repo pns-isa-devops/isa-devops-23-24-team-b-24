@@ -19,15 +19,15 @@ import teamb.w4e.interfaces.reservation.ReservationCreator;
 
 @Service
 public class Cashier implements Payment {
-    private final Bank bankProxy;
+    private final Bank bank;
     private final CustomerFinder finder;
     private final TransactionCreator transactionCreator;
 
     private final ReservationCreator reservationCreator;
 
     @Autowired
-    public Cashier(Bank bankProxy, CustomerFinder finder, TransactionCreator transactionCreator, ReservationCreator reservationCreator) {
-        this.bankProxy = bankProxy;
+    public Cashier(Bank bank, CustomerFinder finder, TransactionCreator transactionCreator, ReservationCreator reservationCreator) {
+        this.bank = bank;
         this.finder = finder;
         this.transactionCreator = transactionCreator;
         this.reservationCreator = reservationCreator;
@@ -35,19 +35,12 @@ public class Cashier implements Payment {
 
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
-    public Transaction pay(Customer customer, double amount) throws PaymentException, CustomerIdNotFoundException, NegativeAmountTransactionException {
-        if (finder.findById(customer.getId()).isEmpty()) {
-            throw new CustomerIdNotFoundException(customer.getId());
+    public Reservation payReservationFromCart(Customer customer, Item item) throws NegativeAmountTransactionException, PaymentException {
+        if (item.getActivity().getPrice() < 0) {
+            throw new NegativeAmountTransactionException(item.getActivity().getPrice());
         }
-        if (amount < 0) {
-            throw new NegativeAmountTransactionException(amount);
-        }
-        String payment = bankProxy.pay(customer, amount).orElseThrow(() -> new PaymentException(customer.getName(), amount));
-        return transactionCreator.createTransaction(customer, amount, payment);
-    }
-
-    @Override
-    public Reservation payReservationFromCart(Customer customer, Item item) throws PaymentException {
-        return reservationCreator.createReservation(customer,item);
+        String payment = bank.pay(customer, item.getActivity().getPrice()).orElseThrow(() -> new PaymentException(customer.getName(), item.getActivity().getPrice()));
+        Transaction transaction = transactionCreator.createTransaction(customer, item.getActivity().getPrice(), payment);
+        return reservationCreator.createReservation(customer,item, transaction);
     }
 }

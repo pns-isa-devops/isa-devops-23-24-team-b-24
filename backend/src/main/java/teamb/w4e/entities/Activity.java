@@ -19,6 +19,8 @@ public class Activity {
 
     private String description;
 
+    private double price;
+
     @ManyToMany
     @Fetch(FetchMode.JOIN)
     private Set<Advantage> advantages;
@@ -26,9 +28,10 @@ public class Activity {
     public Activity() {
     }
 
-    public Activity(String name, String description, Set<Advantage> advantages) {
+    public Activity(String name, String description, double price, Set<Advantage> advantages) {
         this.name = name;
         this.description = description;
+        this.price = price;
         this.advantages = advantages;
     }
 
@@ -44,8 +47,24 @@ public class Activity {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public Set<Advantage> getAdvantages() {

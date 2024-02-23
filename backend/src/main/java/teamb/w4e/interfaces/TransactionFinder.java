@@ -8,11 +8,11 @@ import java.util.Optional;
 
 public interface TransactionFinder {
 
-    Optional<Transaction> findTransactionByCustomer(Customer customer);
+    Optional<Transaction> findTransactionByCustomer(Long customerId);
 
     Optional<Transaction> findTransactionById(Long id);
 
     List<Transaction> findAllTransactions();
 
-    List<Transaction> findTransactionsByCustomer(Customer customer);
+    List<Transaction> findTransactionsByCustomer(Long customerId);
 }

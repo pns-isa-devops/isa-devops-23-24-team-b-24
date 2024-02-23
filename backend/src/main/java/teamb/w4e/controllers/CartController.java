@@ -8,10 +8,7 @@ import teamb.w4e.dto.CartElementDTO;
 import teamb.w4e.dto.ReservationDTO;
 import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Item;
-import teamb.w4e.exceptions.EmptyCartException;
-import teamb.w4e.exceptions.IdNotFoundException;
-import teamb.w4e.exceptions.NonValidDateForActivity;
-import teamb.w4e.exceptions.PaymentException;
+import teamb.w4e.exceptions.*;
 import teamb.w4e.interfaces.ActivityFinder;
 import teamb.w4e.interfaces.CartModifier;
 import teamb.w4e.interfaces.CartProcessor;
@@ -41,18 +38,18 @@ public class CartController {
     }
 
     @PostMapping(path = CART_URI, consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<CartElementDTO> updateCustomerCart(@PathVariable("customerId") Long customerId, @RequestBody @Valid CartElementDTO cartDTO) throws IdNotFoundException, NonValidDateForActivity {
+    public ResponseEntity<CartElementDTO> updateCustomerCart(@PathVariable("customerId") Long customerId, @RequestBody @Valid CartElementDTO cartDTO) throws IdNotFoundException, NonValidDateForActivity, CustomerIdNotFoundException {
         Activity activity = finder.retrieveActivity(cartDTO.getActivity().id());
         return ResponseEntity.ok(convertCartElementToDTO(cart.update(customerId, activity, cartDTO.getDate())));
     }
 
     @GetMapping(path = CART_URI)
-    public ResponseEntity<Set<CartElementDTO>> getCustomerCartContents(@PathVariable("customerId") Long customerId) throws IdNotFoundException {
+    public ResponseEntity<Set<CartElementDTO>> getCustomerCartContents(@PathVariable("customerId") Long customerId) throws IdNotFoundException, CustomerIdNotFoundException {
         return ResponseEntity.ok(cart.cartContent(customerId).stream().map(CartController::convertCartElementToDTO).collect(Collectors.toSet()));
     }
 
     @PostMapping(path = CART_URI + "/reservation", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<ReservationDTO> reserve(@PathVariable("customerId") Long customerId, @RequestBody @Valid Item item) throws EmptyCartException, PaymentException, IdNotFoundException {
+    public ResponseEntity<ReservationDTO> reserve(@PathVariable("customerId") Long customerId, @RequestBody @Valid Item item) throws EmptyCartException, PaymentException, IdNotFoundException, CustomerIdNotFoundException, NegativeAmountTransactionException {
         return ResponseEntity.ok().body(ReservationController.convertReservationToDTO(processor.validate(customerId, item)));
     }
 

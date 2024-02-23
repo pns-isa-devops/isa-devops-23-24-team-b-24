@@ -22,7 +22,8 @@ public class Customer {
 
     private Caddy caddy = new Caddy();
 
-    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "card_id", referencedColumnName = "id")
     private Card card = new Card();
 
     public Customer() {

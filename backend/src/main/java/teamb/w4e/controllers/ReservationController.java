@@ -10,6 +10,7 @@ import teamb.w4e.dto.ReservationDTO;
 import teamb.w4e.entities.Card;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Reservation;
+import teamb.w4e.exceptions.CustomerIdNotFoundException;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.reservation.ReservationFinder;
@@ -36,10 +37,9 @@ public class ReservationController {
     }
 
     @RequestMapping(path = RESERVATION_URI)
-    public ResponseEntity<List<ReservationDTO>> getCustomerReservations(@PathVariable("customerId") Long customerId) throws IdNotFoundException {
+    public ResponseEntity<List<ReservationDTO>> getCustomerReservations(@PathVariable("customerId") Long customerId) throws CustomerIdNotFoundException {
         CustomerDTO customerDTO = CustomerCareController.convertCustomerToDto(customerFinder.retrieveCustomer(customerId));
-
-        return ResponseEntity.ok(reservationFinder.findReservationByCard(customerDTO.cardId()).stream().map(ReservationController::convertReservationToDTO).toList());
+        return ResponseEntity.ok(reservationFinder.findReservationByCard(customerDTO.card().id()).stream().map(ReservationController::convertReservationToDTO).toList());
     }
 
 

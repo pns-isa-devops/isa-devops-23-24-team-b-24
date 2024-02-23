@@ -5,7 +5,6 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.web.client.RestTemplate;
 import teamb.w4e.cli.CliContext;
-import teamb.w4e.cli.model.CliCustomer;
 import teamb.w4e.cli.model.CliTransaction;
 
 import java.util.Arrays;
@@ -27,12 +26,6 @@ public class TransactionCommands {
         this.restTemplate = restTemplate;
         this.cliContext = cliContext;
     }
-
-    @ShellMethod("Execute a transaction in the CoD backend (transaction CUSTOMER_NAME AMOUNT)")
-    public CliTransaction makeTransaction(String name, double amount) {
-        CliCustomer customer = cliContext.getCustomers().get(name);
-        return restTemplate.postForObject(getUriForTransaction(name) , new CliTransaction(customer, amount), CliTransaction.class);
-    } // This method will remove in the future
 
     @ShellMethod("List all known transactions")
     public Set<CliTransaction> transactions() {

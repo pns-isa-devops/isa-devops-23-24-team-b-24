@@ -5,18 +5,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
-import teamb.w4e.entities.Customer;
-import teamb.w4e.entities.Transaction;
+import teamb.w4e.entities.*;
 import teamb.w4e.exceptions.CustomerIdNotFoundException;
 import teamb.w4e.exceptions.NegativeAmountTransactionException;
 import teamb.w4e.exceptions.PaymentException;
 import teamb.w4e.interfaces.Bank;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.Payment;
+import teamb.w4e.repositories.ActivityCatalogRepository;
 import teamb.w4e.repositories.CustomerRepository;
 import teamb.w4e.repositories.TransactionRepository;
 
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -34,6 +35,9 @@ class CashierTest {
     @Autowired
     private TransactionRepository transactionRepository;
 
+    @Autowired
+    private ActivityCatalogRepository activityCatalogRepository;
+
     @MockBean
     private Bank bankProxy;
 
@@ -41,7 +45,7 @@ class CashierTest {
     private Customer customer;
     @BeforeEach
     void setUpContext() {
-        customer = new Customer("John", "1234567890896983");
+        customer = new Customer("John", "5251896983");
         customerRepository.save(customer);
         when(bankProxy.pay(customer, 100.0)).thenReturn(Optional.of("playReceiptOKId"));
     }
@@ -49,10 +53,13 @@ class CashierTest {
     @Test
     void payRegularAmount() throws Exception {
         customerRepository.save(customer);
-        double amount = 100.0;
-        Transaction transaction = payment.pay(customer, amount);
+        Activity activity = new Activity("a", "a", 100, Set.of());
+        activityCatalogRepository.save(activity);
+        Item item = new Item(activity, "01-10 23:56");
+        payment.payReservationFromCart(customer, item);
+        Transaction transaction = transactionRepository.findTransactionByCustomer(customer.getId()).orElse(null);
         assertEquals(customer, transaction.getCustomer());
-        assertEquals(amount, transaction.getAmount());
+        assertEquals(100, transaction.getAmount());
         assertNotNull(transaction.getPaymentId());
         assertEquals(transaction, transactionRepository.findById(transaction.getId()).get());
     }
@@ -60,8 +67,8 @@ class CashierTest {
     @Test
     void payNegativeAmount() {
         customerRepository.save(customer);
-        double amount = -100.0;
-        assertThrows(NegativeAmountTransactionException.class, () -> payment.pay(customer, amount));
-        assertNull(transactionRepository.findTransactionByCustomer(customer).orElse(null));
+        Item item = new Item(new Activity("a", "a", -12, Set.of()), "01-10 23:56");
+        assertThrows(NegativeAmountTransactionException.class, () -> payment.payReservationFromCart(customer, item));
+        assertNull(transactionRepository.findTransactionByCustomer(customer.getId()).orElse(null));
     }
 }
