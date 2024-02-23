@@ -6,7 +6,6 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.web.client.RestTemplate;
 import teamb.w4e.cli.CliContext;
 import teamb.w4e.cli.model.AdvantageType;
-import teamb.w4e.cli.model.CliActivity;
 import teamb.w4e.cli.model.CliAdvantage;
 
 import java.util.Arrays;

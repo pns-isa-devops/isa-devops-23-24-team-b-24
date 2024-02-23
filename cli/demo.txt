@@ -1,3 +1,18 @@
 echo "start of demo"
-echo "SCENARIO: simple registration and valid order"
-register nikan 1234567890
+echo "SCENARIO: create reservation"
+register Emma 0110896983
+advantages
+showAdvantageTypes
+create-advantage free-juice COCKTAIL 2
+create-advantage cookies LOCAL_SPECIALITY 3
+create-activity Yoga relaxing 20 cookies
+create-activity Pilates hard 30 free-juice
+activities
+add-to-cart Emma Yoga 23-02 19:22
+add-to-cart Emma Pilates 23-02 17:22
+show-cart Emma
+add-to-cart Emma Yoga 23-02 13:22
+reserve Emma
+show-reservation Emma
+show-transactions Emma
+echo "END OF DEMO"

@@ -10,7 +10,6 @@ import org.springframework.web.client.RestTemplate;
 import teamb.w4e.cli.CliContext;
 import teamb.w4e.cli.model.CliActivity;
 import teamb.w4e.cli.model.CliAdvantage;
-import teamb.w4e.cli.model.CliCustomer;
 
 import java.util.*;
 import java.util.function.Function;
