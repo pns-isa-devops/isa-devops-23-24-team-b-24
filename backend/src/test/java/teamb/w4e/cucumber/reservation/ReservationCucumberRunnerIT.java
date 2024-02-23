@@ -10,8 +10,8 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("teamb/w4e/cucumber/reservation")
+@SelectClasspathResource("features/reservation")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "teamb.w4e.cucumber.reservation")
-public class ReservationCucumberRunnerIT {
+public class ReservationCucumberRunnerIT { // the IT suffix is important for the maven-failsafe-plugin to run this test
 }
