@@ -1,7 +1,8 @@
 package teamb.w4e.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -12,7 +13,7 @@ public class Reservation {
     private Long id;
     @ManyToOne
     private Activity activity;
-    @NotBlank
+    @Pattern(regexp = "^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2]) (?:[01]\\d|2[0-3]):(?:[0-5]\\d)", message = "Invalid date")
     private String date;
 
     @ManyToOne
@@ -20,6 +21,7 @@ public class Reservation {
     private Card card;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @NotNull
     private Transaction transaction;
 
     public Reservation() {
