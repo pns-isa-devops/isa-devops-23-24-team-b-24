@@ -3,6 +3,7 @@ package teamb.w4e.entities;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import teamb.w4e.entities.reservations.Reservation;
 
 import java.util.Set;
 

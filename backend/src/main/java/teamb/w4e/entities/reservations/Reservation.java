@@ -1,21 +1,24 @@
-package teamb.w4e.entities;
+package teamb.w4e.entities.reservations;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import teamb.w4e.entities.Activity;
+import teamb.w4e.entities.Card;
+import teamb.w4e.entities.Transaction;
 
-@Entity
-public class Reservation {
+@Entity(name = "reservations")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "reservation_type", discriminatorType = DiscriminatorType.STRING)
+public abstract class Reservation {
     @Id
     @GeneratedValue
     private Long id;
+    @Enumerated(EnumType.STRING)
+    private ReservationType type;
     @ManyToOne
     private Activity activity;
-    @Pattern(regexp = "^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2]) (?:[01]\\d|2[0-3]):(?:[0-5]\\d)", message = "Invalid date")
-    private String date;
-
     @ManyToOne
     @Fetch(FetchMode.JOIN)
     private Card card;
@@ -24,17 +27,17 @@ public class Reservation {
     @NotNull
     private Transaction transaction;
 
-    public Reservation() {
+    protected Reservation() {
     }
 
-    public Reservation(Activity activity, String date) {
+    protected Reservation(ReservationType type, Activity activity) {
+        this.type = type;
         this.activity = activity;
-        this.date = date;
     }
 
-    public Reservation(Activity activity, String date, Card card, Transaction transaction) {
+    protected Reservation(ReservationType type, Activity activity, Card card, Transaction transaction) {
+        this.type = type;
         this.activity = activity;
-        this.date = date;
         this.card = card;
         this.transaction = transaction;
     }
@@ -47,20 +50,20 @@ public class Reservation {
         return id;
     }
 
+    public ReservationType getType() {
+        return type;
+    }
+
+    public void setType(ReservationType type) {
+        this.type = type;
+    }
+
     public Activity getActivity() {
         return activity;
     }
 
     public void setActivity(Activity activity) {
         this.activity = activity;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
     public Card getCard() {

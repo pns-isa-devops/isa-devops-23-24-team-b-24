@@ -5,17 +5,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import teamb.w4e.dto.CustomerDTO;
-import teamb.w4e.dto.ReservationDTO;
-import teamb.w4e.entities.Card;
-import teamb.w4e.entities.Customer;
-import teamb.w4e.entities.Reservation;
-import teamb.w4e.exceptions.CustomerIdNotFoundException;
-import teamb.w4e.exceptions.IdNotFoundException;
-import teamb.w4e.interfaces.CustomerFinder;
+import teamb.w4e.dto.cart.CartElementDTO;
+import teamb.w4e.dto.reservations.ReservationDTO;
+import teamb.w4e.entities.cart.GroupItem;
+import teamb.w4e.entities.cart.TimeSlotItem;
+import teamb.w4e.entities.reservations.GroupReservation;
+import teamb.w4e.entities.reservations.Reservation;
+import teamb.w4e.entities.reservations.ReservationType;
+import teamb.w4e.entities.reservations.TimeSlotReservation;
 import teamb.w4e.interfaces.reservation.ReservationFinder;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -28,23 +30,36 @@ public class ReservationController {
 
     private final ReservationFinder reservationFinder;
 
-    private final CustomerFinder customerFinder;
 
     @Autowired
-    public ReservationController(ReservationFinder reservationFinder, CustomerFinder customerFinder) {
+    public ReservationController(ReservationFinder reservationFinder) {
         this.reservationFinder = reservationFinder;
-        this.customerFinder = customerFinder;
     }
 
     @RequestMapping(path = RESERVATION_URI)
-    public ResponseEntity<List<ReservationDTO>> getCustomerReservations(@PathVariable("customerId") Long customerId) throws CustomerIdNotFoundException {
-        CustomerDTO customerDTO = CustomerCareController.convertCustomerToDto(customerFinder.retrieveCustomer(customerId));
-        return ResponseEntity.ok(reservationFinder.findReservationByCard(customerDTO.card().id()).stream().map(ReservationController::convertReservationToDTO).toList());
+    public ResponseEntity<Set<ReservationDTO>> getCustomerReservations(@PathVariable("customerId") Long customerId) {
+        Set<TimeSlotReservation> timeSlotReservations = new HashSet<>(reservationFinder.findTimeSlotReservationByCard(customerId, ReservationType.TIME_SLOT));
+        Set<GroupReservation> groupReservations = new HashSet<>(reservationFinder.findGroupReservationByCard(customerId, ReservationType.GROUP));
+        Set<ReservationDTO> reservations = new HashSet<>();
+        reservations.addAll(timeSlotReservations.stream().map(ReservationController::convertTimeSlotReservationToDTO).collect(Collectors.toSet()));
+        reservations.addAll(groupReservations.stream().map(ReservationController::convertGroupReservationToDTO).collect(Collectors.toSet()));
+        return ResponseEntity.ok(reservations);
     }
 
-
     public static ReservationDTO convertReservationToDTO(Reservation reservation) {
-        return new ReservationDTO(reservation.getId(), LeisureController.convertActivityToDto(reservation.getActivity()), reservation.getDate());
+        if (reservation.getType().equals(ReservationType.TIME_SLOT)) {
+            TimeSlotReservation timeSlotReservation = (TimeSlotReservation) reservation;
+            return convertTimeSlotReservationToDTO(timeSlotReservation);
+        }
+        GroupReservation groupReservation = (GroupReservation) reservation;
+        return convertGroupReservationToDTO(groupReservation);
+    }
+    private static ReservationDTO convertTimeSlotReservationToDTO(TimeSlotReservation reservation) {
+        return new ReservationDTO(reservation.getId(), reservation.getType(), LeisureController.convertActivityToDto(reservation.getActivity()), reservation.getTimeSlot());
+    }
+
+    private static ReservationDTO convertGroupReservationToDTO(GroupReservation reservation) {
+        return new ReservationDTO(reservation.getId(), reservation.getType(), LeisureController.convertActivityToDto(reservation.getActivity()), CustomerCareController.convertGroupToDto(reservation.getGroup()));
     }
 }
 

@@ -5,8 +5,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Customer;
-import teamb.w4e.entities.Item;
-import teamb.w4e.entities.Reservation;
+import teamb.w4e.entities.Group;
+import teamb.w4e.entities.cart.GroupItem;
+import teamb.w4e.entities.cart.Item;
+import teamb.w4e.entities.cart.TimeSlotItem;
+import teamb.w4e.entities.reservations.GroupReservation;
+import teamb.w4e.entities.reservations.Reservation;
+import teamb.w4e.entities.reservations.ReservationType;
+import teamb.w4e.entities.reservations.TimeSlotReservation;
 import teamb.w4e.exceptions.*;
 import teamb.w4e.interfaces.*;
 
@@ -31,20 +37,39 @@ public class CartHandler implements CartProcessor, CartModifier {
 
     @Override
     @Transactional
-    public Item update(Long customerId, Activity activity, String date) throws NonValidDateForActivity, CustomerIdNotFoundException {
+    public TimeSlotItem timeSlotUpdate(Long customerId, Activity activity, String date) throws NonValidDateForActivity, CustomerIdNotFoundException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         Set<Item> items = customer.getCaddy().getActivities();
         if (!scheduler.checkAvailability(activity, date)) {
             throw new NonValidDateForActivity(activity);
         }
-        Optional<Item> existingItem = items.stream().filter(it -> it.getActivity().equals(activity)).findFirst();
+        Optional<TimeSlotItem> existingItem = items.stream()
+                .filter(item -> item.getActivity().equals(activity))
+                .filter(item -> item.getType().equals(ReservationType.TIME_SLOT))
+                .map(TimeSlotItem.class::cast).findFirst();
         if (existingItem.isPresent()) {
-            existingItem.get().setDate(date);
+            existingItem.get().setTimeSlot(date);
         } else {
-            items.add(new Item(activity, date));
+            items.add(new TimeSlotItem(activity, date));
         }
+        return new TimeSlotItem(activity, date);
+    }
 
-        return new Item(activity, date);
+    @Override
+    @Transactional
+    public GroupItem groupUpdate(Long customerId, Activity activity, Group group) throws CustomerIdNotFoundException {
+        Customer customer = customerFinder.retrieveCustomer(customerId);
+        Set<Item> items = customer.getCaddy().getActivities();
+        Optional<GroupItem> existingItem = items.stream()
+                .filter(item -> item.getActivity().equals(activity))
+                .filter(item -> item.getType().equals(ReservationType.GROUP))
+                .map(GroupItem.class::cast).findFirst();
+        if (existingItem.isPresent()) {
+            existingItem.get().setGroup(group);
+        } else {
+            items.add(new GroupItem(activity, group));
+        }
+        return new GroupItem(activity, group);
     }
 
     @Override
@@ -60,7 +85,15 @@ public class CartHandler implements CartProcessor, CartModifier {
         if (customer.getCaddy().getActivities().isEmpty()) {
             throw new EmptyCartException(customer.getName());
         }
-        Reservation reservation = payment.payReservationFromCart(customer, item);
+        if (item.getType().equals(ReservationType.TIME_SLOT)) {
+            TimeSlotItem timeSlotItem = (TimeSlotItem) item;
+            if (scheduler.reserve(timeSlotItem.getActivity(), timeSlotItem.getTimeSlot())) {
+                TimeSlotReservation reservation = (TimeSlotReservation) payment.payReservationFromCart(customer, item);
+                customer.getCaddy().getActivities().remove(item);
+                return reservation;
+            }
+        }
+        GroupReservation reservation = (GroupReservation) payment.payReservationFromCart(customer, item);
         customer.getCaddy().getActivities().remove(item);
         return reservation;
     }

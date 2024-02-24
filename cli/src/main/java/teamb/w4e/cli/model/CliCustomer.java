@@ -7,6 +7,7 @@ public class CliCustomer {
     private Long id;
     private String name;
     private String creditCard;
+    private boolean isLeader;
     private CliCard card;
 
     public CliCustomer(String name, String creditCard) {
@@ -35,6 +36,14 @@ public class CliCustomer {
 
     public void setCreditCard(String creditCard) {
         this.creditCard = creditCard;
+    }
+
+    public boolean isLeader() {
+        return isLeader;
+    }
+
+    public void setLeader(boolean isLeader) {
+        this.isLeader = isLeader;
     }
 
     public CliCard getCard() {
