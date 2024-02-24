@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import teamb.w4e.dto.cart.CartElementDTO;
 import teamb.w4e.dto.reservations.ReservationDTO;
 import teamb.w4e.entities.Activity;
+import teamb.w4e.entities.Item;
+import teamb.w4e.entities.reservations.ReservationType;
 import teamb.w4e.entities.Group;
 import teamb.w4e.entities.cart.GroupItem;
 import teamb.w4e.entities.cart.TimeSlotItem;
@@ -70,6 +72,8 @@ public class CartController {
             return ResponseEntity.ok().body(ReservationController.convertReservationToDTO(processor.validate(customerId, new TimeSlotItem(finder.retrieveActivity(cartElementDTO.getActivity().id()), cartElementDTO.getDate()))));
         }
         return ResponseEntity.ok().body(ReservationController.convertReservationToDTO(processor.validate(customerId, new GroupItem(finder.retrieveActivity(cartElementDTO.getActivity().id()), groupFinder.retrieveGroup(customerId)))));
+    public ResponseEntity<ReservationDTO> reserve(@PathVariable("customerId") Long customerId, @RequestBody @Valid Item item, @RequestParam("type") String type) throws EmptyCartException, PaymentException, IdNotFoundException, CustomerIdNotFoundException, NegativeAmountTransactionException {
+        return ResponseEntity.ok().body(ReservationController.convertReservationToDTO(processor.validate(customerId, item, ReservationType.valueOf(type))));
     }
 
 

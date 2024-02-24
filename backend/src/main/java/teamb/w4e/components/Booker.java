@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.*;
+import teamb.w4e.entities.reservations.ReservationType;
 import teamb.w4e.entities.cart.GroupItem;
 import teamb.w4e.entities.cart.Item;
 import teamb.w4e.entities.cart.TimeSlotItem;
@@ -26,6 +27,11 @@ public class Booker implements ReservationCreator, ReservationFinder {
     @Autowired
     public Booker(ReservationRepository reservationRepository) {
         this.reservationRepository = reservationRepository;
+    }
+
+    @Override
+    public Reservation createReservation(Customer customer, Item item, Transaction transaction, ReservationType type) {
+        return reservationRepository.save(new Reservation(item.getActivity(), item.getDate(), customer.getCard(), transaction, type));
     }
 
     @Override

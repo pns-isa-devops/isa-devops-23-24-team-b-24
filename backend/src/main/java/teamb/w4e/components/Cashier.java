@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Transaction;
+import teamb.w4e.entities.reservations.ReservationType;
+import teamb.w4e.exceptions.CustomerIdNotFoundException;
 import teamb.w4e.entities.cart.GroupItem;
 import teamb.w4e.entities.cart.Item;
 import teamb.w4e.entities.cart.TimeSlotItem;
@@ -34,7 +36,7 @@ public class Cashier implements Payment {
 
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
-    public Reservation payReservationFromCart(Customer customer, Item item) throws NegativeAmountTransactionException, PaymentException {
+    public Reservation payReservationFromCart(Customer customer, Item item, ReservationType type) throws NegativeAmountTransactionException, PaymentException {
         if (item.getActivity().getPrice() < 0) {
             throw new NegativeAmountTransactionException(item.getActivity().getPrice());
         }
@@ -46,5 +48,6 @@ public class Cashier implements Payment {
             return reservationCreator.createTimeSlotReservation(customer, (TimeSlotItem) item, transaction);
         }
         return reservationCreator.createGroupReservation(customer, (GroupItem) item, transaction);
+        return reservationCreator.createReservation(customer, item, transaction, type);
     }
 }
