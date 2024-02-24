@@ -8,6 +8,7 @@ import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Item;
 import teamb.w4e.entities.Reservation;
 import teamb.w4e.entities.Transaction;
+import teamb.w4e.entities.reservations.ReservationType;
 import teamb.w4e.exceptions.CustomerIdNotFoundException;
 import teamb.w4e.exceptions.NegativeAmountTransactionException;
 import teamb.w4e.exceptions.PaymentException;
@@ -35,12 +36,12 @@ public class Cashier implements Payment {
 
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
-    public Reservation payReservationFromCart(Customer customer, Item item) throws NegativeAmountTransactionException, PaymentException {
+    public Reservation payReservationFromCart(Customer customer, Item item, ReservationType type) throws NegativeAmountTransactionException, PaymentException {
         if (item.getActivity().getPrice() < 0) {
             throw new NegativeAmountTransactionException(item.getActivity().getPrice());
         }
         String payment = bank.pay(customer, item.getActivity().getPrice()).orElseThrow(() -> new PaymentException(customer.getName(), item.getActivity().getPrice()));
         Transaction transaction = transactionCreator.createTransaction(customer, item.getActivity().getPrice(), payment);
-        return reservationCreator.createReservation(customer,item, transaction);
+        return reservationCreator.createReservation(customer, item, transaction, type);
     }
 }

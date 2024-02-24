@@ -7,6 +7,7 @@ import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Item;
 import teamb.w4e.entities.Reservation;
+import teamb.w4e.entities.reservations.ReservationType;
 import teamb.w4e.exceptions.*;
 import teamb.w4e.interfaces.*;
 
@@ -22,11 +23,14 @@ public class CartHandler implements CartProcessor, CartModifier {
 
     private final Scheduler scheduler;
 
+    private final SkiPass skiPass;
+
     @Autowired
-    public CartHandler(CustomerFinder customerFinder, Payment payment, Scheduler scheduler) {
+    public CartHandler(CustomerFinder customerFinder, Payment payment, Scheduler scheduler, SkiPass skiPass) {
         this.customerFinder = customerFinder;
         this.payment = payment;
         this.scheduler = scheduler;
+        this.skiPass = skiPass;
     }
 
     @Override
@@ -55,12 +59,15 @@ public class CartHandler implements CartProcessor, CartModifier {
 
     @Override
     @Transactional
-    public Reservation validate(Long customerId, Item item) throws EmptyCartException, PaymentException, CustomerIdNotFoundException, NegativeAmountTransactionException {
+    public Reservation validate(Long customerId, Item item, ReservationType type) throws EmptyCartException, PaymentException, CustomerIdNotFoundException, NegativeAmountTransactionException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         if (customer.getCaddy().getActivities().isEmpty()) {
             throw new EmptyCartException(customer.getName());
         }
-        Reservation reservation = payment.payReservationFromCart(customer, item);
+        Reservation reservation = payment.payReservationFromCart(customer, item, type);
+        if (reservation.getType() == ReservationType.SKI_PASS) {
+            skiPass.reserve(customer.getName(), item.getActivity().getName());
+        }
         customer.getCaddy().getActivities().remove(item);
         return reservation;
     }

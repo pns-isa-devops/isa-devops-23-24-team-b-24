@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.*;
+import teamb.w4e.entities.reservations.ReservationType;
 import teamb.w4e.exceptions.CustomerIdNotFoundException;
 import teamb.w4e.exceptions.NegativeAmountTransactionException;
 import teamb.w4e.exceptions.PaymentException;
@@ -56,7 +57,7 @@ class CashierTest {
         Activity activity = new Activity("a", "a", 100, Set.of());
         activityCatalogRepository.save(activity);
         Item item = new Item(activity, "01-10 23:56");
-        payment.payReservationFromCart(customer, item);
+        payment.payReservationFromCart(customer, item, ReservationType.NONE);
         Transaction transaction = transactionRepository.findTransactionByCustomer(customer.getId()).orElse(null);
         assertEquals(customer, transaction.getCustomer());
         assertEquals(100, transaction.getAmount());
@@ -68,7 +69,7 @@ class CashierTest {
     void payNegativeAmount() {
         customerRepository.save(customer);
         Item item = new Item(new Activity("a", "a", -12, Set.of()), "01-10 23:56");
-        assertThrows(NegativeAmountTransactionException.class, () -> payment.payReservationFromCart(customer, item));
+        assertThrows(NegativeAmountTransactionException.class, () -> payment.payReservationFromCart(customer, item, ReservationType.NONE));
         assertNull(transactionRepository.findTransactionByCustomer(customer.getId()).orElse(null));
     }
 }

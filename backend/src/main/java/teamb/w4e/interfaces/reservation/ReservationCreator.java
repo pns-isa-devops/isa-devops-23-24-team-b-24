@@ -4,9 +4,10 @@ import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Item;
 import teamb.w4e.entities.Reservation;
 import teamb.w4e.entities.Transaction;
+import teamb.w4e.entities.reservations.ReservationType;
 
 public interface ReservationCreator {
-    Reservation createReservation(Customer customer, Item item, Transaction transaction);
+    Reservation createReservation(Customer customer, Item item, Transaction transaction, ReservationType type);
 
 
 }
