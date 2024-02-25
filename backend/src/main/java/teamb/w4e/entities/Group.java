@@ -1,6 +1,8 @@
 package teamb.w4e.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.Objects;
 import java.util.Set;
@@ -12,11 +14,12 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "leader_id", referencedColumnName = "id")
     private Customer leader;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
+    @Fetch(FetchMode.JOIN)
     @JoinTable(
             name = "members",
             joinColumns = @JoinColumn(name = "group_id", referencedColumnName = "id"),
