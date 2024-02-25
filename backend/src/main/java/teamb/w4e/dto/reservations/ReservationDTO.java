@@ -78,25 +78,22 @@ public class ReservationDTO {
 
     @Override
     public String toString() {
+        String base = "id=" + id + '\'' +
+                "type=" + type + '\'' +
+                "activity=" + activity + '\'';
         if (date != null) {
-            return "ReservationDTO{" + '\'' +
-                    "id=" + id + '\'' +
-                    "type=" + type + '\'' +
-                    "activity=" + activity + '\'' +
+            return "TimeSlotReservationDTO{" + '\'' +
+                    base + '\'' +
                     "date=" + date + '\'' +
                     "}";
         } else if (group != null) {
-            return "ReservationDTO{" + '\'' +
-                    "id=" + id + '\'' +
-                    "type=" + type + '\'' +
-                    "activity=" + activity + '\'' +
+            return "GroupReservationDTO{" + '\'' +
+                    base + '\'' +
                     "group=" + group + '\'' +
                     "}";
         } else {
             return "ReservationDTO{" + '\'' +
-                    "id=" + id + '\'' +
-                    "type=" + type + '\'' +
-                    "activity=" + activity + '\'' +
+                    base + '\'' +
                     "}";
         }
     }

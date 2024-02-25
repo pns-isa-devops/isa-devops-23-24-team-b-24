@@ -3,20 +3,34 @@ package teamb.w4e.cli.model;
 public class CliReservation {
 
     private Long id;
+
+    private ReservationType type;
     private CliActivity activity;
 
     private String date;
 
-    private String status;
+    private CliGroup group;
 
     public CliReservation() {
     }
 
-    public CliReservation(CliActivity activity, String date, String status) {
+    public CliReservation(ReservationType type, CliActivity activity) {
+        this.type = type;
+        this.activity = activity;
+    }
+
+    public CliReservation(ReservationType type, CliActivity activity, String date) {
+        this.type = type;
         this.activity = activity;
         this.date = date;
-        this.status = status;
     }
+
+    public CliReservation(ReservationType type, CliActivity activity, CliGroup group) {
+        this.type = type;
+        this.activity = activity;
+        this.group = group;
+    }
+
 
     public Long getId() {
         return id;
@@ -24,6 +38,14 @@ public class CliReservation {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public ReservationType getType() {
+        return type;
+    }
+
+    public void setType(ReservationType type) {
+        this.type = type;
     }
 
     public CliActivity getActivity() {
@@ -42,21 +64,34 @@ public class CliReservation {
         this.date = date;
     }
 
-    public String getStatus() {
-        return status;
+    public CliGroup getGroup() {
+        return group;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setGroup(CliGroup group) {
+        this.group = group;
     }
 
     @Override
     public String toString() {
-        return "Reservation{" +
-                "id='" + id + '\'' +
-                ", activity='" + activity + '\'' +
-                ", date='" + date + '\'' +
-                ", status='" + status + '\'' +
-                '}';
+        String base = "id=" + id + '\'' +
+                "type=" + type + '\'' +
+                "activity=" + activity + '\'';
+        if (date != null) {
+            return "TimeSlotReservation{" + '\'' +
+                    base + '\'' +
+                    "date=" + date + '\'' +
+                    "}";
+        } else if (group != null) {
+            return "GroupReservation{" + '\'' +
+                    base + '\'' +
+                    "group=" + group + '\'' +
+                    "}";
+        } else {
+            return "Reservation{" + '\'' +
+                    base + '\'' +
+                    "}";
+        }
+
     }
 }
