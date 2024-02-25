@@ -10,8 +10,9 @@ import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 import teamb.w4e.connectors.externaldto.AvailabilityRequestDTO;
 import teamb.w4e.connectors.externaldto.AvailabilityReceiptDTO;
+import teamb.w4e.connectors.externaldto.BookedReceiptDTO;
+import teamb.w4e.connectors.externaldto.BookedRequestDTO;
 import teamb.w4e.entities.Activity;
-import teamb.w4e.entities.Reservation;
 import teamb.w4e.interfaces.Scheduler;
 
 @Component
@@ -46,7 +47,26 @@ public class SchedulerProxy implements Scheduler {
     }
 
     @Override
-    public Reservation reserve(Activity activity, String date) {
-        return new Reservation(activity, date);
+    @Transactional(propagation = Propagation.MANDATORY)
+    public boolean reserve(Activity activity, String date) {
+        try {
+            ResponseEntity<BookedReceiptDTO> result = restTemplate.postForEntity(
+                    schedulerHostandPort + "/ccbooked",
+                    new BookedRequestDTO(activity.getId(), date),
+                    BookedReceiptDTO.class
+            );
+            if (result.getStatusCode().equals(HttpStatus.CREATED) && result.hasBody()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        catch (RestClientResponseException errorException) {
+            if (errorException.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+                return false;
+            }
+            throw errorException;
+        }
     }
 }
+

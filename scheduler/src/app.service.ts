@@ -8,26 +8,47 @@ import { MagicKeyNoMatchException } from './exceptions/magic-key-no-match-except
 
 @Injectable()
 export class AppService {
-  private static readonly magicKey: string = '07/11/2023'; // ASCII code for 'YES'
+  private magicKey: Array<string>; // ASCII code for 'YES'
   private availabilities: Array<AvailabilityReceiptDto>;
 
   constructor() {
-    this.availabilities = [];
+    this.magicKey = [
+      '07-11 21:30',
+      '04-07 13:00',
+      '29-01 17:00',
+      '15-09 19:00',
+      '12-12 20:00',
+      '31-12 23:59',
+    ];
   }
 
-  findAll(): AvailabilityReceiptDto[] {
+  findAllAvailabilities(): AvailabilityReceiptDto[] {
     return this.availabilities;
+  }
+
+  findAllKeys(): string[] {
+    return this.magicKey;
+  }
+
+  isScheduled(date: string): boolean {
+    const availabities = this.findAllKeys();
+    for (let i = 0; i < availabities.length; i++) {
+      if (availabities[i] == date) {
+        return true;
+      }
+    }
+    return false;
   }
 
   checkAvailabilities(
     availabilityRequestDto: AvailabilityRequestDto,
   ): AvailabilityReceiptDto {
     let availabilityReceiptDto: AvailabilityReceiptDto;
-    if (availabilityRequestDto.date.includes(AppService.magicKey)) {
+    if (this.magicKey.includes(availabilityRequestDto.date)) {
       // eslint-disable-next-line prefer-const
       availabilityReceiptDto = new AvailabilityReceiptDto(
         'RECEIPT:' + randomUUID(),
-        true,
+        this.isScheduled(availabilityRequestDto.date),
       );
       if (availabilityReceiptDto.isAvailable) {
         this.availabilities.push(availabilityReceiptDto);
@@ -53,4 +74,7 @@ export class AppService {
       throw new MagicKeyNoMatchException(availabilityRequestDto.date);
     }
   }
+  
+  
+  
 }

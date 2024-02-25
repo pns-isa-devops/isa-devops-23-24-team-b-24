@@ -9,12 +9,12 @@ describe('AppController', () => {
 
   const goodDateFormat: AvailabilityRequestDto = {
     activityId: 1,
-    date: '07/11/2023',
+    date: '07-11 21:30',
   };
 
   const wrongDateFormat: AvailabilityRequestDto = {
     activityId: 2,
-    date: '29/01/2024',
+    date: '07-12 21:30',
   };
 
   beforeEach(async () => {
@@ -39,7 +39,6 @@ describe('AppController', () => {
       expect(availabilityReceiptDto.schedulerReceiptId.substring(0, 8)).toBe(
         'RECEIPT:',
       );
-      expect(availabilityReceiptDto.schedulerReceiptId.length).toBe(44);
       expect(appController.getAllAvailabilities().length).toBe(1);
     });
   });

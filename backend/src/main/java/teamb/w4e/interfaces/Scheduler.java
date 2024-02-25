@@ -8,5 +8,5 @@ import java.util.Date;
 public interface Scheduler {
     boolean checkAvailability(Activity activity, String date);
 
-    Reservation reserve(Activity activity, String date);
+    boolean reserve(Activity activity, String date);
 }

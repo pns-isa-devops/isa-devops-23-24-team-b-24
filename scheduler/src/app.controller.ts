@@ -17,7 +17,7 @@ export class AppController {
 
   @Get()
   getAllAvailabilities(): AvailabilityReceiptDto[] {
-    return this.appService.findAll();
+    return this.appService.findAllAvailabilities();
   }
 
   @Post()

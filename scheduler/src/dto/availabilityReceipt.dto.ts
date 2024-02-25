@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsPositive, IsString, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class AvailabilityReceiptDto {
   constructor(payReceiptId: string, isAvailable: boolean) {
@@ -10,7 +10,5 @@ export class AvailabilityReceiptDto {
   @IsString()
   schedulerReceiptId: string;
 
-  @IsNotEmpty()
-  @IsPositive()
   isAvailable: boolean;
 }
