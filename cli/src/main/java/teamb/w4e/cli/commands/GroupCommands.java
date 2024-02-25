@@ -60,7 +60,7 @@ public class GroupCommands {
                 .getBody())).collect(Collectors.toSet());
     }
 
-    private String getUriForGroup(String name) {
+    public String getUriForGroup(String name) {
         return BASE_URI + "/groups/" + cliContext.getCustomers().get(name).getId() + "/group";
     }
 

@@ -22,7 +22,6 @@ import teamb.w4e.interfaces.CustomerRegistration;
 import teamb.w4e.interfaces.GroupCreator;
 import teamb.w4e.interfaces.GroupFinder;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -98,11 +97,15 @@ public class CustomerCareController {
         return ResponseEntity.ok(convertGroupToDto(createGroup.createGroup(leader, members)));
     }
 
+    @GetMapping(path = "/groups/{customerId}/group")
+    public ResponseEntity<GroupDTO> getGroup(@PathVariable("customerId") Long customerId) throws CustomerIdNotFoundException {
+        return ResponseEntity.ok(convertGroupToDto(groupFinder.retrieveGroup(customerId)));
+    }
+
     @GetMapping(path = "/groups")
     public ResponseEntity<Set<GroupDTO>> getGroups() {
         return ResponseEntity.ok(groupFinder.findAll().stream().map(CustomerCareController::convertGroupToDto).collect(Collectors.toSet()));
     }
-
 
 
     public static CustomerDTO convertCustomerToDto(Customer customer) { // In more complex cases, we could use a ModelMapper such as MapStruct
@@ -115,7 +118,7 @@ public class CustomerCareController {
     }
 
     public static GroupDTO convertGroupToDto(Group group) { // In more complex cases, we could use a ModelMapper such as MapStruct
-        return new GroupDTO(group.getId(),CustomerCareController.convertCustomerToDto(group.getLeader()), group.getMembers().stream().map(CustomerCareController::convertCustomerToDto).collect(Collectors.toSet()));
+        return new GroupDTO(group.getId(), CustomerCareController.convertCustomerToDto(group.getLeader()), group.getMembers().stream().map(CustomerCareController::convertCustomerToDto).collect(Collectors.toSet()));
     }
 }
 

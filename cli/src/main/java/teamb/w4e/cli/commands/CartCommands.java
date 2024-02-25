@@ -55,7 +55,7 @@ public class CartCommands {
         }
         if (groupActivity) {
             ResponseEntity<CliActivity> activityResponse = restTemplate.getForEntity(getUriForActivity(activityName), CliActivity.class);
-            ResponseEntity<CliGroup> groupResponse = restTemplate.getForEntity(GroupCommands.BASE_URI, CliGroup.class);
+            ResponseEntity<CliGroup> groupResponse = restTemplate.getForEntity(getUriForGroup(customerName), CliGroup.class);
             return restTemplate.postForObject(getUriForCustomer(customerName), new CartElement(ReservationType.GROUP, Objects.requireNonNull(activityResponse.getBody()), groupResponse.getBody()), CartElement.class);
 
         } else if (timeSlot) {
@@ -84,5 +84,9 @@ public class CartCommands {
 
     private String getUriForCustomer(String name) {
         return BASE_URI + "/" + cliContext.getCustomers().get(name).getId() + "/cart";
+    }
+
+    private String getUriForGroup(String name) {
+        return BASE_URI + "/groups/" + cliContext.getCustomers().get(name).getId() + "/group";
     }
 }
