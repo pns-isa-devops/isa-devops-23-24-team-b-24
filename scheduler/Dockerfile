@@ -39,8 +39,8 @@ WORKDIR /app
 
 COPY --from=build /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/dist ./dist
-COPY docker-healthcheck/healthcheck.js .
+COPY docker-healthcheck/healthcheck.js
 
-EXPOSE 9090
+EXPOSE 9091
 # Start the server using the production build
 CMD ["dist/main.js" ]
