@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Group;
 import teamb.w4e.exceptions.AlreadyExistingCustomerException;
+import teamb.w4e.exceptions.CustomerIdNotFoundException;
 import teamb.w4e.exceptions.group.AlreadyLeaderException;
 import teamb.w4e.exceptions.group.NotEnoughMembersException;
 import teamb.w4e.interfaces.CustomerFinder;
@@ -57,7 +58,7 @@ class GrouperTest {
     }
 
     @Test
-    void alreadyLeader() throws AlreadyExistingCustomerException, AlreadyLeaderException, NotEnoughMembersException {
+    void alreadyLeader() throws AlreadyExistingCustomerException, AlreadyLeaderException, NotEnoughMembersException, CustomerIdNotFoundException {
         Customer johnCustomer = customerRegistration.register(john, creditCard);
         Customer janeCustomer = customerRegistration.register(jane, creditCard);
         Customer mattCustomer = customerRegistration.register(matt, creditCard);
@@ -73,14 +74,14 @@ class GrouperTest {
     }
 
     @Test
-    void findGroupByLeader() throws AlreadyExistingCustomerException, AlreadyLeaderException, NotEnoughMembersException {
+    void findGroupByLeader() throws AlreadyExistingCustomerException, AlreadyLeaderException, NotEnoughMembersException, CustomerIdNotFoundException {
         Customer johnCustomer = customerRegistration.register(john, creditCard);
         Customer janeCustomer = customerRegistration.register(jane, creditCard);
         Customer mattCustomer = customerRegistration.register(matt, creditCard);
         assertEquals(customerFinder.findById(johnCustomer.getId()).get(), johnCustomer);
 
         Group newGroup = grouper.createGroup(johnCustomer, Set.of(janeCustomer, mattCustomer));
-        assertEquals(newGroup, grouper.findGroupByLeader(johnCustomer).get());
+        assertEquals(newGroup, grouper.findGroupByLeader(johnCustomer.getId()).get());
     }
 
 }
