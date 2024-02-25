@@ -5,11 +5,13 @@ import { AvailabilityReceiptDto } from './dto/availabilityReceipt.dto';
 import { randomUUID } from 'crypto';
 import { DateAlreadyScheduledException } from './exceptions/date-already-scheduled-exception';
 import { MagicKeyNoMatchException } from './exceptions/magic-key-no-match-exception';
+import { BookedRequestDto } from './dto/bookedRequest.dto';
+import { BookedReceiptDto } from './dto/bookedReceipt.dto';
 
 @Injectable()
 export class AppService {
   private magicKey: Array<string>; // ASCII code for 'YES'
-  private availabilities: Array<AvailabilityReceiptDto>;
+  private booked: Array<BookedReceiptDto>;
 
   constructor() {
     this.magicKey = [
@@ -20,10 +22,11 @@ export class AppService {
       '12-12 20:00',
       '31-12 23:59',
     ];
+    this.booked = [];
   }
 
-  findAllAvailabilities(): AvailabilityReceiptDto[] {
-    return this.availabilities;
+  findAllBooked(): BookedReceiptDto[] {
+    return this.booked;
   }
 
   findAllKeys(): string[] {
@@ -51,13 +54,6 @@ export class AppService {
         this.isScheduled(availabilityRequestDto.date),
       );
       if (availabilityReceiptDto.isAvailable) {
-        this.availabilities.push(availabilityReceiptDto);
-        console.log(
-          'Schedulation number : ' +
-            availabilityReceiptDto.schedulerReceiptId +
-            '): ' +
-            availabilityReceiptDto.isAvailable,
-        );
         return availabilityReceiptDto;
       } else {
         console.log(
@@ -74,7 +70,36 @@ export class AppService {
       throw new MagicKeyNoMatchException(availabilityRequestDto.date);
     }
   }
-  
-  
-  
+
+  bookDate(bookedRequestDto: BookedRequestDto): BookedReceiptDto {
+    let bookedReceiptDto: BookedReceiptDto;
+    //boucle sur le tableau de booked
+    for (const element of this.booked) {
+      if (element.date == bookedRequestDto.date) {
+        console.log(
+          'Date ' +
+            bookedRequestDto.date +
+            ' already scheduled. Cant scheduled it again.',
+        );
+        throw new DateAlreadyScheduledException(bookedRequestDto.date);
+      }
+    }
+    // eslint-disable-next-line prefer-const
+    bookedReceiptDto = new BookedReceiptDto(
+      'RECEIPT:' + randomUUID(),
+      true,
+      bookedRequestDto.date,
+    );
+
+    this.booked.push(bookedReceiptDto);
+    console.log(
+      'Schedulation number : ' +
+        bookedReceiptDto.schedulerReceiptId +
+        '): ' +
+        bookedReceiptDto.isBooked +
+        ' for date ' +
+        bookedRequestDto.date,
+    );
+    return bookedReceiptDto;
+  }
 }
