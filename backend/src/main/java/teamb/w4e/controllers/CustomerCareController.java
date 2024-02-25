@@ -22,6 +22,7 @@ import teamb.w4e.interfaces.CustomerRegistration;
 import teamb.w4e.interfaces.GroupCreator;
 import teamb.w4e.interfaces.GroupFinder;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -84,17 +85,18 @@ public class CustomerCareController {
 
     @PostMapping(path = "/groups/{customerId}/group", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<GroupDTO> createGroup(@PathVariable("customerId") Long customerId, @RequestBody @Valid GroupDTO groupDTO) throws CustomerIdNotFoundException, AlreadyLeaderException, NotEnoughMembersException {
-        Customer leader = customerFinder.findById(customerId).orElseThrow(() -> new CustomerIdNotFoundException(customerId));
-        Set<Customer> members = groupDTO.members().stream().map(customer -> {
-            try {
-                return customerFinder.findById(customer.id()).orElseThrow(() -> new CustomerIdNotFoundException(customer.id()));
-            } catch (CustomerIdNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        }).collect(Collectors.toSet());
-
-
-        return ResponseEntity.ok(convertGroupToDto(createGroup.createGroup(leader, members)));
+        Customer leader = customerFinder.retrieveCustomer(customerId);
+        Set<Customer>  members = new HashSet<>();
+        for (CustomerDTO member : groupDTO.members()) {
+            members.add(customerFinder.retrieveCustomer(member.id()));
+        }
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(convertGroupToDto(createGroup.createGroup(leader, members)));
+        } catch (AlreadyLeaderException e) {
+            // Note: Returning 409 (Conflict) can also be seen a security/privacy vulnerability, exposing a service for account enumeration
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
     }
 
     @GetMapping(path = "/groups/{customerId}/group")
