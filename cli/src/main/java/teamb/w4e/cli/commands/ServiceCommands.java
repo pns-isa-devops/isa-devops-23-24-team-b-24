@@ -7,7 +7,10 @@ import org.springframework.web.client.RestTemplate;
 import teamb.w4e.cli.CliContext;
 import teamb.w4e.cli.model.CliService;
 
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @ShellComponent
 public class ServiceCommands {
@@ -28,5 +31,17 @@ public class ServiceCommands {
         CliService res = restTemplate.postForObject(BASE_URI, newService, CliService.class);
         cliContext.getServices().put(Objects.requireNonNull(res).getName(), res);
         return res;
+    }
+
+    @ShellMethod("List all services")
+    public Set<CliService> services() {
+        return Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(BASE_URI, CliService[].class).getBody())).collect(Collectors.toSet());
+    }
+
+    @ShellMethod("Update all known services from server")
+    public String updateServices() {
+        cliContext.getServices().clear();
+        Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(BASE_URI, CliService[].class).getBody())).forEach(service -> cliContext.getServices().put(service.getName(), service));
+        return "Services updated";
     }
 }
