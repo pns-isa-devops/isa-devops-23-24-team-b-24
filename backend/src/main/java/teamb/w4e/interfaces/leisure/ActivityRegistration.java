@@ -1,4 +1,4 @@
-package teamb.w4e.interfaces;
+package teamb.w4e.interfaces.leisure;
 
 import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Advantage;
