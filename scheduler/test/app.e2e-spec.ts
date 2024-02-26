@@ -15,9 +15,9 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/cctransactions (GET)', () => {
+  it('/ccavailabilities (GET)', () => {
     return request(app.getHttpServer())
-      .get('/cctransactions')
+      .get('/ccavailabilities ')
       .expect(200)
       .expect([]);
   });
