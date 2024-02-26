@@ -12,6 +12,7 @@ import teamb.w4e.interfaces.AdvantageRegistration;
 import teamb.w4e.interfaces.leisure.ActivityFinder;
 import teamb.w4e.interfaces.leisure.ActivityRegistration;
 import teamb.w4e.interfaces.leisure.ServiceFinder;
+import teamb.w4e.interfaces.leisure.ServiceRegistration;
 import teamb.w4e.repositories.catalog.ActivityCatalogRepository;
 import teamb.w4e.repositories.catalog.AdvantageCatalogRepository;
 import teamb.w4e.repositories.catalog.ServiceCatalogRepository;
@@ -22,7 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-public class Catalog implements AdvantageRegistration, AdvantageFinder, ActivityRegistration, ActivityFinder, ServiceFinder, ServiceFinder{
+public class Catalog implements AdvantageRegistration, AdvantageFinder, ActivityRegistration, ActivityFinder, ServiceFinder, ServiceRegistration {
 
     private final AdvantageCatalogRepository advantageCatalogRepository;
     private final ActivityCatalogRepository activityCatalogRepository;
@@ -121,12 +122,21 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
     }
 
     @Override
+    @Transactional(readOnly = true)
     public teamb.w4e.entities.Service retrieveService(Long serviceId) throws IdNotFoundException {
         return findServiceById(serviceId).orElseThrow(() -> new IdNotFoundException(serviceId));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<teamb.w4e.entities.Service> findAllServices() {
         return serviceCatalogRepository.findAll();
+    }
+
+    @Override
+    @Transactional
+    public teamb.w4e.entities.Service register(String name, String description, double price) {
+        teamb.w4e.entities.Service newService = new teamb.w4e.entities.Service(name, description, price);
+        return serviceCatalogRepository.save(newService);
     }
 }
