@@ -11,8 +11,8 @@ import teamb.w4e.interfaces.leisure.ActivityFinder;
 import teamb.w4e.interfaces.leisure.ActivityRegistration;
 import teamb.w4e.interfaces.AdvantageFinder;
 import teamb.w4e.interfaces.AdvantageRegistration;
-import teamb.w4e.repositories.ActivityCatalogRepository;
-import teamb.w4e.repositories.AdvantageCatalogRepository;
+import teamb.w4e.repositories.catalog.ActivityCatalogRepository;
+import teamb.w4e.repositories.catalog.AdvantageCatalogRepository;
 
 import java.util.EnumSet;
 import java.util.List;

@@ -1,4 +1,4 @@
-package teamb.w4e.repositories;
+package teamb.w4e.repositories.catalog;
 
 import org.springframework.stereotype.Repository;
 import teamb.w4e.entities.Service;
