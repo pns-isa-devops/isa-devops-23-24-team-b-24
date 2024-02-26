@@ -8,7 +8,7 @@ import java.util.Set;
 public record ActivityDTO(
         Long id,
         @NotBlank(message = "name should not be blank") String name,
-        @NotBlank(message = "name should not be blank") String description,
+        @NotBlank(message = "description should not be blank") String description,
         @Positive(message = "price should be positive") double price,
         Set<AdvantageDTO> advantages) {
 }
