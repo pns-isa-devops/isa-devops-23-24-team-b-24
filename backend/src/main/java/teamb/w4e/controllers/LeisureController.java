@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import teamb.w4e.dto.ActivityDTO;
 import teamb.w4e.dto.AdvantageDTO;
 import teamb.w4e.dto.ErrorDTO;
+import teamb.w4e.dto.ServiceDTO;
 import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Advantage;
 import teamb.w4e.entities.AdvantageType;
@@ -96,7 +97,6 @@ public class LeisureController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
         }
-
     }
 
     @GetMapping(path = "/activities")
@@ -109,6 +109,26 @@ public class LeisureController {
         return ResponseEntity.ok(convertActivityToDto(activityFinder.retrieveActivity(activityId)));
     }
 
+    @PostMapping(path = "/services", consumes = APPLICATION_JSON_VALUE)
+    public ResponseEntity<ServiceDTO> register(@RequestBody @Valid ServiceDTO serviceDTO) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(convertServiceToDto(serviceRegistry.register(serviceDTO.name(), serviceDTO.description(), serviceDTO.price())));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
+        }
+    }
+
+    @GetMapping(path = "/services")
+    public ResponseEntity<List<ServiceDTO>> services() {
+        return ResponseEntity.ok(serviceFinder.findAllServices().stream().map(LeisureController::convertServiceToDto).toList());
+    }
+
+    @GetMapping(path = "/services/{serviceId}")
+    public ResponseEntity<ServiceDTO> getService(@PathVariable Long serviceId) throws IdNotFoundException {
+        return ResponseEntity.ok(convertServiceToDto(serviceFinder.retrieveService(serviceId)));
+    }
+
     private static AdvantageDTO convertAdvantageToDto(Advantage advantage) {
         return new AdvantageDTO(advantage.getId(), advantage.getName(), advantage.getType(), advantage.getPoints());
     }
@@ -116,6 +136,10 @@ public class LeisureController {
     public static ActivityDTO convertActivityToDto(Activity activity) {
         return new ActivityDTO(activity.getId(), activity.getName(), activity.getDescription(), activity.getPrice(), activity.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
 
+    }
+
+    public static ServiceDTO convertServiceToDto(teamb.w4e.entities.Service service) {
+        return new ServiceDTO(service.getId(), service.getName(), service.getDescription(), service.getPrice());
     }
 
 }
