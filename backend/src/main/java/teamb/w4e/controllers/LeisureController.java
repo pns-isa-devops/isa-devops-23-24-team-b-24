@@ -17,6 +17,8 @@ import teamb.w4e.interfaces.leisure.ActivityFinder;
 import teamb.w4e.interfaces.leisure.ActivityRegistration;
 import teamb.w4e.interfaces.AdvantageFinder;
 import teamb.w4e.interfaces.AdvantageRegistration;
+import teamb.w4e.interfaces.leisure.ServiceFinder;
+import teamb.w4e.interfaces.leisure.ServiceRegistration;
 
 import java.util.List;
 import java.util.Set;
@@ -32,15 +34,19 @@ public class LeisureController {
 
     private final AdvantageRegistration advantageRegistry;
     private final ActivityRegistration activityRegistry;
+    private final ServiceRegistration serviceRegistry;
     private final AdvantageFinder advantageFinder;
     private final ActivityFinder activityFinder;
+    private final ServiceFinder serviceFinder;
 
     @Autowired
-    public LeisureController(AdvantageRegistration advantageRegistry, AdvantageFinder advantageFinder, ActivityRegistration activityRegistry, ActivityFinder activityFinder) {
+    public LeisureController(AdvantageRegistration advantageRegistry, AdvantageFinder advantageFinder, ActivityRegistration activityRegistry, ServiceRegistration serviceRegistry, ActivityFinder activityFinder, ServiceFinder serviceFinder) {
         this.advantageRegistry = advantageRegistry;
         this.activityRegistry = activityRegistry;
         this.advantageFinder = advantageFinder;
+        this.serviceRegistry = serviceRegistry;
         this.activityFinder = activityFinder;
+        this.serviceFinder = serviceFinder;
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
