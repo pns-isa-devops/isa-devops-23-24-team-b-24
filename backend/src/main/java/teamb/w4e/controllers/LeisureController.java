@@ -113,7 +113,7 @@ public class LeisureController {
     public ResponseEntity<ServiceDTO> register(@RequestBody @Valid ServiceDTO serviceDTO) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(convertServiceToDto(serviceRegistry.register(serviceDTO.name(), serviceDTO.description(), serviceDTO.price())));
+                    .body(convertServiceToDto(serviceRegistry.registerService(serviceDTO.name(), serviceDTO.description(), serviceDTO.price())));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
         }
