@@ -8,8 +8,10 @@ import teamb.w4e.cli.CliContext;
 import teamb.w4e.cli.model.CliService;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @ShellComponent
@@ -40,8 +42,11 @@ public class ServiceCommands {
 
     @ShellMethod("Update all known services from server")
     public String updateServices() {
-        cliContext.getServices().clear();
-        Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(BASE_URI, CliService[].class).getBody())).forEach(service -> cliContext.getServices().put(service.getName(), service));
-        return "Services updated";
+        Map<String, CliService> serviceMap = cliContext.getServices();
+        serviceMap.clear();
+        serviceMap.putAll(Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(BASE_URI, CliService[].class)
+                .getBody())).collect(Collectors.toMap(CliService::getName, Function.identity())));
+        return serviceMap.toString();
+
     }
 }
