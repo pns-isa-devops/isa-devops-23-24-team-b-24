@@ -8,10 +8,10 @@ public class CartElementDTO {
     Long id;
     ReservationType type;
     ActivityDTO activity;
-
     String date;
-
     GroupDTO group;
+    String skiPassType;
+    int skiPassDuration;
 
     public CartElementDTO() {
     }
@@ -31,6 +31,13 @@ public class CartElementDTO {
         this.type = type;
         this.activity = activity;
         this.group = group;
+    }
+
+    public CartElementDTO(ReservationType type, ActivityDTO activity, String skiPassType, int skiPassDuration) {
+        this.type = type;
+        this.activity = activity;
+        this.skiPassType = skiPassType;
+        this.skiPassDuration = skiPassDuration;
     }
 
     public Long getId() {
@@ -73,26 +80,47 @@ public class CartElementDTO {
         this.group = group;
     }
 
+    public String getSkiPassType() {
+        return skiPassType;
+    }
+
+    public void setSkiPassType(String skiPassType) {
+        this.skiPassType = skiPassType;
+    }
+
+    public int getSkiPassDuration() {
+        return skiPassDuration;
+    }
+
+    public void setSkiPassDuration(int skiPassDuration) {
+        this.skiPassDuration = skiPassDuration;
+    }
+
 
     @Override
     public String toString() {
+        String base = "CartElementDTO{" +
+                "id=" + id +
+                ", type=" + type +
+                ", activity=" + activity;
         if (date != null) {
-            return "CartElementDTO{" + '\'' +
-                    "type=" + type + '\'' +
-                    ", activity=" + activity + '\'' +
-                    ", date=" + date + '\'' +
-                    "}";
+            return "TimeSlotReservationDTO{" +
+                    base +
+                    ", date='" + date + '\'' +
+                    '}';
         } else if (group != null) {
-            return "CartElementDTO{" + '\'' +
-                    "type=" + type + '\'' +
-                    ", activity=" + activity + '\'' +
-                    ", group=" + group + '\'' +
-                    "}";
+            return "GroupReservationDTO{" +
+                    base +
+                    ", group=" + group +
+                    '}';
+        } else if (skiPassType != null) {
+            return "SkiPassReservationDTO{" +
+                    base +
+                    ", skiPassType=" + skiPassType +
+                    ", skiPassDuration=" + skiPassDuration +
+                    '}';
         } else {
-            return "CartElementDTO{" + '\'' +
-                    "type=" + type + '\'' +
-                    ", activity=" + activity + '\'' +
-                    "}";
+            return base + '}';
         }
     }
 
@@ -100,7 +128,7 @@ public class CartElementDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof CartElementDTO that)) return false;
-        return type.equals(that.getType()) && activity.equals(that.getActivity());
+        return type.equals(that.getType()) && activity.equals(that.getActivity()) && date.equals(that.getDate()) && group.equals(that.getGroup()) && skiPassType.equals(that.getSkiPassType()) && skiPassDuration == that.getSkiPassDuration();
     }
 
     @Override
