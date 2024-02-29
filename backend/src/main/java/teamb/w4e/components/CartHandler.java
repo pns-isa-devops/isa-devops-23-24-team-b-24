@@ -8,11 +8,9 @@ import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Group;
 import teamb.w4e.entities.cart.GroupItem;
 import teamb.w4e.entities.cart.Item;
+import teamb.w4e.entities.cart.SkiPassItem;
 import teamb.w4e.entities.cart.TimeSlotItem;
-import teamb.w4e.entities.reservations.GroupReservation;
-import teamb.w4e.entities.reservations.Reservation;
-import teamb.w4e.entities.reservations.ReservationType;
-import teamb.w4e.entities.reservations.TimeSlotReservation;
+import teamb.w4e.entities.reservations.*;
 import teamb.w4e.exceptions.*;
 import teamb.w4e.interfaces.*;
 
@@ -28,11 +26,14 @@ public class CartHandler implements CartProcessor, CartModifier {
 
     private final Scheduler scheduler;
 
+    private final SkiPass skiPass;
+
     @Autowired
-    public CartHandler(CustomerFinder customerFinder, Payment payment, Scheduler scheduler) {
+    public CartHandler(CustomerFinder customerFinder, Payment payment, Scheduler scheduler, SkiPass skiPass) {
         this.customerFinder = customerFinder;
         this.payment = payment;
         this.scheduler = scheduler;
+        this.skiPass = skiPass;
     }
 
     @Override
@@ -73,6 +74,23 @@ public class CartHandler implements CartProcessor, CartModifier {
     }
 
     @Override
+    public SkiPassItem skiPassUpdate(Long customerId, Activity activity, String type, int duration) throws IdNotFoundException, CustomerIdNotFoundException {
+        Customer customer = customerFinder.retrieveCustomer(customerId);
+        Set<Item> items = customer.getCaddy().getActivities();
+        Optional<SkiPassItem> existingItem = items.stream()
+                .filter(item -> item.getActivity().equals(activity))
+                .filter(item -> item.getType().equals(ReservationType.SKI_PASS))
+                .map(SkiPassItem.class::cast).findFirst();
+        if (existingItem.isPresent()) {
+            existingItem.get().setSkiPassType(type);
+            existingItem.get().setDuration(duration);
+        } else {
+            items.add(new SkiPassItem(activity, type, duration));
+        }
+        return new SkiPassItem(activity, type, duration);
+    }
+
+    @Override
     @Transactional
     public Set<Item> cartContent(Long customerId) throws CustomerIdNotFoundException {
         return customerFinder.retrieveCustomer(customerId).getCaddy().getActivities();
@@ -88,13 +106,27 @@ public class CartHandler implements CartProcessor, CartModifier {
         if (item.getType().equals(ReservationType.TIME_SLOT)) {
             TimeSlotItem timeSlotItem = (TimeSlotItem) item;
             if (scheduler.reserve(timeSlotItem.getActivity(), timeSlotItem.getTimeSlot())) {
-                TimeSlotReservation reservation = (TimeSlotReservation) payment.payReservationFromCart(customer, item);
+                TimeSlotReservation reservation = (TimeSlotReservation) payment.payReservationFromCart(customer, timeSlotItem);
                 customer.getCaddy().getActivities().remove(item);
                 return reservation;
             }
         }
-        GroupReservation reservation = (GroupReservation) payment.payReservationFromCart(customer, item);
-        customer.getCaddy().getActivities().remove(item);
-        return reservation;
+        if (item.getType().equals(ReservationType.GROUP)) {
+            GroupItem groupItem = (GroupItem) item;
+
+            GroupReservation reservation = (GroupReservation) payment.payReservationFromCart(customer, groupItem);
+            customer.getCaddy().getActivities().remove(item);
+            return reservation;
+
+        }
+        if (item.getType().equals(ReservationType.SKI_PASS)) {
+            SkiPassItem skiPassItem = (SkiPassItem) item;
+            if (skiPass.reserve(customer.getName(), skiPassItem.getActivity().getName()).isPresent()) {
+                SkiPassReservation reservation = (SkiPassReservation) payment.payReservationFromCart(customer, skiPassItem);
+                customer.getCaddy().getActivities().remove(item);
+                return reservation;
+            }
+        }
+        throw new PaymentException(customer.getName(), item.getActivity().getPrice());
     }
 }

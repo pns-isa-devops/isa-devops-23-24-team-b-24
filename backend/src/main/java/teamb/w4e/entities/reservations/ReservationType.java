@@ -2,7 +2,8 @@ package teamb.w4e.entities.reservations;
 
 public enum ReservationType {
     GROUP("group"),
-    TIME_SLOT("time_slot");
+    TIME_SLOT("time_slot"),
+    SKI_PASS("ski_pass");
 
     private final String type;
 

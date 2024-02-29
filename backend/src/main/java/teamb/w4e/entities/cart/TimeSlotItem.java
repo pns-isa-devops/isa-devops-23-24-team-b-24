@@ -27,4 +27,17 @@ public class TimeSlotItem extends Item {
     public void setTimeSlot(String timeSlot) {
         this.timeSlot = timeSlot;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TimeSlotItem that)) return false;
+        if (!super.equals(o)) return false;
+        return timeSlot.equals(that.timeSlot);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode() + timeSlot.hashCode();
+    }
 }

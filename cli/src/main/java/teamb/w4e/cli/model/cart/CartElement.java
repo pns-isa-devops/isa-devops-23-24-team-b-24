@@ -9,8 +9,9 @@ public class CartElement {
     private ReservationType type;
     private CliActivity activity;
     private String date;
-
     private CliGroup group;
+    private String skiPassType;
+    private int duration;
 
     protected CartElement() {
     }
@@ -30,6 +31,13 @@ public class CartElement {
         this.type = type;
         this.activity = activity;
         this.group = group;
+    }
+
+    public CartElement(ReservationType type, CliActivity activity, String skiPassType, int duration) {
+        this.type = type;
+        this.activity = activity;
+        this.skiPassType = skiPassType;
+        this.duration = duration;
     }
 
     public Long getId() {
@@ -72,6 +80,21 @@ public class CartElement {
         this.group = group;
     }
 
+    public String getSkiPassType() {
+        return skiPassType;
+    }
+
+    public void setSkiPassType(String skiPassType) {
+        this.skiPassType = skiPassType;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
 
     @Override
     public String toString() {
@@ -87,6 +110,12 @@ public class CartElement {
             return "GroupElement{" +
                     base + '\'' +
                     "group=" + group + '\'' +
+                    '}';
+        } else if(skiPassType != null && duration != 0) {
+            return "SkiPassElement{" +
+                    base + '\'' +
+                    "skiPassType='" + skiPassType + '\'' +
+                    ", duration=" + duration +
                     '}';
         }
         return "CartElement{" +

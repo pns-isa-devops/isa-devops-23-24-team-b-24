@@ -8,8 +8,9 @@ create-advantage cookies LOCAL_SPECIALITY 3
 create-activity Yoga relaxing 20 cookies
 create-activity Pilates hard 30 free-juice
 activities
-add-to-cart Emma Yoga -t --day 23-02 --hour 19:22
-add-to-cart Emma Pilates -t --day 23-02 --hour 17:22
+add-to-cart Emma Yoga -t --day 07-11 --hour 21:30
+add-to-cart Emma Pilates -t --day 07-11 --hour 21:30
+add-to-cart Emma Pilates -s --type day --duration 7
 show-cart Emma
 create-group Emma --m John
 add-to-cart Emma Yoga -g

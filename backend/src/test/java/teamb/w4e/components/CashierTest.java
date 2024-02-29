@@ -6,6 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.*;
+import teamb.w4e.entities.reservations.ReservationType;
+import teamb.w4e.exceptions.CustomerIdNotFoundException;
 import teamb.w4e.entities.cart.Item;
 import teamb.w4e.entities.cart.TimeSlotItem;
 import teamb.w4e.exceptions.NegativeAmountTransactionException;
