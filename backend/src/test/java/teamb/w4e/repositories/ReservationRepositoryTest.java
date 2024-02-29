@@ -11,7 +11,6 @@ import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.reservations.Reservation;
 import teamb.w4e.entities.Transaction;
 import teamb.w4e.entities.reservations.ReservationType;
-import teamb.w4e.entities.reservations.ReservationType;
 import teamb.w4e.entities.reservations.TimeSlotReservation;
 import teamb.w4e.repositories.catalog.ActivityCatalogRepository;
 import teamb.w4e.repositories.reservation.ReservationRepository;

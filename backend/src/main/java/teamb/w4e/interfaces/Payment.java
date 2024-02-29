@@ -8,6 +8,6 @@ import teamb.w4e.exceptions.PaymentException;
 
 public interface Payment {
 
-    Reservation payReservationFromCart(Customer customer, Item item, ReservationType type) throws PaymentException, NegativeAmountTransactionException;
+    Reservation payReservationFromCart(Customer customer, Item item) throws PaymentException, NegativeAmountTransactionException;
   
 }

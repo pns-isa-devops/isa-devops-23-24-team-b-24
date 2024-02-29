@@ -12,38 +12,43 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
+import teamb.w4e.interfaces.SkiPass;
 
 import java.util.Optional;
 
 @Component
-public class SkiPassProxy implements Bank {
+public class SkiPassProxy implements SkiPass {
 
-    @Value("${bank.host.baseurl}")
-    private String bankHostandPort;
-
-    private final RestTemplate restTemplate = new RestTemplate();
+//    @Value("${bank.host.baseurl}")
+//    private String bankHostandPort;
+//
+//    private final RestTemplate restTemplate = new RestTemplate();
+//
+//    @Override
+//    @Transactional(propagation = Propagation.MANDATORY)
+//    public Optional<String> pay(Customer customer, double value) {
+//        try {
+//            ResponseEntity<PaymentReceiptDTO> result = restTemplate.postForEntity(
+//                    bankHostandPort + "/cctransactions",
+//                    new PaymentRequestDTO(customer.getCreditCard(), value),
+//                    PaymentReceiptDTO.class
+//            );
+//            if (result.getStatusCode().equals(HttpStatus.CREATED) && result.hasBody()) {
+//                return Optional.of(result.getBody().payReceiptId());
+//            } else {
+//                return Optional.empty();
+//            }
+//        }
+//        catch (RestClientResponseException errorException) {
+//            if (errorException.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+//                return Optional.empty();
+//            }
+//            throw errorException;
+//        }
+//    }
 
     @Override
-    @Transactional(propagation = Propagation.MANDATORY)
-    public Optional<String> pay(Customer customer, double value) {
-        try {
-            ResponseEntity<PaymentReceiptDTO> result = restTemplate.postForEntity(
-                    bankHostandPort + "/cctransactions",
-                    new PaymentRequestDTO(customer.getCreditCard(), value),
-                    PaymentReceiptDTO.class
-            );
-            if (result.getStatusCode().equals(HttpStatus.CREATED) && result.hasBody()) {
-                return Optional.of(result.getBody().payReceiptId());
-            } else {
-                return Optional.empty();
-            }
-        }
-        catch (RestClientResponseException errorException) {
-            if (errorException.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
-                return Optional.empty();
-            }
-            throw errorException;
-        }
+    public Optional<String> reserve(String name, String activity) {
+        return Optional.of("1234");
     }
-
 }
