@@ -7,12 +7,15 @@ import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Advantage;
 import teamb.w4e.entities.AdvantageType;
 import teamb.w4e.exceptions.IdNotFoundException;
-import teamb.w4e.interfaces.ActivityFinder;
-import teamb.w4e.interfaces.ActivityRegistration;
 import teamb.w4e.interfaces.AdvantageFinder;
 import teamb.w4e.interfaces.AdvantageRegistration;
-import teamb.w4e.repositories.ActivityCatalogRepository;
-import teamb.w4e.repositories.AdvantageCatalogRepository;
+import teamb.w4e.interfaces.leisure.ActivityFinder;
+import teamb.w4e.interfaces.leisure.ActivityRegistration;
+import teamb.w4e.interfaces.leisure.ServiceFinder;
+import teamb.w4e.interfaces.leisure.ServiceRegistration;
+import teamb.w4e.repositories.catalog.ActivityCatalogRepository;
+import teamb.w4e.repositories.catalog.AdvantageCatalogRepository;
+import teamb.w4e.repositories.catalog.ServiceCatalogRepository;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -20,15 +23,18 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-public class Catalog implements AdvantageRegistration, AdvantageFinder, ActivityRegistration, ActivityFinder {
+public class Catalog implements AdvantageRegistration, AdvantageFinder, ActivityRegistration, ActivityFinder, ServiceFinder, ServiceRegistration {
 
     private final AdvantageCatalogRepository advantageCatalogRepository;
     private final ActivityCatalogRepository activityCatalogRepository;
+    private final ServiceCatalogRepository serviceCatalogRepository;
+
 
     @Autowired
-    public Catalog(AdvantageCatalogRepository catalogRepository, ActivityCatalogRepository activityCatalogRepository) {
+    public Catalog(AdvantageCatalogRepository catalogRepository, ActivityCatalogRepository activityCatalogRepository, ServiceCatalogRepository serviceCatalogRepository) {
         this.advantageCatalogRepository = catalogRepository;
         this.activityCatalogRepository = activityCatalogRepository;
+        this.serviceCatalogRepository = serviceCatalogRepository;
     }
 
     @Override
@@ -105,4 +111,32 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
         return activityCatalogRepository.findAll();
     }
 
+    @Override
+    public Optional<teamb.w4e.entities.Service> findServiceByName(String name) {
+        return serviceCatalogRepository.findServiceByName(name);
+    }
+
+    @Override
+    public Optional<teamb.w4e.entities.Service> findServiceById(Long id) {
+        return serviceCatalogRepository.findById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public teamb.w4e.entities.Service retrieveService(Long serviceId) throws IdNotFoundException {
+        return findServiceById(serviceId).orElseThrow(() -> new IdNotFoundException(serviceId));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<teamb.w4e.entities.Service> findAllServices() {
+        return serviceCatalogRepository.findAll();
+    }
+
+    @Override
+    @Transactional
+    public teamb.w4e.entities.Service registerService(String name, String description, double price) {
+        teamb.w4e.entities.Service newService = new teamb.w4e.entities.Service(name, description, price);
+        return serviceCatalogRepository.save(newService);
+    }
 }

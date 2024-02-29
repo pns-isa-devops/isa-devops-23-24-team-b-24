@@ -9,14 +9,17 @@ import org.springframework.web.bind.annotation.*;
 import teamb.w4e.dto.ActivityDTO;
 import teamb.w4e.dto.AdvantageDTO;
 import teamb.w4e.dto.ErrorDTO;
+import teamb.w4e.dto.ServiceDTO;
 import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Advantage;
 import teamb.w4e.entities.AdvantageType;
 import teamb.w4e.exceptions.IdNotFoundException;
-import teamb.w4e.interfaces.ActivityFinder;
-import teamb.w4e.interfaces.ActivityRegistration;
+import teamb.w4e.interfaces.leisure.ActivityFinder;
+import teamb.w4e.interfaces.leisure.ActivityRegistration;
 import teamb.w4e.interfaces.AdvantageFinder;
 import teamb.w4e.interfaces.AdvantageRegistration;
+import teamb.w4e.interfaces.leisure.ServiceFinder;
+import teamb.w4e.interfaces.leisure.ServiceRegistration;
 
 import java.util.List;
 import java.util.Set;
@@ -32,15 +35,19 @@ public class LeisureController {
 
     private final AdvantageRegistration advantageRegistry;
     private final ActivityRegistration activityRegistry;
+    private final ServiceRegistration serviceRegistry;
     private final AdvantageFinder advantageFinder;
     private final ActivityFinder activityFinder;
+    private final ServiceFinder serviceFinder;
 
     @Autowired
-    public LeisureController(AdvantageRegistration advantageRegistry, AdvantageFinder advantageFinder, ActivityRegistration activityRegistry, ActivityFinder activityFinder) {
+    public LeisureController(AdvantageRegistration advantageRegistry, AdvantageFinder advantageFinder, ActivityRegistration activityRegistry, ServiceRegistration serviceRegistry, ActivityFinder activityFinder, ServiceFinder serviceFinder) {
         this.advantageRegistry = advantageRegistry;
         this.activityRegistry = activityRegistry;
         this.advantageFinder = advantageFinder;
+        this.serviceRegistry = serviceRegistry;
         this.activityFinder = activityFinder;
+        this.serviceFinder = serviceFinder;
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -90,7 +97,6 @@ public class LeisureController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
         }
-
     }
 
     @GetMapping(path = "/activities")
@@ -103,6 +109,26 @@ public class LeisureController {
         return ResponseEntity.ok(convertActivityToDto(activityFinder.retrieveActivity(activityId)));
     }
 
+    @PostMapping(path = "/services", consumes = APPLICATION_JSON_VALUE)
+    public ResponseEntity<ServiceDTO> register(@RequestBody @Valid ServiceDTO serviceDTO) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(convertServiceToDto(serviceRegistry.registerService(serviceDTO.name(), serviceDTO.description(), serviceDTO.price())));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
+        }
+    }
+
+    @GetMapping(path = "/services")
+    public ResponseEntity<List<ServiceDTO>> services() {
+        return ResponseEntity.ok(serviceFinder.findAllServices().stream().map(LeisureController::convertServiceToDto).toList());
+    }
+
+    @GetMapping(path = "/services/{serviceId}")
+    public ResponseEntity<ServiceDTO> getService(@PathVariable Long serviceId) throws IdNotFoundException {
+        return ResponseEntity.ok(convertServiceToDto(serviceFinder.retrieveService(serviceId)));
+    }
+
     private static AdvantageDTO convertAdvantageToDto(Advantage advantage) {
         return new AdvantageDTO(advantage.getId(), advantage.getName(), advantage.getType(), advantage.getPoints());
     }
@@ -110,6 +136,10 @@ public class LeisureController {
     public static ActivityDTO convertActivityToDto(Activity activity) {
         return new ActivityDTO(activity.getId(), activity.getName(), activity.getDescription(), activity.getPrice(), activity.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
 
+    }
+
+    public static ServiceDTO convertServiceToDto(teamb.w4e.entities.Service service) {
+        return new ServiceDTO(service.getId(), service.getName(), service.getDescription(), service.getPrice());
     }
 
 }

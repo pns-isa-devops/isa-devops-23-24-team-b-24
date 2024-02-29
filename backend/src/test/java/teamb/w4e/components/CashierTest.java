@@ -11,7 +11,7 @@ import teamb.w4e.entities.cart.TimeSlotItem;
 import teamb.w4e.exceptions.NegativeAmountTransactionException;
 import teamb.w4e.interfaces.Bank;
 import teamb.w4e.interfaces.Payment;
-import teamb.w4e.repositories.ActivityCatalogRepository;
+import teamb.w4e.repositories.catalog.ActivityCatalogRepository;
 import teamb.w4e.repositories.CustomerRepository;
 import teamb.w4e.repositories.TransactionRepository;
 

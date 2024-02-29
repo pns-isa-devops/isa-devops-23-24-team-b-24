@@ -9,6 +9,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Transaction;
+import teamb.w4e.repositories.catalog.ActivityCatalogRepository;
 
 import java.util.Set;
 
