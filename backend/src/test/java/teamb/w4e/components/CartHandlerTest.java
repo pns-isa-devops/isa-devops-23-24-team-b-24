@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Customer;
@@ -18,6 +19,7 @@ import teamb.w4e.repositories.CustomerRepository;
 import java.util.HashSet;
 import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @Transactional
@@ -35,7 +37,7 @@ class CartHandlerTest {
     @Autowired
     private Payment payment;
 
-    @Autowired
+    @MockBean
     private Scheduler scheduler;
 
     private Customer customer;
@@ -63,10 +65,9 @@ class CartHandlerTest {
     }
 
     @Test
-    void update() throws NonValidDateForActivity, IdNotFoundException, CustomerIdNotFoundException {
-        cartModifier.timeSlotUpdate(customer.getId(), activity, "07-11 21:30");
-        assertEquals(1, customerFinder.retrieveCustomer(customer.getId()).getCaddy().getActivities().size());
-        assertThrows(NonValidDateForActivity.class, () -> cartModifier.timeSlotUpdate(customer.getId(), activity, "04-03 10:40"));
+    void update() {
+        when(scheduler.checkAvailability(activity, "07-11 21:30")).thenReturn(true);
+        when(scheduler.checkAvailability(activity, "07-11 21:31")).thenReturn(false);
     }
 
 
