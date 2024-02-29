@@ -50,7 +50,7 @@ public class CartController {
         return switch (type) {
             case TIME_SLOT -> ResponseEntity.ok(convertTimeSlotElementToDTO(cart.timeSlotUpdate(customerId, activity, cartDTO.getDate())));
             case GROUP -> ResponseEntity.ok(convertCartGroupElementToDTO(cart.groupUpdate(customerId, activity, groupFinder.retrieveGroup(customerId))));
-            case SKI_PASS -> ResponseEntity.ok(convertSkiPassElementToDTO(cart.skiPassUpdate(customerId, activity, cartDTO.getSkiPassType(), cartDTO.getSkiPassDuration())));
+            case SKI_PASS -> ResponseEntity.ok(convertSkiPassElementToDTO(cart.skiPassUpdate(customerId, activity, cartDTO.getSkiPassType(), cartDTO.getDuration())));
         };
     }
 
@@ -76,7 +76,7 @@ public class CartController {
             case GROUP ->
                     ResponseEntity.ok().body(ReservationController.convertReservationToDTO(processor.validate(customerId, new GroupItem(finder.retrieveActivity(cartElementDTO.getActivity().id()), groupFinder.retrieveGroup(customerId)))));
             case SKI_PASS ->
-                    ResponseEntity.ok().body(ReservationController.convertReservationToDTO(processor.validate(customerId, new SkiPassItem(finder.retrieveActivity(cartElementDTO.getActivity().id()), cartElementDTO.getSkiPassType(), cartElementDTO.getSkiPassDuration()))));
+                    ResponseEntity.ok().body(ReservationController.convertReservationToDTO(processor.validate(customerId, new SkiPassItem(finder.retrieveActivity(cartElementDTO.getActivity().id()), cartElementDTO.getSkiPassType(), cartElementDTO.getDuration()))));
         };
     }
 
