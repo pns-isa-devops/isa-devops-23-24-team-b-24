@@ -5,7 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import teamb.w4e.dto.ActivityDTO;
 import teamb.w4e.dto.reservations.ReservationDTO;
+import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.reservations.GroupReservation;
 import teamb.w4e.entities.reservations.Reservation;
 import teamb.w4e.entities.reservations.ReservationType;
@@ -52,7 +54,7 @@ public class ReservationController {
         return convertGroupReservationToDTO(groupReservation);
     }
     private static ReservationDTO convertTimeSlotReservationToDTO(TimeSlotReservation reservation) {
-        return new ReservationDTO(reservation.getId(), reservation.getType(), LeisureController.convertActivityToDto(reservation.getActivity()), reservation.getTimeSlot());
+        return new ReservationDTO(reservation.getId(), reservation.getType(), LeisureController.convertActivityToDto( reservation.getActivity() ), reservation.getTimeSlot());
     }
 
     private static ReservationDTO convertGroupReservationToDTO(GroupReservation reservation) {

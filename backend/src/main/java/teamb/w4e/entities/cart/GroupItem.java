@@ -1,6 +1,5 @@
 package teamb.w4e.entities.cart;
 
-import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -8,8 +7,7 @@ import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Group;
 import teamb.w4e.entities.reservations.ReservationType;
 
-@Entity
-@DiscriminatorValue("GROUP")
+@Entity(name="group-items")
 public class GroupItem extends Item {
     @ManyToOne
     @JoinColumn(name = "group_id", referencedColumnName = "id")

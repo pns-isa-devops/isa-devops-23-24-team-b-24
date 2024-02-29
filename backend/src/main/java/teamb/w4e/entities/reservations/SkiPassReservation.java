@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Positive;
 import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Card;
 import teamb.w4e.entities.Transaction;
+import teamb.w4e.entities.Truc;
 
 @Entity
 @DiscriminatorValue("SKI_PASS")
@@ -19,14 +20,14 @@ public class SkiPassReservation extends Reservation {
     public SkiPassReservation() {
     }
 
-    public SkiPassReservation(Activity activity, String skiPassType, int duration) {
-        super(ReservationType.SKI_PASS, activity);
+    public SkiPassReservation(Activity truc, String skiPassType, int duration) {
+        super(ReservationType.SKI_PASS, truc);
         this.skiPassType = skiPassType;
         this.duration = duration;
     }
 
-    public SkiPassReservation(Activity activity, String skiPassType, int duration, Card card, Transaction transaction) {
-        super(ReservationType.SKI_PASS, activity, card, transaction);
+    public SkiPassReservation(Activity truc, String skiPassType, int duration, Card card, Transaction transaction) {
+        super(ReservationType.SKI_PASS, truc, card, transaction);
         this.skiPassType = skiPassType;
         this.duration = duration;
     }

@@ -2,51 +2,49 @@ package teamb.w4e.dto.reservations;
 
 import teamb.w4e.dto.ActivityDTO;
 import teamb.w4e.dto.GroupDTO;
+import teamb.w4e.dto.TrucDTO;
 import teamb.w4e.entities.reservations.ReservationType;
 
 public class ReservationDTO {
     Long id;
     ReservationType type;
-    ActivityDTO activity;
-
+    TrucDTO activity;
     String date;
-
     GroupDTO group;
-
     String skiPassType;
-
     int skiPassDuration;
 
     public ReservationDTO() {
     }
 
-    public ReservationDTO(Long id, ReservationType type, ActivityDTO activity) {
+    public ReservationDTO(Long id, ReservationType type, TrucDTO activity) {
         this.id = id;
         this.type = type;
         this.activity = activity;
     }
 
-    public ReservationDTO(Long id, ReservationType type, ActivityDTO activity, String date) {
+    public ReservationDTO(Long id, ReservationType type, TrucDTO activity, String date) {
         this.id = id;
         this.type = type;
         this.activity = activity;
         this.date = date;
     }
 
-    public ReservationDTO(Long id, ReservationType type, ActivityDTO activity, GroupDTO group) {
+    public ReservationDTO(Long id, ReservationType type, TrucDTO activity, GroupDTO group) {
         this.id = id;
         this.type = type;
         this.activity = activity;
         this.group = group;
     }
 
-    public ReservationDTO(Long id, ReservationType type, ActivityDTO activity, String skiPassType, int skiPassDuration) {
+    public ReservationDTO(Long id, ReservationType type, TrucDTO activity, String skiPassType, int skiPassDuration) {
         this.id = id;
         this.type = type;
         this.activity = activity;
         this.skiPassType = skiPassType;
         this.skiPassDuration = skiPassDuration;
     }
+
 
     public Long getId() {
         return id;
@@ -64,11 +62,11 @@ public class ReservationDTO {
         this.type = type;
     }
 
-    public ActivityDTO getActivity() {
+    public TrucDTO getActivity() {
         return activity;
     }
 
-    public void setActivity(ActivityDTO activity) {
+    public void setActivity(TrucDTO activity) {
         this.activity = activity;
     }
 
