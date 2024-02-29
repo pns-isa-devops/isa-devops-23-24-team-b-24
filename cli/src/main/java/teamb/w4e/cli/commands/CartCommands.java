@@ -7,13 +7,12 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import org.springframework.web.client.RestTemplate;
 import teamb.w4e.cli.CliContext;
+import teamb.w4e.cli.model.CliActivity;
 import teamb.w4e.cli.model.CliGroup;
+import teamb.w4e.cli.model.CliReservation;
 import teamb.w4e.cli.model.ReservationType;
 import teamb.w4e.cli.model.cart.CartElement;
-import teamb.w4e.cli.model.CliActivity;
-import teamb.w4e.cli.model.CliReservation;
 
-import java.lang.annotation.ElementType;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
@@ -49,7 +48,10 @@ public class CartCommands {
             @ShellOption(value = "-g", defaultValue = "false") boolean groupActivity,
             @ShellOption(value = "-t", defaultValue = "false") boolean timeSlot,
             @ShellOption(value = "--day") String day,
-            @ShellOption(value = "--hour") String hour) {
+            @ShellOption(value = "--hour") String hour,
+            @ShellOption(value = "-s", defaultValue = "false") boolean skiPass,
+            @ShellOption(value = "--type") String skiPassType,
+            @ShellOption(value = "--duration", defaultValue ="0") int duration) {
         if (groupActivity && timeSlot) {
             throw new IllegalArgumentException("Options -g and -t cannot be combined.");
         }
@@ -65,6 +67,14 @@ public class CartCommands {
             ResponseEntity<CliActivity> activityResponse = restTemplate.getForEntity(getUriForActivity(activityName), CliActivity.class);
             return restTemplate.postForObject(getUriForCustomer(customerName), new CartElement(ReservationType.TIME_SLOT, Objects.requireNonNull(activityResponse.getBody()), day + " " + hour), CartElement.class);
 
+        } else if (skiPass) {
+            if (skiPassType.isEmpty() || duration == 0) {
+                throw new IllegalArgumentException("Option -s requires specifying both --type and --duration.");
+            }
+            ResponseEntity<CliActivity> activityResponse = restTemplate.getForEntity(getUriForActivity(activityName), CliActivity.class);
+            CartElement cartElement = new CartElement(ReservationType.SKI_PASS, Objects.requireNonNull(activityResponse.getBody()), skiPassType, duration);
+            System.out.println(cartElement);
+            return restTemplate.postForObject(getUriForCustomer(customerName), cartElement, CartElement.class);
         }
         throw new IllegalArgumentException("Either -g or -t must be specified.");
     }
