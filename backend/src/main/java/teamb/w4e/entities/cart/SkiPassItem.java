@@ -1,14 +1,14 @@
 package teamb.w4e.entities.cart;
 
-import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import teamb.w4e.entities.Activity;
+import teamb.w4e.entities.Truc;
 import teamb.w4e.entities.reservations.ReservationType;
 
-@Entity
-@DiscriminatorValue("SKI_PASS")
+
+@Entity(name="ski-pass-items")
 public class SkiPassItem extends Item {
     @Pattern(regexp = "^(day|half_day|hourly)$", message = "Invalid ski pass type")
     private String skiPassType;

@@ -135,8 +135,8 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
 
     @Override
     @Transactional
-    public teamb.w4e.entities.Service registerService(String name, String description, double price) {
-        teamb.w4e.entities.Service newService = new teamb.w4e.entities.Service(name, description, price);
+    public teamb.w4e.entities.Service registerService(String name, String description, double price, Set<Advantage> advantages) {
+        teamb.w4e.entities.Service newService = new teamb.w4e.entities.Service(name, description, price, advantages);
         return serviceCatalogRepository.save(newService);
     }
 }

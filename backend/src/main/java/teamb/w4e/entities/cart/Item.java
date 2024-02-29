@@ -3,14 +3,14 @@ package teamb.w4e.entities.cart;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import teamb.w4e.entities.Activity;
+import teamb.w4e.entities.Truc;
 import teamb.w4e.entities.reservations.Reservation;
 import teamb.w4e.entities.reservations.ReservationType;
 
 import java.util.Objects;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "item_type", discriminatorType = DiscriminatorType.STRING)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Item {
     @Id
     @GeneratedValue
@@ -21,14 +21,14 @@ public abstract class Item {
 
     @NotNull
     @ManyToOne
-    private Activity activity;
+    private Truc truc;
 
     protected Item() {
     }
 
-    protected Item(ReservationType type, Activity activity) {
+    protected Item(ReservationType type, Truc truc) {
         this.type = type;
-        this.activity = activity;
+        this.truc = truc;
     }
 
     public void setId(Long id) {
@@ -47,19 +47,19 @@ public abstract class Item {
         this.type = type;
     }
 
-    public Activity getActivity() {
-        return activity;
+    public Truc getTruc() {
+        return truc;
     }
 
-    public void setActivity(Activity activity) {
-        this.activity = activity;
+    public void setTruc(Truc truc) {
+        this.truc = truc;
     }
 
     @Override
     public String toString() {
         return "Item{" +
                 "type=" + type +
-                "activity=" + activity +
+                "truc=" + truc +
                 '}';
     }
 
@@ -67,11 +67,11 @@ public abstract class Item {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Item item)) return false;
-        return Objects.equals(activity, item.getActivity()) && Objects.equals(type, item.getType());
+        return Objects.equals(truc, item.getTruc()) && Objects.equals(type, item.getType());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, activity);
+        return Objects.hash(type, truc);
     }
 }

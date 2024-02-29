@@ -3,6 +3,7 @@ package teamb.w4e.components;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Transaction;
 import teamb.w4e.entities.cart.GroupItem;
@@ -45,16 +46,15 @@ public class Booker implements ReservationCreator, ReservationFinder {
 
     @Override
     public GroupReservation createGroupReservation(Customer customer, GroupItem item, Transaction transaction) {
-        return reservationRepository.save(new GroupReservation(item.getActivity(), item.getGroup(), customer.getCard(), transaction));
+        return reservationRepository.save(new GroupReservation((Activity) item.getTruc(), item.getGroup(), customer.getCard(), transaction));
     }
-
     @Override
     public TimeSlotReservation createTimeSlotReservation(Customer customer, TimeSlotItem item, Transaction transaction) {
-        return reservationRepository.save(new TimeSlotReservation(item.getActivity(), item.getTimeSlot(), customer.getCard(), transaction));
+        return reservationRepository.save(new TimeSlotReservation((Activity) item.getTruc(), item.getTimeSlot(), customer.getCard(), transaction));
     }
 
     @Override
     public SkiPassReservation createSkiPassReservation(Customer customer, SkiPassItem item, Transaction transaction) {
-        return reservationRepository.save(new SkiPassReservation(item.getActivity(), item.getSkiPassType(), item.getDuration(), customer.getCard(), transaction));
+        return reservationRepository.save(new SkiPassReservation((Activity) item.getTruc(), item.getSkiPassType(), item.getDuration(), customer.getCard(), transaction));
     }
 }
