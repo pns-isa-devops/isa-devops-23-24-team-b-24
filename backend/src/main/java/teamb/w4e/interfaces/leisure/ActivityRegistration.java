@@ -1,4 +1,4 @@
-package teamb.w4e.interfaces;
+package teamb.w4e.interfaces.leisure;
 
 import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Advantage;
@@ -6,5 +6,5 @@ import teamb.w4e.entities.Advantage;
 import java.util.Set;
 
 public interface ActivityRegistration {
-    Activity register(String name, String description, Set<Advantage> advantages);
+    Activity register(String name, String description, double price, Set<Advantage> advantages);
 }

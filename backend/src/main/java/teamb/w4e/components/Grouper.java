@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Group;
+import teamb.w4e.exceptions.CustomerIdNotFoundException;
 import teamb.w4e.exceptions.group.AlreadyLeaderException;
 import teamb.w4e.exceptions.group.NotEnoughMembersException;
 import teamb.w4e.interfaces.CustomerFinder;
@@ -30,17 +31,8 @@ public class Grouper implements GroupCreator, GroupFinder {
 
     @Override
     @Transactional
-    public Group createGroup(Customer leader, Set<Customer> members) throws NotEnoughMembersException, AlreadyLeaderException {
-        if (customerFinder.findById(leader.getId()).isEmpty()) {
-            throw new IllegalArgumentException("Leader not found");
-        }
-        for (Customer member : members) {
-            if (customerFinder.findById(member.getId()).isEmpty()) {
-                throw new IllegalArgumentException("Member not found");
-            }
-        }
-
-        if (groupRepository.findGroupByLeader(leader).isPresent()) {
+    public Group createGroup(Customer leader, Set<Customer> members) throws NotEnoughMembersException, AlreadyLeaderException, CustomerIdNotFoundException {
+        if (groupRepository.findGroupByLeader(leader.getId()).isPresent()) {
             throw new AlreadyLeaderException(leader + " is already a leader");
         }
         if (members.contains(leader)) {
@@ -49,14 +41,29 @@ public class Grouper implements GroupCreator, GroupFinder {
         if (members.isEmpty()) {
             throw new NotEnoughMembersException("There must be at least one member in the group");
         }
+
+        if(customerFinder.findByName(leader.getName()).isEmpty()) {
+            throw new CustomerIdNotFoundException(leader.getId());
+        }
+        for (Customer member : members) {
+            if(customerFinder.findByName(member.getName()).isEmpty()) {
+                throw new CustomerIdNotFoundException(member.getId());
+            }
+        }
         Group newGroup = new Group(leader, members);
         return groupRepository.save(newGroup);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Group> findGroupByLeader(Customer leader) {
-        return groupRepository.findGroupByLeader(leader);
+    public Optional<Group> findGroupByLeader(Long leaderId) {
+        return groupRepository.findGroupByLeader(leaderId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Group retrieveGroup(Long leaderId) throws CustomerIdNotFoundException {
+        return findGroupByLeader(leaderId).orElseThrow(() -> new CustomerIdNotFoundException(leaderId));
     }
 
     @Override
