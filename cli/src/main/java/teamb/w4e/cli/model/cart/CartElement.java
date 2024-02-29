@@ -1,36 +1,36 @@
-package teamb.w4e.cli.model;
+package teamb.w4e.cli.model.cart;
 
-public class CliReservation {
+import teamb.w4e.cli.model.CliActivity;
+import teamb.w4e.cli.model.CliGroup;
+import teamb.w4e.cli.model.ReservationType;
 
+public class CartElement {
     private Long id;
-
     private ReservationType type;
     private CliActivity activity;
-
     private String date;
 
     private CliGroup group;
 
-    public CliReservation() {
+    protected CartElement() {
     }
 
-    public CliReservation(ReservationType type, CliActivity activity) {
+    protected CartElement(ReservationType type, CliActivity activity) {
         this.type = type;
         this.activity = activity;
     }
 
-    public CliReservation(ReservationType type, CliActivity activity, String date) {
+    public CartElement(ReservationType type, CliActivity activity, String date) {
         this.type = type;
         this.activity = activity;
         this.date = date;
     }
 
-    public CliReservation(ReservationType type, CliActivity activity, CliGroup group) {
+    public CartElement(ReservationType type, CliActivity activity, CliGroup group) {
         this.type = type;
         this.activity = activity;
         this.group = group;
     }
-
 
     public Long getId() {
         return id;
@@ -72,26 +72,25 @@ public class CliReservation {
         this.group = group;
     }
 
+
     @Override
     public String toString() {
         String base = "id=" + id + '\'' +
                 "type=" + type + '\'' +
                 "activity=" + activity + '\'';
         if (date != null) {
-            return "TimeSlotReservation{" + '\'' +
+            return "TimeSlotElement{" +
                     base + '\'' +
-                    "date=" + date + '\'' +
-                    "}";
+                    "date='" + date + '\'' +
+                    '}';
         } else if (group != null) {
-            return "GroupReservation{" + '\'' +
+            return "GroupElement{" +
                     base + '\'' +
                     "group=" + group + '\'' +
-                    "}";
-        } else {
-            return "Reservation{" + '\'' +
-                    base + '\'' +
-                    "}";
+                    '}';
         }
-
+        return "CartElement{" +
+                base + '\'' +
+                '}';
     }
 }

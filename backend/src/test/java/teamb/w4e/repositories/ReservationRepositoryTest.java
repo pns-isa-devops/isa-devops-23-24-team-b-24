@@ -8,8 +8,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Customer;
-import teamb.w4e.entities.Reservation;
+import teamb.w4e.entities.reservations.Reservation;
 import teamb.w4e.entities.Transaction;
+import teamb.w4e.entities.reservations.ReservationType;
+import teamb.w4e.entities.reservations.TimeSlotReservation;
 import teamb.w4e.repositories.reservation.ReservationRepository;
 
 import java.util.Arrays;
@@ -46,7 +48,7 @@ class ReservationRepositoryTest {
 
     @Test
     void testIdGenerationAndUnicity() {
-        Reservation reservation = new Reservation(activity, "15-06 12:30", customer.getCard(), transaction);
+        Reservation reservation = new TimeSlotReservation(activity, "15-06 12:30", customer.getCard(), transaction);
         assertNull(reservation.getId());
         reservationRepository.saveAndFlush(reservation); // save in the persistent context and force saving in the DB (thus ensuring validation by Hibernate)
         assertNotNull(reservation.getId());
@@ -56,7 +58,7 @@ class ReservationRepositoryTest {
 
     @Test
     void testReservationWithoutTransaction() {
-        Reservation reservation = new Reservation(activity, "15-06 12:30", customer.getCard(), null);
+        Reservation reservation = new TimeSlotReservation(activity, "15-06 12:30", customer.getCard(), null);
         assertNull(reservation.getId());
         assertThrows(ConstraintViolationException.class, () -> reservationRepository.saveAndFlush(reservation));
     }
@@ -64,7 +66,7 @@ class ReservationRepositoryTest {
     @Test
     void testReservationWithoutRegisteredActivity() {
         Activity activity = new Activity("activity", "desc", 123, Set.of());
-        Reservation reservation = new Reservation(activity, "15-06 12:30", customer.getCard(), transaction);
+        Reservation reservation = new TimeSlotReservation(activity, "15-06 12:30", customer.getCard(), transaction);
         assertNull(reservation.getId());
         assertThrows(InvalidDataAccessApiUsageException.class, () -> reservationRepository.saveAndFlush(reservation));
     }
@@ -72,9 +74,9 @@ class ReservationRepositoryTest {
 
     @Test
     void testFindReservationByCard() {
-        Reservation reservation = new Reservation(activity, "15-06 12:30", customer.getCard(), transaction);
+        Reservation reservation = new TimeSlotReservation(activity, "15-06 12:30", customer.getCard(), transaction);
         reservationRepository.saveAndFlush(reservation);
-        assertEquals(reservationRepository.findReservationByCard(customer.getCard().getId()).get(0), reservation);
+        assertEquals(reservationRepository.findTimeSlotReservationByCard(customer.getCard().getId(), ReservationType.TIME_SLOT).get(0), reservation);
     }
 
     @Test
@@ -94,7 +96,7 @@ class ReservationRepositoryTest {
         );
         invalidDates.forEach(date -> {
             assertThrows(ConstraintViolationException.class, () -> {
-                reservationRepository.saveAndFlush(new Reservation(activity, date));
+                reservationRepository.saveAndFlush(new TimeSlotReservation(activity, date));
             });
         });
     }

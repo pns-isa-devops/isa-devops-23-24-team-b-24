@@ -1,12 +1,8 @@
 package teamb.w4e.repositories;
 
 import teamb.w4e.entities.Customer;
-import teamb.w4e.entities.Item;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.HashSet;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;

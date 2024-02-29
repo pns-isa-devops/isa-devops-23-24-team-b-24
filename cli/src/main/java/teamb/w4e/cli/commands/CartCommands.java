@@ -4,12 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
 import org.springframework.web.client.RestTemplate;
 import teamb.w4e.cli.CliContext;
-import teamb.w4e.cli.model.CartElement;
+import teamb.w4e.cli.model.CliGroup;
+import teamb.w4e.cli.model.ReservationType;
+import teamb.w4e.cli.model.cart.CartElement;
 import teamb.w4e.cli.model.CliActivity;
 import teamb.w4e.cli.model.CliReservation;
 
+import java.lang.annotation.ElementType;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
@@ -38,11 +42,31 @@ public class CartCommands {
                 .getBody())).collect(toSet());
     }
 
-    @ShellMethod("Add cookie to cart of customer (add-to-cart CUSTOMER_NAME ACTIVITY_NAME DATE(dd-MM HH:mm))")
-    public CartElement addToCart(String customerName, String activityName, String day, String hour) {
-        ResponseEntity<CliActivity> activityResponse = restTemplate.getForEntity(getUriForActivity(activityName), CliActivity.class);
-        CartElement element = new CartElement((Objects.requireNonNull(activityResponse.getBody())), day + " " + hour);
-        return restTemplate.postForObject(getUriForCustomer(customerName), element, CartElement.class);
+    @ShellMethod("Add activity to cart of customer (add-to-cart CUSTOMER_NAME ACTIVITY_NAME)")
+    public CartElement addToCart(
+            String customerName,
+            String activityName,
+            @ShellOption(value = "-g", defaultValue = "false") boolean groupActivity,
+            @ShellOption(value = "-t", defaultValue = "false") boolean timeSlot,
+            @ShellOption(value = "--day") String day,
+            @ShellOption(value = "--hour") String hour) {
+        if (groupActivity && timeSlot) {
+            throw new IllegalArgumentException("Options -g and -t cannot be combined.");
+        }
+        if (groupActivity) {
+            ResponseEntity<CliActivity> activityResponse = restTemplate.getForEntity(getUriForActivity(activityName), CliActivity.class);
+            ResponseEntity<CliGroup> groupResponse = restTemplate.getForEntity(getUriForGroup(customerName), CliGroup.class);
+            return restTemplate.postForObject(getUriForCustomer(customerName), new CartElement(ReservationType.GROUP, Objects.requireNonNull(activityResponse.getBody()), groupResponse.getBody()), CartElement.class);
+
+        } else if (timeSlot) {
+            if (day.isEmpty() || hour.isEmpty()) {
+                throw new IllegalArgumentException("Option -h requires specifying both --day and --hour.");
+            }
+            ResponseEntity<CliActivity> activityResponse = restTemplate.getForEntity(getUriForActivity(activityName), CliActivity.class);
+            return restTemplate.postForObject(getUriForCustomer(customerName), new CartElement(ReservationType.TIME_SLOT, Objects.requireNonNull(activityResponse.getBody()), day + " " + hour), CartElement.class);
+
+        }
+        throw new IllegalArgumentException("Either -g or -t must be specified.");
     }
 
     @ShellMethod("Reserve an activity (reserve CUSTOMER_NAME)")
@@ -60,5 +84,9 @@ public class CartCommands {
 
     private String getUriForCustomer(String name) {
         return BASE_URI + "/" + cliContext.getCustomers().get(name).getId() + "/cart";
+    }
+
+    private String getUriForGroup(String name) {
+        return BASE_URI + "/groups/" + cliContext.getCustomers().get(name).getId() + "/group";
     }
 }

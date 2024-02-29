@@ -5,9 +5,9 @@ public enum AdvantageType {
     VIP("VIP"),
     LOCAL_SPECIALITY("Local speciality"),
     REDUCTION("Reduction");
-    private String name;
+    private final String name;
 
-    private AdvantageType(String name) {
+    AdvantageType(String name) {
         this.name = name;
     }
 

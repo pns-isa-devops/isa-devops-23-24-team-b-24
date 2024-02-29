@@ -4,23 +4,47 @@ import java.util.Set;
 
 public class CliGroup {
     private Long id;
-    private String leaderName;
-    private Set<String> membersNames;
+    private CliCustomer leader;
+    private Set<CliCustomer> members;
 
     public CliGroup() {
     }
 
-    public CliGroup(String leaderName, Set<String> membersNames) {
-        this.leaderName = leaderName;
-        this.membersNames = membersNames;
+    public CliGroup(CliCustomer leader, Set<CliCustomer> members) {
+        this.leader = leader;
+        this.members = members;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public CliCustomer getLeader() {
+        return leader;
+    }
+
+    public void setLeader(CliCustomer leader) {
+        this.leader = leader;
+    }
+
+    public Set<CliCustomer> getMembers() {
+        return members;
+    }
+
+    public void setMembers(Set<CliCustomer> members) {
+        this.members = members;
     }
 
     @Override
     public String toString() {
-        return "CliGroup{" +
+        return "Group{" +
                 "id='" + id + '\'' +
-                ", leaderName='" + leaderName + '\'' +
-                ", membersNames=" + membersNames +
+                ", leader='" + leader + '\'' +
+                ", members='" + members + '\'' +
                 '}';
     }
 }

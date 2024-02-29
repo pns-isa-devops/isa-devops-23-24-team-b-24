@@ -15,15 +15,17 @@ import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Group;
 import teamb.w4e.exceptions.AlreadyExistingCustomerException;
 import teamb.w4e.exceptions.CustomerIdNotFoundException;
-import teamb.w4e.exceptions.IdNotFoundException;
+import teamb.w4e.exceptions.group.AlreadyLeaderException;
+import teamb.w4e.exceptions.group.NotEnoughMembersException;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.CustomerRegistration;
 import teamb.w4e.interfaces.GroupCreator;
+import teamb.w4e.interfaces.GroupFinder;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.Optional;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -35,15 +37,18 @@ public class CustomerCareController {
 
     private final CustomerRegistration registry;
 
-    private final CustomerFinder finder;
+    private final CustomerFinder customerFinder;
 
     private final GroupCreator createGroup;
 
+    private final GroupFinder groupFinder;
+
     @Autowired
-    public CustomerCareController(CustomerRegistration registry, CustomerFinder finder, GroupCreator createGroup) {
+    public CustomerCareController(CustomerRegistration registry, CustomerFinder finder, GroupCreator createGroup, GroupFinder groupFinder) {
         this.registry = registry;
-        this.finder = finder;
+        this.customerFinder = finder;
         this.createGroup = createGroup;
+        this.groupFinder = groupFinder;
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -56,7 +61,7 @@ public class CustomerCareController {
         return new ErrorDTO("Cannot process Customer information", e.getMessage());
     }
 
-    @PostMapping(path = "/register", consumes = APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<CustomerDTO> register(@RequestBody @Valid CustomerDTO customerDTO) {
         // Note that there is no validation at all on the CustomerDto mapped
         try {
@@ -70,31 +75,40 @@ public class CustomerCareController {
 
     @GetMapping
     public ResponseEntity<List<CustomerDTO>> getCustomers() {
-        return ResponseEntity.ok(finder.findAll().stream().map(CustomerCareController::convertCustomerToDto).toList());
+        return ResponseEntity.ok(customerFinder.findAll().stream().map(CustomerCareController::convertCustomerToDto).toList());
     }
 
     @GetMapping(path = "/{customerId}")
     public ResponseEntity<CustomerDTO> getCustomer(@PathVariable("customerId") Long customerId) throws CustomerIdNotFoundException {
-        return ResponseEntity.ok(convertCustomerToDto(finder.retrieveCustomer(customerId)));
+        return ResponseEntity.ok(convertCustomerToDto(customerFinder.retrieveCustomer(customerId)));
     }
 
-    @PostMapping(path = "/{customerId}/group", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<GroupDTO> createGroup(@RequestBody @Valid GroupDTO groupDTO) {
-        // Retriever the leader
-        Customer leader = finder.findByName(groupDTO.leaderName()).get();
-
-        // Retrieve  members
-        Set<Customer> members = groupDTO.membersNames().stream()
-                .map(finder::findByName)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toSet());
+    @PostMapping(path = "/groups/{customerId}/group", consumes = APPLICATION_JSON_VALUE)
+    public ResponseEntity<GroupDTO> createGroup(@PathVariable("customerId") Long customerId, @RequestBody @Valid GroupDTO groupDTO) throws CustomerIdNotFoundException, AlreadyLeaderException, NotEnoughMembersException {
+        Customer leader = customerFinder.retrieveCustomer(customerId);
+        Set<Customer>  members = new HashSet<>();
+        for (CustomerDTO member : groupDTO.members()) {
+            members.add(customerFinder.retrieveCustomer(member.id()));
+        }
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(convertGroupToDto(createGroup.createGroup(leader, members)));
-        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(convertGroupToDto(createGroup.createGroup(leader, members)));
+        } catch (AlreadyLeaderException e) {
+            // Note: Returning 409 (Conflict) can also be seen a security/privacy vulnerability, exposing a service for account enumeration
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
+
+    @GetMapping(path = "/groups/{customerId}/group")
+    public ResponseEntity<GroupDTO> getGroup(@PathVariable("customerId") Long customerId) throws CustomerIdNotFoundException {
+        return ResponseEntity.ok(convertGroupToDto(groupFinder.retrieveGroup(customerId)));
+    }
+
+    @GetMapping(path = "/groups")
+    public ResponseEntity<Set<GroupDTO>> getGroups() {
+        return ResponseEntity.ok(groupFinder.findAll().stream().map(CustomerCareController::convertGroupToDto).collect(Collectors.toSet()));
+    }
+
 
     public static CustomerDTO convertCustomerToDto(Customer customer) { // In more complex cases, we could use a ModelMapper such as MapStruct
 
@@ -105,8 +119,8 @@ public class CustomerCareController {
         return new CardDTO(card.getId());
     }
 
-    private static GroupDTO convertGroupToDto(Group group) { // In more complex cases, we could use a ModelMapper such as MapStruct
-        return new GroupDTO(group.getId(), group.getLeader().getName(), group.getMembers().stream().map(Customer::getName).collect(Collectors.toSet()));
+    public static GroupDTO convertGroupToDto(Group group) { // In more complex cases, we could use a ModelMapper such as MapStruct
+        return new GroupDTO(group.getId(), CustomerCareController.convertCustomerToDto(group.getLeader()), group.getMembers().stream().map(CustomerCareController::convertCustomerToDto).collect(Collectors.toSet()));
     }
 }
 
