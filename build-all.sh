@@ -15,4 +15,6 @@ build_dir "cli"
 
 build_dir "bank"
 
+build_dir "scheduler"
+
 echo "** Done all"
