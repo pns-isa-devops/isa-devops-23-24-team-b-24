@@ -11,7 +11,7 @@ public class CartElementDTO {
     String date;
     GroupDTO group;
     String skiPassType;
-    int skiPassDuration;
+    int duration;
 
     public CartElementDTO() {
     }
@@ -33,11 +33,11 @@ public class CartElementDTO {
         this.group = group;
     }
 
-    public CartElementDTO(ReservationType type, ActivityDTO activity, String skiPassType, int skiPassDuration) {
+    public CartElementDTO(ReservationType type, ActivityDTO activity, String skiPassType, int duration) {
         this.type = type;
         this.activity = activity;
         this.skiPassType = skiPassType;
-        this.skiPassDuration = skiPassDuration;
+        this.duration = duration;
     }
 
     public Long getId() {
@@ -88,12 +88,12 @@ public class CartElementDTO {
         this.skiPassType = skiPassType;
     }
 
-    public int getSkiPassDuration() {
-        return skiPassDuration;
+    public int getDuration() {
+        return duration;
     }
 
-    public void setSkiPassDuration(int skiPassDuration) {
-        this.skiPassDuration = skiPassDuration;
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 
 
@@ -117,7 +117,7 @@ public class CartElementDTO {
             return "SkiPassReservationDTO{" +
                     base +
                     ", skiPassType=" + skiPassType +
-                    ", skiPassDuration=" + skiPassDuration +
+                    ", skiPassDuration=" + duration +
                     '}';
         } else {
             return base + '}';
@@ -128,7 +128,7 @@ public class CartElementDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof CartElementDTO that)) return false;
-        return type.equals(that.getType()) && activity.equals(that.getActivity()) && date.equals(that.getDate()) && group.equals(that.getGroup()) && skiPassType.equals(that.getSkiPassType()) && skiPassDuration == that.getSkiPassDuration();
+        return type.equals(that.getType()) && activity.equals(that.getActivity()) && date.equals(that.getDate()) && group.equals(that.getGroup()) && skiPassType.equals(that.getSkiPassType()) && duration == that.getDuration();
     }
 
     @Override
