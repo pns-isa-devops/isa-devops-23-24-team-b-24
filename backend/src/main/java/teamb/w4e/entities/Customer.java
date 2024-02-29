@@ -3,6 +3,8 @@ package teamb.w4e.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import teamb.w4e.entities.cart.Caddy;
+import teamb.w4e.entities.reservations.Reservation;
 
 import java.util.Objects;
 
@@ -22,7 +24,8 @@ public class Customer {
 
     private Caddy caddy = new Caddy();
 
-    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "card_id", referencedColumnName = "id")
     private Card card = new Card();
 
     public Customer() {
@@ -35,6 +38,10 @@ public class Customer {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {

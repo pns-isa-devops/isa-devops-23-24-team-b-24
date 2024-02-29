@@ -6,7 +6,7 @@ import java.util.Set;
 
 public record GroupDTO(
         Long id,
-        @NotBlank(message = "name should not be blank") String leaderName,
-        Set<@NotBlank(message = "name should not be blank") String> membersNames) {
+        CustomerDTO leader,
+        Set<CustomerDTO> members) {
 }
 

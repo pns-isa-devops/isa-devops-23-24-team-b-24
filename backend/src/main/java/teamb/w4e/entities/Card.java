@@ -3,6 +3,7 @@ package teamb.w4e.entities;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import teamb.w4e.entities.reservations.Reservation;
 
 import java.util.Set;
 
@@ -10,10 +11,10 @@ import java.util.Set;
 public class Card {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(mappedBy = "card")
     private Customer customer;
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -26,6 +27,14 @@ public class Card {
 
     public Long getId() {
         return id;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Customer getCustomer() {
+        return customer;
     }
 
     public void setReservations(Set<Reservation> reservations) {

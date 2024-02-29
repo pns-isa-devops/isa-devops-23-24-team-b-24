@@ -7,7 +7,8 @@ public class CliCustomer {
     private Long id;
     private String name;
     private String creditCard;
-    private Long cardId;
+    private boolean isLeader;
+    private CliCard card;
 
     public CliCustomer(String name, String creditCard) {
         this.name = name;
@@ -18,20 +19,39 @@ public class CliCustomer {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
     public String getCreditCard() {
         return creditCard;
     }
 
-    public Long getCardId() {
-        return cardId;
+    public void setCreditCard(String creditCard) {
+        this.creditCard = creditCard;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public boolean isLeader() {
+        return isLeader;
+    }
+
+    public void setLeader(boolean isLeader) {
+        this.isLeader = isLeader;
+    }
+
+    public CliCard getCard() {
+        return card;
+    }
+
+    public void setCard(CliCard card) {
+        this.card = card;
     }
 
     @Override
@@ -40,7 +60,7 @@ public class CliCustomer {
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", creditCard='" + creditCard + '\'' +
-                ", cardId='" + cardId + '\'' +
+                ", card='" + card + '\'' +
                 '}';
     }
 }

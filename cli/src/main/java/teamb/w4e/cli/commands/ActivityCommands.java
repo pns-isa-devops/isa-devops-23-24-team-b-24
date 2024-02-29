@@ -10,7 +10,6 @@ import org.springframework.web.client.RestTemplate;
 import teamb.w4e.cli.CliContext;
 import teamb.w4e.cli.model.CliActivity;
 import teamb.w4e.cli.model.CliAdvantage;
-import teamb.w4e.cli.model.CliCustomer;
 
 import java.util.*;
 import java.util.function.Function;
@@ -32,8 +31,8 @@ public class ActivityCommands {
         this.cliContext = cliContext;
     }
 
-    @ShellMethod("Create an activity (create-activity ACTIVITY_NAME ACTIVITY_DESCRIPTION [ADVANTAGE_NAME,ADVANTAGE_NAME,...])")
-    public CliActivity createActivity(String name, String description, @ShellOption(defaultValue = "") String advantageNames) {
+    @ShellMethod("Create an activity (create-activity ACTIVITY_NAME ACTIVITY_DESCRIPTION PRICE [ADVANTAGE_NAME,ADVANTAGE_NAME,...])")
+    public CliActivity createActivity(String name, String description, double price, @ShellOption(defaultValue = "") String advantageNames) {
         Set<CliAdvantage> advantagesSet = new HashSet<>();
         if (!advantageNames.isEmpty()) {
             String[] advantageNameArray = advantageNames.split(",");
@@ -44,7 +43,7 @@ public class ActivityCommands {
                 }
             }
         }
-        CliActivity newActivity = new CliActivity(name, description, advantagesSet);
+        CliActivity newActivity = new CliActivity(name, description, price, advantagesSet);
         CliActivity res = restTemplate.postForObject(BASE_URI, newActivity, CliActivity.class);
         cliContext.getActivities().put(Objects.requireNonNull(res).getName(), res);
         return res;

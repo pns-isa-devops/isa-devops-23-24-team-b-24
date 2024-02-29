@@ -31,7 +31,7 @@ public class CustomerCommands {
 
     @ShellMethod("Register a customer in the CoD backend (register CUSTOMER_NAME CREDIT_CARD_NUMBER)")
     public CliCustomer register(String name, String creditCard) {
-        CliCustomer res = restTemplate.postForObject(BASE_URI + "/register", new CliCustomer(name, creditCard), CliCustomer.class);
+        CliCustomer res = restTemplate.postForObject(BASE_URI, new CliCustomer(name, creditCard), CliCustomer.class);
         cliContext.getCustomers().put(Objects.requireNonNull(res).getName(), res);
         return res;
     }
