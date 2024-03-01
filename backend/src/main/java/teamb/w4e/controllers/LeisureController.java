@@ -19,6 +19,7 @@ import teamb.w4e.interfaces.AdvantageRegistration;
 import teamb.w4e.interfaces.leisure.ServiceFinder;
 import teamb.w4e.interfaces.leisure.ServiceRegistration;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -129,6 +130,14 @@ public class LeisureController {
     @GetMapping(path = "/services/{serviceId}")
     public ResponseEntity<LeisureDTO> getService(@PathVariable Long serviceId) throws IdNotFoundException {
         return ResponseEntity.ok(convertServiceToDto(serviceFinder.retrieveService(serviceId)));
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<LeisureDTO>> getAllLeisure() {
+        List<LeisureDTO> leisure = new ArrayList<>();
+        leisure.addAll(activityFinder.findAllActivities().stream().map(LeisureController::convertActivityToDto).toList());
+        leisure.addAll(serviceFinder.findAllServices().stream().map(LeisureController::convertServiceToDto).toList());
+        return ResponseEntity.ok(leisure);
     }
 
     private static AdvantageDTO convertAdvantageToDto(Advantage advantage) {
