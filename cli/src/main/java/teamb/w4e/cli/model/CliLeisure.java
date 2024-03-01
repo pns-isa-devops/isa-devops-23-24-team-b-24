@@ -1,19 +1,25 @@
 package teamb.w4e.cli.model;
 
-public class CliService {
+import java.util.Arrays;
+import java.util.Set;
+
+public class CliLeisure {
     private Long id;
     private String name;
     private String description;
-
     private double price;
+    private boolean isBooked; // activity (true) service (false)
+    private Set<CliAdvantage> advantages;
 
-    public CliService() {
+    public CliLeisure() {
     }
 
-    public CliService(String name, String description, double price) {
+    public CliLeisure(String name, String description, double price, boolean isBooked, Set<CliAdvantage> advantages) {
         this.name = name;
         this.description = description;
         this.price = price;
+        this.isBooked = isBooked;
+        this.advantages = advantages;
     }
 
     public Long getId() {
@@ -48,13 +54,31 @@ public class CliService {
         this.price = price;
     }
 
+    public boolean isBooked() {
+        return isBooked;
+    }
+
+    public void setBooked(boolean isBooked) {
+        this.isBooked = isBooked;
+    }
+
+    public Set<CliAdvantage> getAdvantages() {
+        return advantages;
+    }
+
+    public void setAdvantages(Set<CliAdvantage> advantages) {
+        this.advantages = advantages;
+    }
+
     @Override
     public String toString() {
-        return "Service{" +
-                "id=" + id +
+        String type = isBooked ? "Activity" : "Service";
+        return type + "{" +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
+                ", advantages=" + Arrays.toString(advantages.toArray()) +
                 '}';
     }
 }
