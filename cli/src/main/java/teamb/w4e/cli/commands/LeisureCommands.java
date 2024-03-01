@@ -34,11 +34,7 @@ public class LeisureCommands {
             String description,
             double price,
             @ShellOption(value = "-a", defaultValue = "false") boolean isActivity,
-            @ShellOption(value = "-s", defaultValue = "false") boolean isService,
-            @ShellOption(defaultValue = "") String advantageNames) {
-        if (!isActivity && !isService) {
-            throw new IllegalArgumentException("Leisure must be either an activity or a service");
-        }
+            @ShellOption(value = "--ad", defaultValue = "") String advantageNames) {
         Set<CliAdvantage> advantagesSet = new HashSet<>();
         if (!advantageNames.isEmpty()) {
             String[] advantageNameArray = advantageNames.split(",");
