@@ -4,12 +4,11 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import teamb.w4e.dto.ServiceDTO;
 import teamb.w4e.dto.TransactionDTO;
 import teamb.w4e.dto.cart.CartElementDTO;
 import teamb.w4e.dto.reservations.ReservationDTO;
-import teamb.w4e.entities.Activity;
-import teamb.w4e.entities.Service;
+import teamb.w4e.entities.catalog.Activity;
+import teamb.w4e.entities.catalog.Service;
 import teamb.w4e.entities.cart.GroupItem;
 import teamb.w4e.entities.cart.ServiceItem;
 import teamb.w4e.entities.cart.SkiPassItem;
@@ -52,17 +51,19 @@ public class CartController {
 
     @PostMapping(path = CART_URI, consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<CartElementDTO> updateCustomerCart(@PathVariable("customerId") Long customerId, @RequestBody @Valid CartElementDTO cartDTO) throws IdNotFoundException, NonValidDateForActivity, CustomerIdNotFoundException {
-       if(cartDTO.getType().equals(ReservationType.NONE)) {
-           Service service = serviceFinder.retrieveService(cartDTO.getActivity().id());
-           return ResponseEntity.ok(convertServiceElementToDTO(cart.serviceUpdate(customerId, service)));
-       } else {
-           Activity activity = activityFinder.retrieveActivity(cartDTO.getActivity().id());
-           if (cartDTO.getType().equals(ReservationType.TIME_SLOT))
-               return ResponseEntity.ok(convertTimeSlotElementToDTO(cart.timeSlotUpdate(customerId, activity, cartDTO.getDate())));
-           if (cartDTO.getType().equals(ReservationType.GROUP))
-               return ResponseEntity.ok(convertCartGroupElementToDTO(cart.groupUpdate(customerId, activity, groupFinder.retrieveGroup(customerId))));
-           return ResponseEntity.ok(convertSkiPassElementToDTO(cart.skiPassUpdate(customerId, activity, cartDTO.getSkiPassType(), cartDTO.getDuration())));
-       }
+        if (cartDTO.getType().equals(ReservationType.NONE)) {
+            Service service = serviceFinder.retrieveService(cartDTO.getActivity().id());
+            return ResponseEntity.ok(convertServiceElementToDTO(cart.serviceUpdate(customerId, service)));
+        } else {
+            Activity activity = activityFinder.retrieveActivity(cartDTO.getActivity().id());
+            if (cartDTO.getType().equals(ReservationType.TIME_SLOT))
+                return ResponseEntity.ok(convertTimeSlotElementToDTO(cart.timeSlotUpdate(customerId, activity, cartDTO.getDate())));
+            if (cartDTO.getType().equals(ReservationType.GROUP))
+                return ResponseEntity.ok(convertCartGroupElementToDTO(cart.groupUpdate(customerId, activity, groupFinder.retrieveGroup(customerId))));
+            if (cartDTO.getType().equals(ReservationType.SKI_PASS))
+                return ResponseEntity.ok(convertSkiPassElementToDTO(cart.skiPassUpdate(customerId, activity, cartDTO.getSkiPassType(), cartDTO.getDuration())));
+        }
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping(path = CART_URI)
@@ -90,8 +91,7 @@ public class CartController {
                     ResponseEntity.ok().body(ReservationController.convertReservationToDTO(processor.validateActivity(customerId, new GroupItem(activityFinder.retrieveActivity(cartElementDTO.getActivity().id()), groupFinder.retrieveGroup(customerId)))));
             case SKI_PASS ->
                     ResponseEntity.ok().body(ReservationController.convertReservationToDTO(processor.validateActivity(customerId, new SkiPassItem(activityFinder.retrieveActivity(cartElementDTO.getActivity().id()), cartElementDTO.getSkiPassType(), cartElementDTO.getDuration()))));
-            case NONE ->
-                ResponseEntity.noContent().build();
+            case NONE -> ResponseEntity.noContent().build();
         };
     }
 
@@ -107,17 +107,16 @@ public class CartController {
     }
 
 
-
-    private static CartElementDTO convertTimeSlotElementToDTO(TimeSlotItem item) {   // cast avait pas marcher [[ comment ça ?
+    private static CartElementDTO convertTimeSlotElementToDTO(TimeSlotItem item) {
         return new CartElementDTO(item.getType(), LeisureController.convertActivityToDto((Activity) item.getTruc()), item.getTimeSlot());
     }
 
     private static CartElementDTO convertCartGroupElementToDTO(GroupItem item) {
-        return new CartElementDTO(item.getType(), LeisureController.convertActivityToDto((Activity)item.getTruc()), CustomerCareController.convertGroupToDto(item.getGroup()));
+        return new CartElementDTO(item.getType(), LeisureController.convertActivityToDto((Activity) item.getTruc()), CustomerCareController.convertGroupToDto(item.getGroup()));
     }
 
     private static CartElementDTO convertSkiPassElementToDTO(SkiPassItem item) {
-        return new CartElementDTO(item.getType(), LeisureController.convertActivityToDto((Activity)item.getTruc()), item.getSkiPassType(), item.getDuration());
+        return new CartElementDTO(item.getType(), LeisureController.convertActivityToDto((Activity) item.getTruc()), item.getSkiPassType(), item.getDuration());
     }
 
     private static CartElementDTO convertServiceElementToDTO(ServiceItem item) {

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
-import teamb.w4e.entities.Activity;
+import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Group;
 import teamb.w4e.entities.reservations.*;
@@ -121,20 +121,27 @@ class ReservationRepositoryTest {
         );
         invalidDates.forEach(date -> {
             assertThrows(ConstraintViolationException.class, () -> {
-                reservationRepository.saveAndFlush(new TimeSlotReservation(activity, date));
+                reservationRepository.saveAndFlush(new TimeSlotReservation(activity, date, customer.getCard(), transaction));
             });
         });
     }
 
     @Test
     void testSkiPassTypePattern() {
+        List<String> validSkiPassTypes = Arrays.asList(
+                "day",
+                "half_day",
+                "hourly"
+        );
+        validSkiPassTypes.forEach(type -> {
+            Transaction transaction = new Transaction(customer, 123, "1234567890");
+            transactionRepository.saveAndFlush(transaction);
+            reservationRepository.saveAndFlush(new SkiPassReservation(activity, type, 7, customer.getCard(), transaction));
+        });
         List<String> invalidSkiPassTypes = Arrays.asList(
                 "dayy",
                 "half_dayy",
                 "hourlyy",
-                "day",
-                "half_day",
-                "hourly",
                 "day ",
                 " half_day",
                 "hourly ",
@@ -143,9 +150,12 @@ class ReservationRepositoryTest {
                 "00"
 
         );
-        invalidSkiPassTypes.forEach(skiPassType -> {
+        invalidSkiPassTypes.forEach(SPtype -> {
             assertThrows(ConstraintViolationException.class, () -> {
-                reservationRepository.saveAndFlush(new SkiPassReservation(activity, skiPassType, 7));
+                Transaction transaction = new Transaction(customer, 123, "1234567890");
+                transactionRepository.saveAndFlush(transaction);
+                reservationRepository.saveAndFlush(new SkiPassReservation(activity, SPtype, 7, customer.getCard(), transaction
+                ));
             });
         });
     }

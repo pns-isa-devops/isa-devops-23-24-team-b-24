@@ -1,4 +1,4 @@
-package teamb.w4e.entities;
+package teamb.w4e.entities.catalog;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -7,7 +7,7 @@ import java.util.Set;
 
 @Entity
 @DiscriminatorValue("SERVICE")
-public class Service extends Truc {
+public class Service extends Leisure {
 
     public Service() {
     }

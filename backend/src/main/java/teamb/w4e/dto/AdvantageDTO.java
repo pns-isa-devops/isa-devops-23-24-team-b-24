@@ -1,9 +1,8 @@
 package teamb.w4e.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
-import teamb.w4e.entities.AdvantageType;
+import teamb.w4e.entities.catalog.AdvantageType;
 
 public record AdvantageDTO(
         Long id,

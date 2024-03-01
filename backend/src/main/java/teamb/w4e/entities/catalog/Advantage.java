@@ -1,4 +1,4 @@
-package teamb.w4e.entities;
+package teamb.w4e.entities.catalog;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

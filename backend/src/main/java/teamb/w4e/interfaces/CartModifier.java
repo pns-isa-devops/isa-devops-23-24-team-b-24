@@ -1,12 +1,12 @@
 package teamb.w4e.interfaces;
 
-import teamb.w4e.entities.Activity;
+import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.Group;
 import teamb.w4e.entities.cart.*;
 import teamb.w4e.exceptions.CustomerIdNotFoundException;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.exceptions.NonValidDateForActivity;
-import teamb.w4e.entities.Service;
+import teamb.w4e.entities.catalog.Service;
 
 import java.util.Set;
 

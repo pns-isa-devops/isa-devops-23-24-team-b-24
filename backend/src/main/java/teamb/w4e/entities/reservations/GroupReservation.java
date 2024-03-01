@@ -6,6 +6,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import teamb.w4e.entities.*;
+import teamb.w4e.entities.catalog.Activity;
 
 @Entity
 @DiscriminatorValue("GROUP")

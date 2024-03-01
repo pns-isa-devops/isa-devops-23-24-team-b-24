@@ -1,7 +1,7 @@
 package teamb.w4e.interfaces;
 
-import teamb.w4e.entities.Advantage;
-import teamb.w4e.entities.AdvantageType;
+import teamb.w4e.entities.catalog.Advantage;
+import teamb.w4e.entities.catalog.AdvantageType;
 import teamb.w4e.exceptions.IdNotFoundException;
 
 import java.util.List;

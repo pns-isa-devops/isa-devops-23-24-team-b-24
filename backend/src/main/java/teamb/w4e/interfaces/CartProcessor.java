@@ -1,6 +1,5 @@
 package teamb.w4e.interfaces;
 
-import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Transaction;
 import teamb.w4e.entities.cart.Item;
 import teamb.w4e.entities.cart.ServiceItem;

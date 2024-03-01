@@ -6,19 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
-import teamb.w4e.entities.Activity;
+import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.cart.Item;
 import teamb.w4e.entities.cart.TimeSlotItem;
-import teamb.w4e.exceptions.CustomerIdNotFoundException;
-import teamb.w4e.exceptions.IdNotFoundException;
-import teamb.w4e.exceptions.NonValidDateForActivity;
 import teamb.w4e.interfaces.*;
 import teamb.w4e.repositories.catalog.ActivityCatalogRepository;
 import teamb.w4e.repositories.CustomerRepository;
 import java.util.HashSet;
 import java.util.Set;
-import static org.junit.jupiter.api.Assertions.*;
+
 import static org.mockito.Mockito.when;
 
 @SpringBootTest

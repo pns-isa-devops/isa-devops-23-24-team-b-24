@@ -3,9 +3,9 @@ package teamb.w4e.components;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import teamb.w4e.entities.Activity;
-import teamb.w4e.entities.Advantage;
-import teamb.w4e.entities.AdvantageType;
+import teamb.w4e.entities.catalog.Activity;
+import teamb.w4e.entities.catalog.Advantage;
+import teamb.w4e.entities.catalog.AdvantageType;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.interfaces.AdvantageFinder;
 import teamb.w4e.interfaces.AdvantageRegistration;
@@ -85,8 +85,8 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
 
     @Override
     @Transactional
-    public Activity register(String name, String description, double price, Set<Advantage> advantages) {
-        Activity newActivity = new Activity(name, description,price, advantages);
+    public Activity register(String name, String description, double price ,Set<Advantage> advantages) {
+        Activity newActivity = new Activity(name, description, price, advantages);
         return activityCatalogRepository.save(newActivity);
     }
 
@@ -96,7 +96,7 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
     }
 
     @Override
-    public Optional<Activity> findActivityById(Long id)  {
+    public Optional<Activity> findActivityById(Long id) {
         return activityCatalogRepository.findById(id);
     }
 
@@ -112,31 +112,31 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
     }
 
     @Override
-    public Optional<teamb.w4e.entities.Service> findServiceByName(String name) {
+    public Optional<teamb.w4e.entities.catalog.Service> findServiceByName(String name) {
         return serviceCatalogRepository.findServiceByName(name);
     }
 
     @Override
-    public Optional<teamb.w4e.entities.Service> findServiceById(Long id) {
+    public Optional<teamb.w4e.entities.catalog.Service> findServiceById(Long id) {
         return serviceCatalogRepository.findById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public teamb.w4e.entities.Service retrieveService(Long serviceId) throws IdNotFoundException {
+    public teamb.w4e.entities.catalog.Service retrieveService(Long serviceId) throws IdNotFoundException {
         return findServiceById(serviceId).orElseThrow(() -> new IdNotFoundException(serviceId));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<teamb.w4e.entities.Service> findAllServices() {
+    public List<teamb.w4e.entities.catalog.Service> findAllServices() {
         return serviceCatalogRepository.findAll();
     }
 
     @Override
     @Transactional
-    public teamb.w4e.entities.Service registerService(String name, String description, double price, Set<Advantage> advantages) {
-        teamb.w4e.entities.Service newService = new teamb.w4e.entities.Service(name, description, price, advantages);
+    public teamb.w4e.entities.catalog.Service registerService(String name, String description, double price, Set<Advantage> advantages) {
+        teamb.w4e.entities.catalog.Service newService = new teamb.w4e.entities.catalog.Service(name, description, price, advantages);
         return serviceCatalogRepository.save(newService);
     }
 }

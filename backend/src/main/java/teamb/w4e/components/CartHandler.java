@@ -3,7 +3,7 @@ package teamb.w4e.components;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import teamb.w4e.entities.Activity;
+import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Group;
 import teamb.w4e.entities.Transaction;
@@ -19,11 +19,8 @@ import java.util.Set;
 public class CartHandler implements CartProcessor, CartModifier {
 
     private final CustomerFinder customerFinder;
-
     private final Payment payment;
-
     private final Scheduler scheduler;
-
     private final SkiPass skiPass;
 
     @Autowired
@@ -72,7 +69,7 @@ public class CartHandler implements CartProcessor, CartModifier {
     }
 
     @Override
-    public SkiPassItem skiPassUpdate(Long customerId, Activity activity, String type, int duration) throws IdNotFoundException, CustomerIdNotFoundException {
+    public SkiPassItem skiPassUpdate(Long customerId, Activity activity, String type, int duration) throws CustomerIdNotFoundException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         Set<Item> items = customer.getCaddy().getActivities();
         Optional<SkiPassItem> existingItem = items.stream()
@@ -89,7 +86,7 @@ public class CartHandler implements CartProcessor, CartModifier {
     }
 
     @Override
-    public ServiceItem serviceUpdate(Long customerId, teamb.w4e.entities.Service service) throws CustomerIdNotFoundException {
+    public ServiceItem serviceUpdate(Long customerId, teamb.w4e.entities.catalog.Service service) throws CustomerIdNotFoundException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         Set<Item> items = customer.getCaddy().getActivities();
         Optional<ServiceItem> existingItem = items.stream()
@@ -155,7 +152,5 @@ public class CartHandler implements CartProcessor, CartModifier {
         Transaction transaction = payment.payServiceFromCart(customer, item);
         customer.getCaddy().getActivities().remove(item);
         return transaction;
-
-        //throw new PaymentException(customer.getName(), item.getTruc().getPrice());
     }
 }
