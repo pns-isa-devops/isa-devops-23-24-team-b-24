@@ -1,13 +1,13 @@
 package teamb.w4e.cli.model.cart;
 
-import teamb.w4e.cli.model.CliActivity;
 import teamb.w4e.cli.model.CliGroup;
+import teamb.w4e.cli.model.CliLeisure;
 import teamb.w4e.cli.model.ReservationType;
 
 public class CartElement {
     private Long id;
     private ReservationType type;
-    private CliActivity activity;
+    private CliLeisure leisure;
     private String date;
     private CliGroup group;
     private String skiPassType;
@@ -16,26 +16,26 @@ public class CartElement {
     protected CartElement() {
     }
 
-    protected CartElement(ReservationType type, CliActivity activity) {
+    public CartElement(ReservationType type, CliLeisure leisure) {
         this.type = type;
-        this.activity = activity;
+        this.leisure = leisure;
     }
 
-    public CartElement(ReservationType type, CliActivity activity, String date) {
+    public CartElement(ReservationType type, CliLeisure leisure, String date) {
         this.type = type;
-        this.activity = activity;
+        this.leisure = leisure;
         this.date = date;
     }
 
-    public CartElement(ReservationType type, CliActivity activity, CliGroup group) {
+    public CartElement(ReservationType type, CliLeisure leisure, CliGroup group) {
         this.type = type;
-        this.activity = activity;
+        this.leisure = leisure;
         this.group = group;
     }
 
-    public CartElement(ReservationType type, CliActivity activity, String skiPassType, int duration) {
+    public CartElement(ReservationType type, CliLeisure leisure, String skiPassType, int duration) {
         this.type = type;
-        this.activity = activity;
+        this.leisure = leisure;
         this.skiPassType = skiPassType;
         this.duration = duration;
     }
@@ -56,12 +56,12 @@ public class CartElement {
         this.type = type;
     }
 
-    public CliActivity getActivity() {
-        return activity;
+    public CliLeisure getLeisure() {
+        return leisure;
     }
 
-    public void setActivity(CliActivity activity) {
-        this.activity = activity;
+    public void setLeisure(CliLeisure leisure) {
+        this.leisure = leisure;
     }
 
     public String getDate() {
@@ -98,28 +98,30 @@ public class CartElement {
 
     @Override
     public String toString() {
-        String base = "id=" + id + '\'' +
-                "type=" + type + '\'' +
-                "activity=" + activity + '\'';
-        if (date != null) {
-            return "TimeSlotElement{" +
-                    base + '\'' +
-                    "date='" + date + '\'' +
-                    '}';
-        } else if (group != null) {
-            return "GroupElement{" +
-                    base + '\'' +
-                    "group=" + group + '\'' +
-                    '}';
-        } else if(skiPassType != null && duration != 0) {
-            return "SkiPassElement{" +
-                    base + '\'' +
-                    "skiPassType='" + skiPassType + '\'' +
+        String base = "id='" + id + '\'' +
+                ", type='" + type + '\'' +
+                ", leisure='" + leisure + '\'';
+        if (type.equals(ReservationType.SKI_PASS)) {
+            return "SkiElement{" +
+                    base +
+                    ", skiPassType='" + skiPassType + '\'' +
                     ", duration=" + duration +
                     '}';
+        } else if (type.equals(ReservationType.GROUP)) {
+            return "GroupElement{" +
+                    base +
+                    ", date='" + date + '\'' +
+                    ", group='" + group + '\'' +
+                    '}';
+        } else if (type.equals(ReservationType.TIME_SLOT)) {
+            return "TimeSlotReservationDTO{" +
+                    base +
+                    ", date='" + date + '\'' +
+                    '}';
+        } else {
+            return "ServiceElement{" +
+                    base +
+                    '}';
         }
-        return "CartElement{" +
-                base + '\'' +
-                '}';
     }
 }

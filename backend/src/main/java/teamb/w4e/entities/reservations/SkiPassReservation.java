@@ -4,15 +4,14 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
-import teamb.w4e.entities.Activity;
+import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.Card;
 import teamb.w4e.entities.Transaction;
-import teamb.w4e.entities.Truc;
 
 @Entity
 @DiscriminatorValue("SKI_PASS")
 public class SkiPassReservation extends Reservation {
-    @Pattern(regexp = "^(day|half_day|hourly)$", message = "Invalid ski pass type")
+    @Pattern(regexp = "^(day|hourly|half_day)", message = "Invalid ski pass type")
     private String skiPassType;
     @Positive
     private int duration;

@@ -3,12 +3,12 @@ package teamb.w4e.components;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import teamb.w4e.entities.Activity;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Transaction;
 import teamb.w4e.entities.cart.GroupItem;
 import teamb.w4e.entities.cart.SkiPassItem;
 import teamb.w4e.entities.cart.TimeSlotItem;
+import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.reservations.*;
 import teamb.w4e.interfaces.reservation.ReservationCreator;
 import teamb.w4e.interfaces.reservation.ReservationFinder;
@@ -42,7 +42,6 @@ public class Booker implements ReservationCreator, ReservationFinder {
     public List<GroupReservation> findGroupReservationByCard(Long cardId, ReservationType type) {
         return reservationRepository.findGroupReservationByCard(cardId, type);
     }
-
 
     @Override
     public GroupReservation createGroupReservation(Customer customer, GroupItem item, Transaction transaction) {

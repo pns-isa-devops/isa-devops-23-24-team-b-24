@@ -12,7 +12,7 @@ import teamb.w4e.connectors.externaldto.AvailabilityRequestDTO;
 import teamb.w4e.connectors.externaldto.AvailabilityReceiptDTO;
 import teamb.w4e.connectors.externaldto.BookedReceiptDTO;
 import teamb.w4e.connectors.externaldto.BookedRequestDTO;
-import teamb.w4e.entities.Activity;
+import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.interfaces.Scheduler;
 
 @Component

@@ -1,13 +1,18 @@
 package teamb.w4e.dto.cart;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotNull;
 import teamb.w4e.dto.GroupDTO;
-import teamb.w4e.dto.TrucDTO;
+import teamb.w4e.dto.LeisureDTO;
 import teamb.w4e.entities.reservations.ReservationType;
 
 public class CartElementDTO {
     Long id;
+    @Enumerated(EnumType.STRING)
     ReservationType type;
-    TrucDTO truc;
+   @NotNull
+   LeisureDTO truc;
     String date;
     GroupDTO group;
     String skiPassType;
@@ -16,24 +21,24 @@ public class CartElementDTO {
     public CartElementDTO() {
     }
 
-    public CartElementDTO(ReservationType type, TrucDTO truc) {
+    public CartElementDTO(ReservationType type, LeisureDTO truc) {
         this.type = type;
         this.truc = truc;
     }
 
-    public CartElementDTO(ReservationType type, TrucDTO truc, String date) {
+    public CartElementDTO(ReservationType type, LeisureDTO truc, String date) {
         this.type = type;
         this.truc = truc;
         this.date = date;
     }
 
-    public CartElementDTO(ReservationType type, TrucDTO activity, GroupDTO group) {
+    public CartElementDTO(ReservationType type, LeisureDTO activity, GroupDTO group) {
         this.type = type;
         this.truc = activity;
         this.group = group;
     }
 
-    public CartElementDTO(ReservationType type, TrucDTO activity, String skiPassType, int duration) {
+    public CartElementDTO(ReservationType type, LeisureDTO activity, String skiPassType, int duration) {
         this.type = type;
         this.truc = activity;
         this.skiPassType = skiPassType;
@@ -56,11 +61,11 @@ public class CartElementDTO {
         this.type = type;
     }
 
-    public TrucDTO getActivity() {
+    public LeisureDTO getActivity() {
         return truc;
     }
 
-    public void setActivity(TrucDTO activity) {
+    public void setActivity(LeisureDTO activity) {
         this.truc = activity;
     }
 

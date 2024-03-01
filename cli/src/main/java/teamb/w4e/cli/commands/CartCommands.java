@@ -7,8 +7,8 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import org.springframework.web.client.RestTemplate;
 import teamb.w4e.cli.CliContext;
-import teamb.w4e.cli.model.CliActivity;
 import teamb.w4e.cli.model.CliGroup;
+import teamb.w4e.cli.model.CliLeisure;
 import teamb.w4e.cli.model.CliReservation;
 import teamb.w4e.cli.model.ReservationType;
 import teamb.w4e.cli.model.cart.CartElement;
@@ -22,7 +22,7 @@ import static java.util.stream.Collectors.toSet;
 
 @ShellComponent
 public class CartCommands {
-    public static final String CATALOG_URI = "/catalog/activities";
+    public static final String CATALOG_URI = "/catalog";
     public static final String BASE_URI = "/customers";
 
     private final RestTemplate restTemplate;
@@ -35,48 +35,57 @@ public class CartCommands {
     }
 
 
-    @ShellMethod("Show cart content of customer (showcart CUSTOMER_NAME)")
+    @ShellMethod("Show cart content of customer (show-cart CUSTOMER_NAME)")
     public Set<CartElement> showCart(String name) {
         return Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(getUriForCustomer(name), CartElement[].class)
                 .getBody())).collect(toSet());
     }
 
     @ShellMethod("Add activity to cart of customer (add-to-cart CUSTOMER_NAME ACTIVITY_NAME)")
-    public CartElement addToCart(
+    public CartElement addActivityToCart(
             String customerName,
-            String activityName,
-            @ShellOption(value = "-g", defaultValue = "false") boolean groupActivity,
+            String leisureName,
+            @ShellOption(value = "-g", defaultValue = "false") boolean group,
             @ShellOption(value = "-t", defaultValue = "false") boolean timeSlot,
-            @ShellOption(value = "--day") String day,
-            @ShellOption(value = "--hour") String hour,
-            @ShellOption(value = "-s", defaultValue = "false") boolean skiPass,
-            @ShellOption(value = "--type") String skiPassType,
-            @ShellOption(value = "--duration", defaultValue ="0") int duration) {
-        if (groupActivity && timeSlot) {
-            throw new IllegalArgumentException("Options -g and -t cannot be combined.");
+            @ShellOption(value = "-p", defaultValue = "false") boolean skiPass,
+            @ShellOption(defaultValue = "") String day,
+            @ShellOption(defaultValue = "") String hour,
+            @ShellOption(defaultValue = "") String skiPassType,
+            @ShellOption(defaultValue = "0") int duration) {
+        if (group && timeSlot || group && skiPass || timeSlot && skiPass) {
+            throw new IllegalArgumentException("Options -g, -t and -p cannot be combined.");
         }
-        if (groupActivity) {
-            ResponseEntity<CliActivity> activityResponse = restTemplate.getForEntity(getUriForActivity(activityName), CliActivity.class);
+        if (group) {
+            ResponseEntity<CliLeisure> activityResponse = restTemplate.getForEntity(getUriForActivity(leisureName), CliLeisure.class);
             ResponseEntity<CliGroup> groupResponse = restTemplate.getForEntity(getUriForGroup(customerName), CliGroup.class);
-            return restTemplate.postForObject(getUriForCustomer(customerName), new CartElement(ReservationType.GROUP, Objects.requireNonNull(activityResponse.getBody()), groupResponse.getBody()), CartElement.class);
-
-        } else if (timeSlot) {
-            if (day.isEmpty() || hour.isEmpty()) {
-                throw new IllegalArgumentException("Option -h requires specifying both --day and --hour.");
-            }
-            ResponseEntity<CliActivity> activityResponse = restTemplate.getForEntity(getUriForActivity(activityName), CliActivity.class);
-            return restTemplate.postForObject(getUriForCustomer(customerName), new CartElement(ReservationType.TIME_SLOT, Objects.requireNonNull(activityResponse.getBody()), day + " " + hour), CartElement.class);
-
-        } else if (skiPass) {
-            if (skiPassType.isEmpty() || duration == 0) {
-                throw new IllegalArgumentException("Option -s requires specifying both --type and --duration.");
-            }
-            ResponseEntity<CliActivity> activityResponse = restTemplate.getForEntity(getUriForActivity(activityName), CliActivity.class);
-            CartElement cartElement = new CartElement(ReservationType.SKI_PASS, Objects.requireNonNull(activityResponse.getBody()), skiPassType, duration);
-            System.out.println(cartElement);
-            return restTemplate.postForObject(getUriForCustomer(customerName), cartElement, CartElement.class);
+            CartElement groupElement = new CartElement(ReservationType.GROUP, Objects.requireNonNull(activityResponse.getBody()), groupResponse.getBody());
+            return restTemplate.postForObject(getUriForCustomer(customerName), groupElement, CartElement.class);
         }
-        throw new IllegalArgumentException("Either -g or -t must be specified.");
+        if (timeSlot) {
+            if (day.isEmpty() || hour.isEmpty()) {
+                throw new IllegalArgumentException("Option -t requires specifying both day and hour.");
+            }
+            ResponseEntity<CliLeisure> activityResponse = restTemplate.getForEntity(getUriForActivity(leisureName), CliLeisure.class);
+            CartElement timeSlotElement = new CartElement(ReservationType.TIME_SLOT, Objects.requireNonNull(activityResponse.getBody()), day + " " + hour);
+            return restTemplate.postForObject(getUriForCustomer(customerName), timeSlotElement, CartElement.class);
+        }
+        if (skiPass) {
+            if (skiPassType.isEmpty() || duration == 0) {
+                throw new IllegalArgumentException("Option -p requires specifying both type and duration.");
+            }
+            ResponseEntity<CliLeisure> activityResponse = restTemplate.getForEntity(getUriForActivity(leisureName), CliLeisure.class);
+            CartElement skiPassElement = new CartElement(ReservationType.SKI_PASS, Objects.requireNonNull(activityResponse.getBody()), skiPassType, duration);
+            return restTemplate.postForObject(getUriForCustomer(customerName), skiPassElement, CartElement.class);
+        }
+        throw new IllegalArgumentException("Invalid combination of options.");
+    }
+
+
+    @ShellMethod("Add service to cart of customer (add-to-cart CUSTOMER_NAME LEISURE_NAME)")
+    public CartElement addServiceToCart(String customerName, String leisureName) {
+        ResponseEntity<CliLeisure> serviceResponse = restTemplate.getForEntity(getUriForService(leisureName), CliLeisure.class);
+        CartElement serviceElement = new CartElement(ReservationType.NONE, Objects.requireNonNull(serviceResponse.getBody()));
+        return restTemplate.postForObject(getUriForCustomer(customerName), serviceElement, CartElement.class);
     }
 
     @ShellMethod("Reserve an activity (reserve CUSTOMER_NAME)")
@@ -89,7 +98,11 @@ public class CartCommands {
     }
 
     private String getUriForActivity(String name) {
-        return CATALOG_URI + "/" + cliContext.getActivities().get(name).getId();
+        return CATALOG_URI + "/activities" + cliContext.getLeisure().get(name).getId();
+    }
+
+    private String getUriForService(String name) {
+        return CATALOG_URI + "/services" + cliContext.getLeisure().get(name).getId();
     }
 
     private String getUriForCustomer(String name) {

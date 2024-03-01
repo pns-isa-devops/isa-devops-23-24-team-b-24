@@ -1,7 +1,7 @@
 package teamb.w4e.interfaces.leisure;
 
-import teamb.w4e.entities.Activity;
-import teamb.w4e.entities.Advantage;
+import teamb.w4e.entities.catalog.Activity;
+import teamb.w4e.entities.catalog.Advantage;
 
 import java.util.Set;
 

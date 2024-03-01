@@ -1,14 +1,13 @@
 package teamb.w4e.dto.reservations;
 
-import teamb.w4e.dto.ActivityDTO;
 import teamb.w4e.dto.GroupDTO;
-import teamb.w4e.dto.TrucDTO;
+import teamb.w4e.dto.LeisureDTO;
 import teamb.w4e.entities.reservations.ReservationType;
 
 public class ReservationDTO {
     Long id;
     ReservationType type;
-    TrucDTO activity;
+    LeisureDTO activity;
     String date;
     GroupDTO group;
     String skiPassType;
@@ -17,27 +16,27 @@ public class ReservationDTO {
     public ReservationDTO() {
     }
 
-    public ReservationDTO(Long id, ReservationType type, TrucDTO activity) {
+    public ReservationDTO(Long id, ReservationType type, LeisureDTO activity) {
         this.id = id;
         this.type = type;
         this.activity = activity;
     }
 
-    public ReservationDTO(Long id, ReservationType type, TrucDTO activity, String date) {
+    public ReservationDTO(Long id, ReservationType type, LeisureDTO activity, String date) {
         this.id = id;
         this.type = type;
         this.activity = activity;
         this.date = date;
     }
 
-    public ReservationDTO(Long id, ReservationType type, TrucDTO activity, GroupDTO group) {
+    public ReservationDTO(Long id, ReservationType type, LeisureDTO activity, GroupDTO group) {
         this.id = id;
         this.type = type;
         this.activity = activity;
         this.group = group;
     }
 
-    public ReservationDTO(Long id, ReservationType type, TrucDTO activity, String skiPassType, int skiPassDuration) {
+    public ReservationDTO(Long id, ReservationType type, LeisureDTO activity, String skiPassType, int skiPassDuration) {
         this.id = id;
         this.type = type;
         this.activity = activity;
@@ -62,11 +61,11 @@ public class ReservationDTO {
         this.type = type;
     }
 
-    public TrucDTO getActivity() {
+    public LeisureDTO getActivity() {
         return activity;
     }
 
-    public void setActivity(TrucDTO activity) {
+    public void setActivity(LeisureDTO activity) {
         this.activity = activity;
     }
 

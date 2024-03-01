@@ -2,9 +2,7 @@ package teamb.w4e.entities.cart;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import teamb.w4e.entities.Activity;
-import teamb.w4e.entities.Truc;
-import teamb.w4e.entities.reservations.Reservation;
+import teamb.w4e.entities.catalog.Leisure;
 import teamb.w4e.entities.reservations.ReservationType;
 
 import java.util.Objects;
@@ -21,12 +19,12 @@ public abstract class Item {
 
     @NotNull
     @ManyToOne
-    private Truc truc;
+    private Leisure truc;
 
     protected Item() {
     }
 
-    protected Item(ReservationType type, Truc truc) {
+    protected Item(ReservationType type, Leisure truc) {
         this.type = type;
         this.truc = truc;
     }
@@ -47,11 +45,11 @@ public abstract class Item {
         this.type = type;
     }
 
-    public Truc getTruc() {
+    public Leisure getTruc() {
         return truc;
     }
 
-    public void setTruc(Truc truc) {
+    public void setTruc(Leisure truc) {
         this.truc = truc;
     }
 
