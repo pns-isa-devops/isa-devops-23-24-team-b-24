@@ -12,7 +12,7 @@ public class CartElementDTO {
     @Enumerated(EnumType.STRING)
     ReservationType type;
    @NotNull
-   LeisureDTO truc;
+   LeisureDTO leisure;
     String date;
     GroupDTO group;
     String skiPassType;
@@ -21,26 +21,26 @@ public class CartElementDTO {
     public CartElementDTO() {
     }
 
-    public CartElementDTO(ReservationType type, LeisureDTO truc) {
+    public CartElementDTO(ReservationType type, LeisureDTO leisure) {
         this.type = type;
-        this.truc = truc;
+        this.leisure = leisure;
     }
 
-    public CartElementDTO(ReservationType type, LeisureDTO truc, String date) {
+    public CartElementDTO(ReservationType type, LeisureDTO leisure, String date) {
         this.type = type;
-        this.truc = truc;
+        this.leisure = leisure;
         this.date = date;
     }
 
-    public CartElementDTO(ReservationType type, LeisureDTO activity, GroupDTO group) {
+    public CartElementDTO(ReservationType type, LeisureDTO leisure, GroupDTO group) {
         this.type = type;
-        this.truc = activity;
+        this.leisure = leisure;
         this.group = group;
     }
 
-    public CartElementDTO(ReservationType type, LeisureDTO activity, String skiPassType, int duration) {
+    public CartElementDTO(ReservationType type, LeisureDTO leisure, String skiPassType, int duration) {
         this.type = type;
-        this.truc = activity;
+        this.leisure = leisure;
         this.skiPassType = skiPassType;
         this.duration = duration;
     }
@@ -61,12 +61,12 @@ public class CartElementDTO {
         this.type = type;
     }
 
-    public LeisureDTO getActivity() {
-        return truc;
+    public LeisureDTO getLeisure() {
+        return leisure;
     }
 
-    public void setActivity(LeisureDTO activity) {
-        this.truc = activity;
+    public void setLeisure(LeisureDTO leisure) {
+        this.leisure = leisure;
     }
 
     public String getDate() {
@@ -104,28 +104,30 @@ public class CartElementDTO {
 
     @Override
     public String toString() {
-        String base = "CartElementDTO{" +
+        String base =
                 "id=" + id +
                 ", type=" + type +
-                ", activity=" + truc;
+                ", leisure=" + leisure;
         if (date != null) {
-            return "TimeSlotReservationDTO{" +
+            return "TimeSlotElementDTO{" +
                     base +
                     ", date='" + date + '\'' +
                     '}';
         } else if (group != null) {
-            return "GroupReservationDTO{" +
+            return "GroupElementDTO{" +
                     base +
                     ", group=" + group +
                     '}';
         } else if (skiPassType != null) {
-            return "SkiPassReservationDTO{" +
+            return "SkiPassElementDTO{" +
                     base +
                     ", skiPassType=" + skiPassType +
                     ", skiPassDuration=" + duration +
                     '}';
         } else {
-            return base + '}';
+            return "ServiceElementDTO{" +
+                    base +
+                    "}";
         }
     }
 
@@ -133,13 +135,13 @@ public class CartElementDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof CartElementDTO that)) return false;
-        return type.equals(that.getType()) && truc.equals(that.getActivity()) && date.equals(that.getDate()) && group.equals(that.getGroup()) && skiPassType.equals(that.getSkiPassType()) && duration == that.getDuration();
+        return type.equals(that.getType()) && leisure.equals(that.getLeisure()) && date.equals(that.getDate()) && group.equals(that.getGroup()) && skiPassType.equals(that.getSkiPassType()) && duration == that.getDuration();
     }
 
     @Override
     public int hashCode() {
         int result = type.hashCode();
-        result = 31 * result + truc.hashCode();
+        result = 31 * result + leisure.hashCode();
         return result;
     }
 

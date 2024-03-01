@@ -19,14 +19,14 @@ public abstract class Item {
 
     @NotNull
     @ManyToOne
-    private Leisure truc;
+    private Leisure leisure;
 
     protected Item() {
     }
 
-    protected Item(ReservationType type, Leisure truc) {
+    protected Item(ReservationType type, Leisure leisure) {
         this.type = type;
-        this.truc = truc;
+        this.leisure = leisure;
     }
 
     public void setId(Long id) {
@@ -45,19 +45,19 @@ public abstract class Item {
         this.type = type;
     }
 
-    public Leisure getTruc() {
-        return truc;
+    public Leisure getLeisure() {
+        return leisure;
     }
 
-    public void setTruc(Leisure truc) {
-        this.truc = truc;
+    public void setLeisure(Leisure leisure) {
+        this.leisure = leisure;
     }
 
     @Override
     public String toString() {
         return "Item{" +
                 "type=" + type +
-                "truc=" + truc +
+                "leisure=" + leisure +
                 '}';
     }
 
@@ -65,11 +65,11 @@ public abstract class Item {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Item item)) return false;
-        return Objects.equals(truc, item.getTruc()) && Objects.equals(type, item.getType());
+        return Objects.equals(leisure, item.getLeisure()) && Objects.equals(type, item.getType());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, truc);
+        return Objects.hash(type, leisure);
     }
 }

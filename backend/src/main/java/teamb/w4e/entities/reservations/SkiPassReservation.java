@@ -19,14 +19,14 @@ public class SkiPassReservation extends Reservation {
     public SkiPassReservation() {
     }
 
-    public SkiPassReservation(Activity truc, String skiPassType, int duration) {
-        super(ReservationType.SKI_PASS, truc);
+    public SkiPassReservation(Activity activity, String skiPassType, int duration) {
+        super(ReservationType.SKI_PASS, activity);
         this.skiPassType = skiPassType;
         this.duration = duration;
     }
 
-    public SkiPassReservation(Activity truc, String skiPassType, int duration, Card card, Transaction transaction) {
-        super(ReservationType.SKI_PASS, truc, card, transaction);
+    public SkiPassReservation(Activity activity, String skiPassType, int duration, Card card, Transaction transaction) {
+        super(ReservationType.SKI_PASS, activity, card, transaction);
         this.skiPassType = skiPassType;
         this.duration = duration;
     }
