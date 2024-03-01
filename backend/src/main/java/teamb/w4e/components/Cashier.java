@@ -33,11 +33,11 @@ public class Cashier implements Payment {
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
     public Reservation payReservationFromCart(Customer customer, Item item) throws NegativeAmountTransactionException, PaymentException {
-        if (item.getTruc().getPrice() < 0) {
-            throw new NegativeAmountTransactionException(item.getTruc().getPrice());
+        if (item.getLeisure().getPrice() < 0) {
+            throw new NegativeAmountTransactionException(item.getLeisure().getPrice());
         }
-        String payment = bank.pay(customer, item.getTruc().getPrice()).orElseThrow(() -> new PaymentException(customer.getName(), item.getTruc().getPrice()));
-        Transaction transaction = transactionCreator.createTransaction(customer, item.getTruc().getPrice(), payment);
+        String payment = bank.pay(customer, item.getLeisure().getPrice()).orElseThrow(() -> new PaymentException(customer.getName(), item.getLeisure().getPrice()));
+        Transaction transaction = transactionCreator.createTransaction(customer, item.getLeisure().getPrice(), payment);
         ReservationType itemType = item.getType();
         return switch (itemType) {
             case TIME_SLOT -> reservationCreator.createTimeSlotReservation(customer, (TimeSlotItem) item, transaction);
@@ -49,11 +49,11 @@ public class Cashier implements Payment {
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
     public Transaction payServiceFromCart(Customer customer, ServiceItem item) throws NegativeAmountTransactionException, PaymentException {
-        if (item.getTruc().getPrice() < 0) {
-            throw new NegativeAmountTransactionException(item.getTruc().getPrice());
+        if (item.getLeisure().getPrice() < 0) {
+            throw new NegativeAmountTransactionException(item.getLeisure().getPrice());
         }
-        String payment = bank.pay(customer, item.getTruc().getPrice()).orElseThrow(() -> new PaymentException(customer.getName(), item.getTruc().getPrice()));
-        return transactionCreator.createTransaction(customer, item.getTruc().getPrice(), payment);
+        String payment = bank.pay(customer, item.getLeisure().getPrice()).orElseThrow(() -> new PaymentException(customer.getName(), item.getLeisure().getPrice()));
+        return transactionCreator.createTransaction(customer, item.getLeisure().getPrice(), payment);
     }
 
 }

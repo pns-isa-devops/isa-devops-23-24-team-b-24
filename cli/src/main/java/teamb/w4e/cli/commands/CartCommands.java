@@ -48,10 +48,10 @@ public class CartCommands {
             @ShellOption(value = "-g", defaultValue = "false") boolean group,
             @ShellOption(value = "-t", defaultValue = "false") boolean timeSlot,
             @ShellOption(value = "-p", defaultValue = "false") boolean skiPass,
-            @ShellOption(defaultValue = "") String day,
-            @ShellOption(defaultValue = "") String hour,
-            @ShellOption(defaultValue = "") String skiPassType,
-            @ShellOption(defaultValue = "0") int duration) {
+            @ShellOption(value = "--day", defaultValue = "") String day,
+            @ShellOption(value = "--hour", defaultValue = "") String hour,
+            @ShellOption(value = "--ski", defaultValue = "") String skiPassType,
+            @ShellOption(value = "--duration", defaultValue = "0") int duration) {
         if (group && timeSlot || group && skiPass || timeSlot && skiPass) {
             throw new IllegalArgumentException("Options -g, -t and -p cannot be combined.");
         }
@@ -98,11 +98,11 @@ public class CartCommands {
     }
 
     private String getUriForActivity(String name) {
-        return CATALOG_URI + "/activities" + cliContext.getLeisure().get(name).getId();
+        return CATALOG_URI + "/activities/" + cliContext.getLeisure().get(name).getId();
     }
 
     private String getUriForService(String name) {
-        return CATALOG_URI + "/services" + cliContext.getLeisure().get(name).getId();
+        return CATALOG_URI + "/services/" + cliContext.getLeisure().get(name).getId();
     }
 
     private String getUriForCustomer(String name) {
