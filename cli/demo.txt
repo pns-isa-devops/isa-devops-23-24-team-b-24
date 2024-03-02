@@ -3,10 +3,10 @@ echo "SCENARIO: create reservation"
 register Emma 0110896983
 register John 0110896983
 advantages
-create-advantage free-juice COCKTAIL 2
-create-advantage cookies LOCAL_SPECIALITY 3
-create-activity Yoga relaxing 20 cookies
-create-activity Pilates hard 30 free-juice
+register-advantage free-juice COCKTAIL 2
+register-advantage cookies LOCAL_SPECIALITY 3
+register-leisure Yoga relaxing 20 cookies
+register-leisure Pilates hard 30 free-juice
 activities
 add-to-cart Emma Yoga -t --day 07-11 --hour 21:30
 add-to-cart Emma Pilates -t --day 07-11 --hour 21:30
