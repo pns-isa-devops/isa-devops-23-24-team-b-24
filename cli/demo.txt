@@ -9,13 +9,13 @@ register-advantage cookies LOCAL_SPECIALITY 3
 register-leisure Yoga relaxing 20 -a true --ad cookies
 register-leisure Pilates hard 30 -a true --ad free-juice
 activities
-add-activity-to-cart Emma Yoga -t true --day 07-11 --hour 21:30
+add-activity-to-cart Emma Yoga -t --day 07-11 --hour 21:30
 add-activity-to-cart Emma Pilates -t --day 07-11 --hour 21:30
-add-activity-to-cart Emma Pilates -s --type day --duration 7
 show-cart Emma
 create-group Emma --m John
 add-activity-to-cart Emma Yoga -g
 show-cart Emma
+echo "RESERVATION"
 reserve Emma
 show-reservation Emma
 show-transactions Emma
