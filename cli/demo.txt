@@ -17,6 +17,6 @@ add-activity-to-cart Emma Yoga -g
 show-cart Emma
 echo "RESERVATION"
 reserve Emma
-show-reservation Emma
+show-reservations Emma
 show-transactions Emma
 echo "END OF DEMO"
