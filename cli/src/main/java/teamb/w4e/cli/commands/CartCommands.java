@@ -41,7 +41,7 @@ public class CartCommands {
                 .getBody())).collect(toSet());
     }
 
-    @ShellMethod("Add activity to cart of customer (add-to-cart CUSTOMER_NAME ACTIVITY_NAME)")
+    @ShellMethod("Add activity to cart of customer (add-activity-to-cart CUSTOMER_NAME ACTIVITY_NAME)")
     public CartElement addActivityToCart(
             String customerName,
             String leisureName,
@@ -81,12 +81,13 @@ public class CartCommands {
     }
 
 
-    @ShellMethod("Add service to cart of customer (add-to-cart CUSTOMER_NAME LEISURE_NAME)")
+    @ShellMethod("Add service to cart of customer (add-service-to-cart CUSTOMER_NAME LEISURE_NAME)")
     public CartElement addServiceToCart(String customerName, String leisureName) {
         ResponseEntity<CliLeisure> serviceResponse = restTemplate.getForEntity(getUriForService(leisureName), CliLeisure.class);
         CartElement serviceElement = new CartElement(ReservationType.NONE, Objects.requireNonNull(serviceResponse.getBody()));
         return restTemplate.postForObject(getUriForCustomer(customerName), serviceElement, CartElement.class);
     }
+
 
     @ShellMethod("Reserve an activity (reserve CUSTOMER_NAME)")
     public Set<CliReservation> reserve(String customerName) {

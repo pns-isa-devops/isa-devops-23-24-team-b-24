@@ -2,18 +2,19 @@ echo "start of demo"
 echo "SCENARIO: create reservation"
 register Emma 0110896983
 register John 0110896983
+customers
 advantages
 register-advantage free-juice COCKTAIL 2
 register-advantage cookies LOCAL_SPECIALITY 3
-register-leisure Yoga relaxing 20 cookies
-register-leisure Pilates hard 30 free-juice
+register-leisure Yoga relaxing 20 -a true --ad cookies
+register-leisure Pilates hard 30 -a true --ad free-juice
 activities
-add-to-cart Emma Yoga -t --day 07-11 --hour 21:30
-add-to-cart Emma Pilates -t --day 07-11 --hour 21:30
-add-to-cart Emma Pilates -s --type day --duration 7
+add-activity-to-cart Emma Yoga -t true --day 07-11 --hour 21:30
+add-activity-to-cart Emma Pilates -t --day 07-11 --hour 21:30
+add-activity-to-cart Emma Pilates -s --type day --duration 7
 show-cart Emma
 create-group Emma --m John
-add-to-cart Emma Yoga -g
+add-activity-to-cart Emma Yoga -g
 show-cart Emma
 reserve Emma
 show-reservation Emma
