@@ -7,10 +7,7 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import org.springframework.web.client.RestTemplate;
 import teamb.w4e.cli.CliContext;
-import teamb.w4e.cli.model.CliGroup;
-import teamb.w4e.cli.model.CliLeisure;
-import teamb.w4e.cli.model.CliReservation;
-import teamb.w4e.cli.model.ReservationType;
+import teamb.w4e.cli.model.*;
 import teamb.w4e.cli.model.cart.CartElement;
 
 import java.util.Arrays;
@@ -96,6 +93,19 @@ public class CartCommands {
             reservations.add(restTemplate.postForObject(getUriForCustomer(customerName) + "/reservation", element, CliReservation.class));
         }
         return reservations;
+    }
+
+    @ShellMethod("Use a service (use-service CUSTOMER_NAME SERVICE_NAME)")
+    public CliTransaction useService(String customerName, String serviceName) {
+        if (showCart(customerName).isEmpty()) {
+            throw new IllegalArgumentException("Cart is empty.");
+        }
+        if (showCart(customerName).stream().noneMatch(element -> element.getLeisure().getName().equals(serviceName))) {
+            throw new IllegalArgumentException("Service not found in cart.");
+        }
+        return restTemplate.postForObject(getUriForCustomer(customerName) + "/use-service", showCart(customerName).stream()
+                .filter(element -> element.getLeisure().getName().equals(serviceName))
+                .findFirst().orElseThrow(), CliTransaction.class);
     }
 
     private String getUriForActivity(String name) {

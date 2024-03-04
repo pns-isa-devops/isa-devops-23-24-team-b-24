@@ -11,3 +11,6 @@ services
 add-service-to-cart Emma KinderGarden
 show-cart Emma
 echo "CHECKOUT"
+use-service Emma KinderGarden
+show-cart Emma
+show-transactions Emma
