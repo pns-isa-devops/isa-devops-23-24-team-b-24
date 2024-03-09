@@ -6,8 +6,8 @@ import { randomUUID } from 'crypto';
 
 @Injectable()
 export class AppService {
-  private static readonly magicKey: string = '896983'; // TODO : change
-
+  private static readonly magicKeyActivity: string = 'ski'; // TODO : change if needed
+    private static readonly magicKeyDuration: number = 3; // TODO : change if needed
   private skiReservations: Array<ReservationReceiptDto>;
 
   constructor() {

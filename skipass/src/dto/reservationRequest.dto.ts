@@ -1,15 +1,15 @@
 import { IsNotEmpty, IsPositive, IsString } from 'class-validator';
 
 export class ReservationRequestDto {
-    @IsNotEmpty()
-    @IsString()
-    name: string;
+  @IsNotEmpty()
+  @IsString()
+  name: string;
 
-    @IsNotEmpty()
-    @IsString()
-    activity: string;
+  @IsNotEmpty()
+  @IsString()
+  activity: string;
 
-    @IsNotEmpty()
-    @IsPositive()
-    duration: number;
+  @IsNotEmpty()
+  @IsPositive()
+  duration: number;
 }
