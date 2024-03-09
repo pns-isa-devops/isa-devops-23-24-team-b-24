@@ -17,4 +17,6 @@ build_dir "bank"
 
 build_dir "scheduler"
 
+build_dir "skipass"
+
 echo "** Done all"
