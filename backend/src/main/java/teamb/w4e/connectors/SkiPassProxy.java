@@ -48,7 +48,7 @@ public class SkiPassProxy implements SkiPass {
 //    }
 
     @Override
-    public Optional<String> reserve(String name, String activity) {
+    public Optional<String> reserve(String name, String activity, Long duration) {
         return Optional.of("1234");
     }
 }

@@ -1,26 +1,25 @@
 import { Injectable } from '@nestjs/common';
 
-import { PaymentRequestDto } from './dto/paymentRequest.dto';
-import { PaymentReceiptDto } from './dto/paymentReceipt.dto';
-import { PaymentRejectedException } from './exceptions/payment-rejected-exception';
+import { ReservationRequestDto } from './dto/reservationRequest.dto';
+import { ReservationReceiptDto } from './dto/reservationReceipt.dto';
 import { randomUUID } from 'crypto';
 
 @Injectable()
 export class AppService {
-  private static readonly magicKey: string = '896983'; // ASCII code for 'YES'
+  private static readonly magicKey: string = '896983'; // TODO : change
 
-  private transactions: Array<PaymentReceiptDto>;
+  private skiReservations: Array<ReservationReceiptDto>;
 
   constructor() {
-    this.transactions = [];
+    this.skiReservations = [];
   }
 
-  findAll(): PaymentReceiptDto[] {
-    return this.transactions;
+  findAll(): ReservationReceiptDto[] {
+    return this.skiReservations;
   }
 
-  pay(paymentRequestDto: PaymentRequestDto): PaymentReceiptDto {
-    let paymentReceiptDto: PaymentReceiptDto;
+  reserve(reservationRequestDto: ReservationRequestDto): ReservationReceiptDto {
+    let reservationReceiptDto: ReservationReceiptDto;
     if (paymentRequestDto.creditCard.includes(AppService.magicKey)) {
       paymentReceiptDto = new PaymentReceiptDto(
         'RECEIPT:' + randomUUID(),
