@@ -42,6 +42,11 @@ public class Booker implements ReservationCreator, ReservationFinder {
         return reservationRepository.findGroupReservationByCard(cardId, type);
     }
 
+    @Override
+    public List<SkiPassReservation> findSkiPassReservationByCard(Long cardId, ReservationType type) {
+        return reservationRepository.findSkiPassReservationByCard(cardId, type);
+    }
+
 
     @Override
     public GroupReservation createGroupReservation(Customer customer, GroupItem item, Transaction transaction) {
