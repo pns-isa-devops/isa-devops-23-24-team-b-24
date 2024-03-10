@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.Customer;
+import teamb.w4e.entities.PointTransaction;
 import teamb.w4e.entities.Transaction;
 import teamb.w4e.entities.cart.GroupItem;
 import teamb.w4e.entities.cart.Item;
@@ -40,6 +41,8 @@ public class Cashier implements Payment {
         }
         String payment = bank.pay(customer, item.getActivity().getPrice()).orElseThrow(() -> new PaymentException(customer.getName(), item.getActivity().getPrice()));
         Transaction transaction = transactionCreator.createTransaction(customer, item.getActivity().getPrice(), payment);
+        // TODO: better way of translating price to points and provide an actual issuer. Also, see if returned object is useful somehow.
+        PointTransaction pointTransaction = transactionCreator.createPointTransaction(customer, ((int) item.getActivity().getPrice()) * 100, null);
         if (item.getType().equals(ReservationType.TIME_SLOT)) {
 
 

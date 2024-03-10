@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.Customer;
+import teamb.w4e.entities.PointTransaction;
 import teamb.w4e.interfaces.TransactionCreator;
 import teamb.w4e.interfaces.TransactionFinder;
 import teamb.w4e.repositories.CustomerRepository;
+import teamb.w4e.repositories.PointTransactionRepository;
 import teamb.w4e.repositories.TransactionRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,6 +31,9 @@ class TransactionRegistryTest {
 
     @Autowired
     private TransactionRepository transactionRepository;
+
+    @Autowired
+    private PointTransactionRepository pointTransactionRepository;
 
     private final String payReceiptId = "123456789";
     private final double amount = 100.0;
@@ -83,5 +88,19 @@ class TransactionRegistryTest {
         // delete all transactions
         transactionRepository.deleteAll(transactionFinder.findTransactionsByCustomer(customer.getId()));
         assertNull(transactionFinder.findTransactionByCustomer(customer.getId()).orElse(null));
+    }
+
+    // Same tests as above, but for PointTransactions
+    @Test
+    void findPointTransactionsByCustomer() {
+        Customer customer = new Customer("John", "1234567890");
+        customerRepository.save(customer);
+        transactionCreator.createPointTransaction(customer, (int) amount, null);
+        transactionCreator.createPointTransaction(customer, (int) amount2, null);
+        assertFalse(transactionFinder.findPointTransactionsByCustomer(customer.getId()).isEmpty());
+        assertEquals(2, transactionFinder.findPointTransactionsByCustomer(customer.getId()).size());
+        // delete all transactions
+        pointTransactionRepository.deleteAll(transactionFinder.findPointTransactionsByCustomer(customer.getId()));
+        assertNull(transactionFinder.findPointTransactionByCustomer(customer.getId()).orElse(null));
     }
 }
