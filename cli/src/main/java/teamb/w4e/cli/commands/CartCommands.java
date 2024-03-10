@@ -73,7 +73,6 @@ public class CartCommands {
             }
             ResponseEntity<CliActivity> activityResponse = restTemplate.getForEntity(getUriForActivity(activityName), CliActivity.class);
             CartElement cartElement = new CartElement(ReservationType.SKI_PASS, Objects.requireNonNull(activityResponse.getBody()), skiPassType, duration);
-            System.out.println(cartElement);
             return restTemplate.postForObject(getUriForCustomer(customerName), cartElement, CartElement.class);
         }
         throw new IllegalArgumentException("Either -g or -t must be specified.");
