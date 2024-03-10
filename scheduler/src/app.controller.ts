@@ -32,12 +32,12 @@ export class AppController {
       );
     }
   }
-  @Get()
+  @Get('/ccbooked')
   getAllBooked(): BookedReceiptDto[] {
     return this.appService.findAllBooked();
   }
 
-  @Post()
+  @Post('/ccbooked')
   book(@Body() bookedRequestDto: BookedRequestDto): BookedReceiptDto {
     try {
       return this.appService.bookDate(bookedRequestDto);

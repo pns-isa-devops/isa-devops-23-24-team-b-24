@@ -4,13 +4,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import teamb.w4e.entities.Activity;
-import teamb.w4e.entities.Advantage;
-import teamb.w4e.entities.AdvantageType;
-import teamb.w4e.interfaces.leisure.ActivityFinder;
-import teamb.w4e.interfaces.leisure.ActivityRegistration;
+import teamb.w4e.entities.catalog.Activity;
+import teamb.w4e.entities.catalog.Advantage;
+import teamb.w4e.entities.catalog.AdvantageType;
 import teamb.w4e.interfaces.AdvantageFinder;
 import teamb.w4e.interfaces.AdvantageRegistration;
+import teamb.w4e.interfaces.leisure.ActivityFinder;
+import teamb.w4e.interfaces.leisure.ActivityRegistration;
 
 import java.util.Collections;
 import java.util.Optional;

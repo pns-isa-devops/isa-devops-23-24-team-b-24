@@ -27,8 +27,8 @@ public class ReservationCommands {
     }
 
 
-    @ShellMethod("Show the reservations of customer (show-reservation CUSTOMER_NAME)")
-    public Set<CliReservation> showReservation(String name) {
+    @ShellMethod("Show the reservations of customer (show-reservations CUSTOMER_NAME)")
+    public Set<CliReservation> showReservations(String name) {
         return Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(getUriForCustomer(name), CliReservation[].class)
                 .getBody())).collect(toSet());
     }

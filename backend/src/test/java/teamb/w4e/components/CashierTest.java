@@ -1,19 +1,22 @@
 package teamb.w4e.components;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
-import teamb.w4e.entities.*;
+import teamb.w4e.entities.Customer;
+import teamb.w4e.entities.Transaction;
 import teamb.w4e.entities.cart.Item;
 import teamb.w4e.entities.cart.TimeSlotItem;
+import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.exceptions.NegativeAmountTransactionException;
 import teamb.w4e.interfaces.Bank;
 import teamb.w4e.interfaces.Payment;
-import teamb.w4e.repositories.catalog.ActivityCatalogRepository;
 import teamb.w4e.repositories.CustomerRepository;
 import teamb.w4e.repositories.TransactionRepository;
+import teamb.w4e.repositories.catalog.ActivityCatalogRepository;
 
 import java.util.Optional;
 import java.util.Set;

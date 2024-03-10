@@ -10,24 +10,24 @@ import java.util.Set;
 @Embeddable
 public class Caddy {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<Item> activities;
+    private Set<Item> leisure;
 
-    public Set<Item> getActivities() {
-        return activities;
+    public Set<Item> getLeisure() {
+        return leisure;
     }
 
-    public void setActivities(Set<Item> activities) {
-        this.activities = activities;
+    public void setLeisure(Set<Item> leisure) {
+        this.leisure = leisure;
     }
 
     public void clear() {
-        this.activities.clear();
+        this.leisure.clear();
     }
 
     @Override
     public String toString() {
         return "Caddy{" +
-                ", activities=" + activities +
+                ", leisure=" + leisure +
                 '}';
     }
 
@@ -35,6 +35,6 @@ public class Caddy {
     }
 
     public Caddy(Set<Item> activities) {
-        this.activities = activities;
+        this.leisure = activities;
     }
 }

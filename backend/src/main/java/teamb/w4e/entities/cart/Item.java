@@ -2,15 +2,13 @@ package teamb.w4e.entities.cart;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import teamb.w4e.entities.Activity;
-import teamb.w4e.entities.reservations.Reservation;
+import teamb.w4e.entities.catalog.Leisure;
 import teamb.w4e.entities.reservations.ReservationType;
 
 import java.util.Objects;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "item_type", discriminatorType = DiscriminatorType.STRING)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Item {
     @Id
     @GeneratedValue
@@ -21,14 +19,14 @@ public abstract class Item {
 
     @NotNull
     @ManyToOne
-    private Activity activity;
+    private Leisure leisure;
 
     protected Item() {
     }
 
-    protected Item(ReservationType type, Activity activity) {
+    protected Item(ReservationType type, Leisure leisure) {
         this.type = type;
-        this.activity = activity;
+        this.leisure = leisure;
     }
 
     public void setId(Long id) {
@@ -47,19 +45,19 @@ public abstract class Item {
         this.type = type;
     }
 
-    public Activity getActivity() {
-        return activity;
+    public Leisure getLeisure() {
+        return leisure;
     }
 
-    public void setActivity(Activity activity) {
-        this.activity = activity;
+    public void setLeisure(Leisure leisure) {
+        this.leisure = leisure;
     }
 
     @Override
     public String toString() {
         return "Item{" +
                 "type=" + type +
-                "activity=" + activity +
+                "leisure=" + leisure +
                 '}';
     }
 
@@ -67,11 +65,11 @@ public abstract class Item {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Item item)) return false;
-        return Objects.equals(activity, item.getActivity()) && Objects.equals(type, item.getType());
+        return Objects.equals(leisure, item.getLeisure()) && Objects.equals(type, item.getType());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, activity);
+        return Objects.hash(type, leisure);
     }
 }

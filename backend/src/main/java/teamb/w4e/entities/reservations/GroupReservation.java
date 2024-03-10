@@ -4,11 +4,14 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotNull;
 import teamb.w4e.entities.*;
+import teamb.w4e.entities.catalog.Activity;
 
 @Entity
 @DiscriminatorValue("GROUP")
 public class GroupReservation extends Reservation {
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "group_id", referencedColumnName = "id")
     private Group group;

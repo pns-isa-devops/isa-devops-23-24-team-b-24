@@ -1,36 +1,48 @@
 package teamb.w4e.dto.cart;
 
-import teamb.w4e.dto.ActivityDTO;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotNull;
 import teamb.w4e.dto.GroupDTO;
+import teamb.w4e.dto.LeisureDTO;
 import teamb.w4e.entities.reservations.ReservationType;
 
 public class CartElementDTO {
     Long id;
+    @Enumerated(EnumType.STRING)
     ReservationType type;
-    ActivityDTO activity;
-
+   @NotNull
+   LeisureDTO leisure;
     String date;
-
     GroupDTO group;
+    String skiPassType;
+    int duration;
 
     public CartElementDTO() {
     }
 
-    public CartElementDTO(ReservationType type, ActivityDTO activity) {
+    public CartElementDTO(ReservationType type, LeisureDTO leisure) {
         this.type = type;
-        this.activity = activity;
+        this.leisure = leisure;
     }
 
-    public CartElementDTO(ReservationType type, ActivityDTO activity, String date) {
+    public CartElementDTO(ReservationType type, LeisureDTO leisure, String date) {
         this.type = type;
-        this.activity = activity;
+        this.leisure = leisure;
         this.date = date;
     }
 
-    public CartElementDTO(ReservationType type, ActivityDTO activity, GroupDTO group) {
+    public CartElementDTO(ReservationType type, LeisureDTO leisure, GroupDTO group) {
         this.type = type;
-        this.activity = activity;
+        this.leisure = leisure;
         this.group = group;
+    }
+
+    public CartElementDTO(ReservationType type, LeisureDTO leisure, String skiPassType, int duration) {
+        this.type = type;
+        this.leisure = leisure;
+        this.skiPassType = skiPassType;
+        this.duration = duration;
     }
 
     public Long getId() {
@@ -49,12 +61,12 @@ public class CartElementDTO {
         this.type = type;
     }
 
-    public ActivityDTO getActivity() {
-        return activity;
+    public LeisureDTO getLeisure() {
+        return leisure;
     }
 
-    public void setActivity(ActivityDTO activity) {
-        this.activity = activity;
+    public void setLeisure(LeisureDTO leisure) {
+        this.leisure = leisure;
     }
 
     public String getDate() {
@@ -73,25 +85,48 @@ public class CartElementDTO {
         this.group = group;
     }
 
+    public String getSkiPassType() {
+        return skiPassType;
+    }
+
+    public void setSkiPassType(String skiPassType) {
+        this.skiPassType = skiPassType;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
 
     @Override
     public String toString() {
+        String base =
+                "id=" + id +
+                ", type=" + type +
+                ", leisure=" + leisure;
         if (date != null) {
-            return "CartElementDTO{" + '\'' +
-                    "type=" + type + '\'' +
-                    ", activity=" + activity + '\'' +
-                    ", date=" + date + '\'' +
-                    "}";
+            return "TimeSlotElementDTO{" +
+                    base +
+                    ", date='" + date + '\'' +
+                    '}';
         } else if (group != null) {
-            return "CartElementDTO{" + '\'' +
-                    "type=" + type + '\'' +
-                    ", activity=" + activity + '\'' +
-                    ", group=" + group + '\'' +
-                    "}";
+            return "GroupElementDTO{" +
+                    base +
+                    ", group=" + group +
+                    '}';
+        } else if (skiPassType != null) {
+            return "SkiPassElementDTO{" +
+                    base +
+                    ", skiPassType=" + skiPassType +
+                    ", skiPassDuration=" + duration +
+                    '}';
         } else {
-            return "CartElementDTO{" + '\'' +
-                    "type=" + type + '\'' +
-                    ", activity=" + activity + '\'' +
+            return "ServiceElementDTO{" +
+                    base +
                     "}";
         }
     }
@@ -100,13 +135,13 @@ public class CartElementDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof CartElementDTO that)) return false;
-        return type.equals(that.getType()) && activity.equals(that.getActivity());
+        return type.equals(that.getType()) && leisure.equals(that.getLeisure()) && date.equals(that.getDate()) && group.equals(that.getGroup()) && skiPassType.equals(that.getSkiPassType()) && duration == that.getDuration();
     }
 
     @Override
     public int hashCode() {
         int result = type.hashCode();
-        result = 31 * result + activity.hashCode();
+        result = 31 * result + leisure.hashCode();
         return result;
     }
 

@@ -5,14 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import teamb.w4e.dto.cart.CartElementDTO;
 import teamb.w4e.dto.reservations.ReservationDTO;
-import teamb.w4e.entities.cart.GroupItem;
-import teamb.w4e.entities.cart.TimeSlotItem;
-import teamb.w4e.entities.reservations.GroupReservation;
-import teamb.w4e.entities.reservations.Reservation;
-import teamb.w4e.entities.reservations.ReservationType;
-import teamb.w4e.entities.reservations.TimeSlotReservation;
+import teamb.w4e.entities.reservations.*;
 import teamb.w4e.interfaces.reservation.ReservationFinder;
 
 import java.util.HashSet;
@@ -40,20 +34,24 @@ public class ReservationController {
     public ResponseEntity<Set<ReservationDTO>> getCustomerReservations(@PathVariable("customerId") Long customerId) {
         Set<TimeSlotReservation> timeSlotReservations = new HashSet<>(reservationFinder.findTimeSlotReservationByCard(customerId, ReservationType.TIME_SLOT));
         Set<GroupReservation> groupReservations = new HashSet<>(reservationFinder.findGroupReservationByCard(customerId, ReservationType.GROUP));
+        Set<SkiPassReservation> skiPassReservations = new HashSet<>(reservationFinder.findSkiPassReservationByCard(customerId, ReservationType.SKI_PASS));
         Set<ReservationDTO> reservations = new HashSet<>();
         reservations.addAll(timeSlotReservations.stream().map(ReservationController::convertTimeSlotReservationToDTO).collect(Collectors.toSet()));
         reservations.addAll(groupReservations.stream().map(ReservationController::convertGroupReservationToDTO).collect(Collectors.toSet()));
+        reservations.addAll(skiPassReservations.stream().map(ReservationController::convertSkiPassReservationToDTO).collect(Collectors.toSet()));
         return ResponseEntity.ok(reservations);
     }
 
     public static ReservationDTO convertReservationToDTO(Reservation reservation) {
-        if (reservation.getType().equals(ReservationType.TIME_SLOT)) {
-            TimeSlotReservation timeSlotReservation = (TimeSlotReservation) reservation;
-            return convertTimeSlotReservationToDTO(timeSlotReservation);
+        ReservationType type = reservation.getType();
+        if (type.equals(ReservationType.TIME_SLOT)) {
+            return convertTimeSlotReservationToDTO((TimeSlotReservation) reservation);
+        } else if (type.equals(ReservationType.GROUP)) {
+            return convertGroupReservationToDTO((GroupReservation) reservation);
         }
-        GroupReservation groupReservation = (GroupReservation) reservation;
-        return convertGroupReservationToDTO(groupReservation);
+        return convertSkiPassReservationToDTO((SkiPassReservation) reservation);
     }
+
     private static ReservationDTO convertTimeSlotReservationToDTO(TimeSlotReservation reservation) {
         return new ReservationDTO(reservation.getId(), reservation.getType(), LeisureController.convertActivityToDto(reservation.getActivity()), reservation.getTimeSlot());
     }
@@ -61,5 +59,11 @@ public class ReservationController {
     private static ReservationDTO convertGroupReservationToDTO(GroupReservation reservation) {
         return new ReservationDTO(reservation.getId(), reservation.getType(), LeisureController.convertActivityToDto(reservation.getActivity()), CustomerCareController.convertGroupToDto(reservation.getGroup()));
     }
+
+    private static ReservationDTO convertSkiPassReservationToDTO(SkiPassReservation reservation) {
+        return new ReservationDTO(reservation.getId(), reservation.getType(), LeisureController.convertActivityToDto(reservation.getActivity()), reservation.getSkiPassType(), reservation.getDuration());
+    }
+
+
 }
 

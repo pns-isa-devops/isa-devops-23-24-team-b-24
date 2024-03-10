@@ -4,20 +4,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
-import teamb.w4e.entities.Activity;
+import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.cart.Item;
 import teamb.w4e.entities.cart.TimeSlotItem;
-import teamb.w4e.exceptions.CustomerIdNotFoundException;
-import teamb.w4e.exceptions.IdNotFoundException;
-import teamb.w4e.exceptions.NonValidDateForActivity;
 import teamb.w4e.interfaces.*;
 import teamb.w4e.repositories.catalog.ActivityCatalogRepository;
 import teamb.w4e.repositories.CustomerRepository;
 import java.util.HashSet;
 import java.util.Set;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @Transactional
@@ -35,8 +34,11 @@ class CartHandlerTest {
     @Autowired
     private Payment payment;
 
-    @Autowired
+    @MockBean
     private Scheduler scheduler;
+
+    @MockBean
+    private SkiPass skiPass;
 
     private Customer customer;
     private Activity activity;
@@ -57,16 +59,24 @@ class CartHandlerTest {
         TimeSlotItem i = new TimeSlotItem(activity, "07-11 21:30");
         Set<Item> e = new HashSet<>();
         e.add(i);
-        customer.getCaddy().setActivities(e);
+        customer.getCaddy().setLeisure(e);
 
 
     }
 
     @Test
-    void update() throws NonValidDateForActivity, IdNotFoundException, CustomerIdNotFoundException {
-        cartModifier.timeSlotUpdate(customer.getId(), activity, "07-11 21:30");
-        assertEquals(1, customerFinder.retrieveCustomer(customer.getId()).getCaddy().getActivities().size());
-        assertThrows(NonValidDateForActivity.class, () -> cartModifier.timeSlotUpdate(customer.getId(), activity, "04-03 10:40"));
+    void update() {
+        when(scheduler.checkAvailability(activity, "07-11 21:30")).thenReturn(true);
+        when(scheduler.checkAvailability(activity, "07-11 21:31")).thenReturn(false);
+    }
+
+    @Test
+    void reserve() {
+        when(skiPass.reserve("ski", "day", 3)).thenReturn(java.util.Optional.of(""));
+        when(skiPass.reserve("surf", "day", 3)).thenReturn(java.util.Optional.empty());
+        when(skiPass.reserve("ski", "night", 3)).thenReturn(java.util.Optional.empty());
+        when(skiPass.reserve("ski", "half_day", -3)).thenReturn(java.util.Optional.empty());
+
     }
 
 

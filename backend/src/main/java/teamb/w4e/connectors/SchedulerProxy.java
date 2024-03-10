@@ -12,7 +12,7 @@ import teamb.w4e.connectors.externaldto.AvailabilityRequestDTO;
 import teamb.w4e.connectors.externaldto.AvailabilityReceiptDTO;
 import teamb.w4e.connectors.externaldto.BookedReceiptDTO;
 import teamb.w4e.connectors.externaldto.BookedRequestDTO;
-import teamb.w4e.entities.Activity;
+import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.interfaces.Scheduler;
 
 @Component
@@ -32,11 +32,7 @@ public class SchedulerProxy implements Scheduler {
                     new AvailabilityRequestDTO(activity.getId(), date),
                     AvailabilityReceiptDTO.class
             );
-            if (result.getStatusCode().equals(HttpStatus.CREATED) && result.hasBody()) {
-                return true;
-            } else {
-                return false;
-            }
+            return result.getStatusCode().equals(HttpStatus.CREATED) && result.hasBody();
         }
         catch (RestClientResponseException errorException) {
             if (errorException.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
@@ -51,15 +47,11 @@ public class SchedulerProxy implements Scheduler {
     public boolean reserve(Activity activity, String date) {
         try {
             ResponseEntity<BookedReceiptDTO> result = restTemplate.postForEntity(
-                    schedulerHostandPort + "/ccbooked",
+                    schedulerHostandPort + "/ccavailabilities/ccbooked",
                     new BookedRequestDTO(activity.getId(), date),
                     BookedReceiptDTO.class
             );
-            if (result.getStatusCode().equals(HttpStatus.CREATED) && result.hasBody()) {
-                return true;
-            } else {
-                return false;
-            }
+            return result.getStatusCode().equals(HttpStatus.CREATED) && result.hasBody();
         }
         catch (RestClientResponseException errorException) {
             if (errorException.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {

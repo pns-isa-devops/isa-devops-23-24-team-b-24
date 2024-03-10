@@ -1,4 +1,4 @@
-package teamb.w4e.entities;
+package teamb.w4e.entities.catalog;
 
 public enum AdvantageType {
     COCKTAIL("Cocktail"),

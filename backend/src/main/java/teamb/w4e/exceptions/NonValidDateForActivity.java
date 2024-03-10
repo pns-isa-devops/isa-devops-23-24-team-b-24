@@ -1,6 +1,6 @@
 package teamb.w4e.exceptions;
 
-import teamb.w4e.entities.Activity;
+import teamb.w4e.entities.catalog.Activity;
 
 public class NonValidDateForActivity extends Exception {
 
