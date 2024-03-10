@@ -127,7 +127,7 @@ public class CartHandler implements CartProcessor, CartModifier {
         }
         if (item.getType().equals(ReservationType.SKI_PASS)) {
             SkiPassItem skiPassItem = (SkiPassItem) item;
-            if (skiPass.reserve( skiPassItem.getActivity().getName(),skiPassItem.getSkiPassType(),skiPassItem.getDuration()).isPresent()) {
+            if (skiPass.reserve( skiPassItem.getLeisure().getName(),skiPassItem.getSkiPassType(),skiPassItem.getDuration()).isPresent()) {
                 SkiPassReservation reservation = (SkiPassReservation) payment.payReservationFromCart(customer, skiPassItem);
                 customer.getCaddy().getLeisure().remove(item);
                 return reservation;

@@ -43,15 +43,17 @@ public class ReservationController {
     }
 
     public static ReservationDTO convertReservationToDTO(Reservation reservation) {
-        return switch (reservation.getType()) {
-            case TIME_SLOT -> convertTimeSlotReservationToDTO((TimeSlotReservation) reservation);
-            case GROUP -> convertGroupReservationToDTO((GroupReservation) reservation);
-            case SKI_PASS -> convertSkiPassReservationToDTO((SkiPassReservation) reservation);
-        };
+        ReservationType type = reservation.getType();
+        if (type.equals(ReservationType.TIME_SLOT)) {
+            return convertTimeSlotReservationToDTO((TimeSlotReservation) reservation);
+        } else if (type.equals(ReservationType.GROUP)) {
+            return convertGroupReservationToDTO((GroupReservation) reservation);
+        }
+        return convertSkiPassReservationToDTO((SkiPassReservation) reservation);
     }
 
     private static ReservationDTO convertTimeSlotReservationToDTO(TimeSlotReservation reservation) {
-        return new ReservationDTO(reservation.getId(), reservation.getType(), LeisureController.convertActivityToDto( reservation.getActivity() ), reservation.getTimeSlot());
+        return new ReservationDTO(reservation.getId(), reservation.getType(), LeisureController.convertActivityToDto(reservation.getActivity()), reservation.getTimeSlot());
     }
 
     private static ReservationDTO convertGroupReservationToDTO(GroupReservation reservation) {
