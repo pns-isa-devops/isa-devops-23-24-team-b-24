@@ -1,10 +1,9 @@
 package teamb.w4e.cli;
 
 import org.springframework.stereotype.Component;
-import teamb.w4e.cli.model.CliActivity;
 import teamb.w4e.cli.model.CliAdvantage;
 import teamb.w4e.cli.model.CliCustomer;
-import teamb.w4e.cli.model.CliService;
+import teamb.w4e.cli.model.CliLeisure;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,32 +12,26 @@ import java.util.stream.Collectors;
 @Component
 public class CliContext {
 
-    private Map<String, CliCustomer> customers;
-    private Map<String, CliActivity> activities;
-    private Map<String, CliAdvantage> advantages;
-    private Map<String, CliService> services;
+    private final Map<String, CliCustomer> customers;
+    private final Map<String, CliLeisure> leisure;
+    private final Map<String, CliAdvantage> advantages;
 
     public Map<String, CliCustomer> getCustomers() {
         return customers;
-    }
-
-    public Map<String, CliActivity> getActivities() {
-        return activities;
     }
 
     public Map<String, CliAdvantage> getAdvantages() {
         return advantages;
     }
 
-    public Map<String, CliService> getServices() {
-        return services;
+    public Map<String, CliLeisure> getLeisure() {
+        return leisure;
     }
 
     public CliContext() {
         customers = new HashMap<>();
-        activities = new HashMap<>();
         advantages = new HashMap<>();
-        services = new HashMap<>();
+        leisure = new HashMap<>();
     }
 
     @Override

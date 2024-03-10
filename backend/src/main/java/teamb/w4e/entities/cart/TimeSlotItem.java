@@ -1,13 +1,12 @@
 package teamb.w4e.entities.cart;
 
-import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.Pattern;
-import teamb.w4e.entities.Activity;
+import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.reservations.ReservationType;
 
-@Entity
-@DiscriminatorValue("TIME_SLOT")
+
+@Entity(name = "time_slot_items")
 public class TimeSlotItem extends Item {
     @Pattern(regexp = "^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2]) (?:[01]\\d|2[0-3]):(?:[0-5]\\d)", message = "Invalid date")
     private String timeSlot;

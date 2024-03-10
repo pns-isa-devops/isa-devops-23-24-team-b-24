@@ -32,8 +32,8 @@ public class AdvantageCommands {
         this.cliContext = cliContext;
     }
 
-    @ShellMethod("Create an advantage (create-advantage ADVANTAGE_NAME ADVANTAGE_TYPE NB_POINTS)")
-    public CliAdvantage createAdvantage(String name, AdvantageType type, int points) {
+    @ShellMethod("Create an advantage (register-advantage ADVANTAGE_NAME ADVANTAGE_TYPE NB_POINTS)")
+    public CliAdvantage registerAdvantage(String name, AdvantageType type, int points) {
         CliAdvantage res = restTemplate.postForObject(BASE_URI, new CliAdvantage(name, type, points), CliAdvantage.class);
         cliContext.getAdvantages().put(Objects.requireNonNull(res).getName(), res);
         return res;
@@ -46,7 +46,7 @@ public class AdvantageCommands {
     }
 
     @ShellMethod("List all types of advantages (advantage-types)")
-    public Set<AdvantageType> showAdvantageTypes() {
+    public Set<AdvantageType> advantageTypes() {
         return Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(BASE_URI + "/types", AdvantageType[].class)
                 .getBody())).collect(Collectors.toSet());
     }

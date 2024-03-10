@@ -54,7 +54,7 @@ public class TransactionController {
                 .toList());
     }
 
-    private static TransactionDTO convertTransactionToDto(Transaction transaction) {
+    public static TransactionDTO convertTransactionToDto(Transaction transaction) {
         return new TransactionDTO(transaction.getId(), CustomerCareController.convertCustomerToDto(transaction.getCustomer()), transaction.getAmount(), transaction.getPaymentId());
     }
 }

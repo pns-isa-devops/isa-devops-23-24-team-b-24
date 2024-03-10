@@ -8,6 +8,7 @@ import teamb.w4e.entities.Transaction;
 import teamb.w4e.entities.cart.GroupItem;
 import teamb.w4e.entities.cart.SkiPassItem;
 import teamb.w4e.entities.cart.TimeSlotItem;
+import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.reservations.*;
 import teamb.w4e.interfaces.reservation.ReservationCreator;
 import teamb.w4e.interfaces.reservation.ReservationFinder;
@@ -47,19 +48,17 @@ public class Booker implements ReservationCreator, ReservationFinder {
         return reservationRepository.findSkiPassReservationByCard(cardId, type);
     }
 
-
     @Override
     public GroupReservation createGroupReservation(Customer customer, GroupItem item, Transaction transaction) {
-        return reservationRepository.save(new GroupReservation(item.getActivity(), item.getGroup(), customer.getCard(), transaction));
+        return reservationRepository.save(new GroupReservation((Activity) item.getLeisure(), item.getGroup(), customer.getCard(), transaction));
     }
-
     @Override
     public TimeSlotReservation createTimeSlotReservation(Customer customer, TimeSlotItem item, Transaction transaction) {
-        return reservationRepository.save(new TimeSlotReservation(item.getActivity(), item.getTimeSlot(), customer.getCard(), transaction));
+        return reservationRepository.save(new TimeSlotReservation((Activity) item.getLeisure(), item.getTimeSlot(), customer.getCard(), transaction));
     }
 
     @Override
     public SkiPassReservation createSkiPassReservation(Customer customer, SkiPassItem item, Transaction transaction) {
-        return reservationRepository.save(new SkiPassReservation(item.getActivity(), item.getSkiPassType(), item.getDuration(), customer.getCard(), transaction));
+        return reservationRepository.save(new SkiPassReservation((Activity) item.getLeisure(), item.getSkiPassType(), item.getDuration(), customer.getCard(), transaction));
     }
 }

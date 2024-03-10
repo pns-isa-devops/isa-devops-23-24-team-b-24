@@ -54,6 +54,7 @@ services:
         condition: service_healthy
     volumes:
       - ./cli/demo.txt:/opt/app/demo.txt
+      - ./cli/demo2.txt:/opt/app/demo2.txt
     stdin_open: true
     tty: true
     healthcheck:

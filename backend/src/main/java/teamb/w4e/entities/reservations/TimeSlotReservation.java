@@ -3,7 +3,7 @@ package teamb.w4e.entities.reservations;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.Pattern;
-import teamb.w4e.entities.Activity;
+import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.Card;
 import teamb.w4e.entities.Transaction;
 

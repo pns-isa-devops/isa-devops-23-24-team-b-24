@@ -2,7 +2,7 @@ package teamb.w4e.repositories.catalog;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import teamb.w4e.entities.Activity;
+import teamb.w4e.entities.catalog.Activity;
 
 import java.util.Optional;
 
