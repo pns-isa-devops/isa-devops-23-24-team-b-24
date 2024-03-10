@@ -6,12 +6,14 @@ customers
 advantages
 register-advantage free-juice COCKTAIL 2
 register-advantage cookies LOCAL_SPECIALITY 3
-register-leisure Yoga relaxing 20 -a true --ad cookies
-register-leisure Pilates hard 30 -a true --ad free-juice
+register-leisure Yoga relaxing 20 -a --ad cookies
+register-leisure Pilates hard 30 -a  --ad free-juice
+register-leisure ski hard 30 -a
 activities
 echo "ADD TO CART"
 add-activity-to-cart Emma Yoga -t --day 07-11 --hour 21:30
 add-activity-to-cart Emma Pilates -t --day 04-07 --hour 13:00
+add-activity-to-cart Emma ski -p --ski day --duration 3
 show-cart Emma
 create-group Emma --m John
 add-activity-to-cart Emma Yoga -g
