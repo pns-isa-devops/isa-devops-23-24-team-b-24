@@ -85,29 +85,29 @@ public class ReserveActivity {
     
 
     @Given("^a customer named \"([^\"]*)\" with the credit card number \"([^\"]*)\"$")
-    public void aCustomerNamedWithTheCreditCardNumber(String arg0, String arg1) throws Throwable {
+    public void aCustomerNamedWithTheCreditCardNumber(String customerName, String creditCardNumber) throws Throwable {
         // Write code here that turns the phrase above into concrete actions
-        customerRegistration.register(arg0, arg1);
+        customerRegistration.register(customerName, creditCardNumber);
     }
 
     @And("^a Activity named \"([^\"]*)\" with the description \"([^\"]*)\" and the price (\\d+) without advantages$")
-    public void aActivityNamedWithTheDescriptionAndThePriceWithoutAdvantages(String arg0, String arg1, int arg2) throws Throwable {
+    public void aActivityNamedWithTheDescriptionAndThePriceWithoutAdvantages(String activityName, String activityDescription, int price) throws Throwable {
         // Write code here that turns the phrase above into concrete actions
-        activityRegistration.register(arg0, arg1, arg2, null);
+        activityRegistration.register(activityName, activityDescription, price, null);
     }
 
     // Dans votre test
     @When("^he adds the Activity \"([^\"]*)\" for the date \"([^\"]*)\" to his cart$")
-    public void heAddsTheActivityForTheDateToHisCart(String arg0, String arg1) throws Throwable {
+    public void heAddsTheActivityForTheDateToHisCart(String activityName, String date) throws Throwable {
         cartModifier = Mockito.mock(CartModifier.class);
-        timeSlot = arg1;
+        timeSlot = date;
         Customer customer = customerRepository.findCustomerByName("John").orElse(null);
-        activity = activityRepository.findActivityByName(arg0).orElse(null);
+        activity = activityRepository.findActivityByName(activityName).orElse(null);
         assertNotNull(customer);
         assertNotNull(activity);
-        when(cartModifier.timeSlotUpdate(anyLong(), any(Activity.class), anyString())).thenReturn(new TimeSlotItem(activity, arg1));
+        when(cartModifier.timeSlotUpdate(anyLong(), any(Activity.class), anyString())).thenReturn(new TimeSlotItem(activity, date));
 
-        TimeSlotItem result = cartModifier.timeSlotUpdate(customer.getId(), activity, arg1);
+        TimeSlotItem result = cartModifier.timeSlotUpdate(customer.getId(), activity, date);
         if (result != null) {
             customer.getCaddy().getLeisure().add(result);
         }
@@ -137,18 +137,18 @@ public class ReserveActivity {
     }
 
     @Then("^a transaction of (\\d+) should appear on the Transaction History of \"([^\"]*)\"$")
-    public void aTransactionOfShouldAppearOnTheTransactionHistoryOf(int arg0, String arg1) throws Throwable {
+    public void aTransactionOfShouldAppearOnTheTransactionHistoryOf(int transactionAmount, String amount) throws Throwable {
         Customer customer = customerRepository.findCustomerByName("John").orElse(null);
         assert customer != null;
         assertEquals(1, transactionFinder.findTransactionsByCustomer(customer.getId()).size());
         Transaction transaction = transactionFinder.findTransactionsByCustomer(customer.getId()).get(0);
-        assertEquals(arg0, transaction.getAmount());
+        assertEquals(transactionAmount, transaction.getAmount());
     }
 
     @And("^the Activity \"([^\"]*)\" should be reserved$")
-    public void theActivityShouldBeReserved(String arg0) throws Throwable {
+    public void theActivityShouldBeReserved(String activityName) throws Throwable {
         Customer customer = customerRepository.findCustomerByName("John").orElse(null);
-        Activity activity = activityRepository.findActivityByName(arg0).orElse(null);
+        Activity activity = activityRepository.findActivityByName(activityName).orElse(null);
         assert customer != null;
         assert activity != null;
         Reservation reservation = reservationFinder.findTimeSlotReservationByCard(customer.getCard().getId(), ReservationType.TIME_SLOT).get(0);
