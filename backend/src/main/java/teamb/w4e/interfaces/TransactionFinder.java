@@ -1,6 +1,7 @@
 package teamb.w4e.interfaces;
 
 import teamb.w4e.entities.Customer;
+import teamb.w4e.entities.PointTransaction;
 import teamb.w4e.entities.Transaction;
 
 import java.util.List;
@@ -15,4 +16,12 @@ public interface TransactionFinder {
     List<Transaction> findAllTransactions();
 
     List<Transaction> findTransactionsByCustomer(Long customerId);
+
+    Optional<PointTransaction> findPointTransactionByCustomer(Long customerId);
+
+    Optional<PointTransaction> findPointTransactionById(Long id);
+
+    List<PointTransaction> findAllPointTransactions();
+
+    List<PointTransaction> findPointTransactionsByCustomer(Long customerId);
 }
