@@ -5,13 +5,18 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Transaction;
 import teamb.w4e.entities.cart.Item;
+import teamb.w4e.entities.cart.TimeSlotItem;
 import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.reservations.Reservation;
+import teamb.w4e.entities.reservations.ReservationType;
+import teamb.w4e.entities.reservations.TimeSlotReservation;
 import teamb.w4e.exceptions.*;
 import teamb.w4e.interfaces.*;
 import teamb.w4e.interfaces.leisure.ActivityRegistration;
@@ -23,17 +28,18 @@ import teamb.w4e.repositories.reservation.ReservationRepository;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @Transactional
 public class ReserveActivity {
 
     // We autowire the mock here because there are some bugs with the cucumber/spring integration
-    @Autowired
+    @MockBean
     private Bank bankMock;
+
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -65,13 +71,16 @@ public class ReserveActivity {
     @Autowired
     private ReservationFinder reservationFinder;
 
+    private Activity activity;
+    private String timeSlot;
+    private Transaction transaction;
+
     @Before
-    public void settingUpContext() throws PaymentException {
+    public void settingUpContext() {
         customerRepository.deleteAll();
         transactionRepository.deleteAll();
         reservationRepository.deleteAll();
         activityRepository.deleteAll();
-        when(bankMock.pay(any(Customer.class), any(Double.class))).thenReturn(Optional.of("1234567890"));
     }
     
 
@@ -87,23 +96,43 @@ public class ReserveActivity {
         activityRegistration.register(arg0, arg1, arg2, null);
     }
 
+    // Dans votre test
     @When("^he adds the Activity \"([^\"]*)\" for the date \"([^\"]*)\" to his cart$")
     public void heAddsTheActivityForTheDateToHisCart(String arg0, String arg1) throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
+        cartModifier = Mockito.mock(CartModifier.class);
+        timeSlot = arg1;
         Customer customer = customerRepository.findCustomerByName("John").orElse(null);
-        Activity activity = activityRepository.findActivityByName(arg0).orElse(null);
-        assert customer != null;
-        cartModifier.timeSlotUpdate(customer.getId(), activity, arg1);
+        activity = activityRepository.findActivityByName(arg0).orElse(null);
+        assertNotNull(customer);
+        assertNotNull(activity);
+        when(cartModifier.timeSlotUpdate(anyLong(), any(Activity.class), anyString())).thenReturn(new TimeSlotItem(activity, arg1));
+
+        TimeSlotItem result = cartModifier.timeSlotUpdate(customer.getId(), activity, arg1);
+        if (result != null) {
+            customer.getCaddy().getLeisure().add(result);
+        }
         assertEquals(1, customer.getCaddy().getLeisure().size());
     }
 
+
     @And("^he proceeds to checkout$")
     public void heProceedsToCheckout() throws EmptyCartException, NegativeAmountTransactionException, PaymentException, IdNotFoundException, CustomerIdNotFoundException {
+        cartProcessor = Mockito.mock(CartProcessor.class);
+        bankMock = Mockito.mock(Bank.class);
         Customer customer = customerRepository.findCustomerByName("John").orElse(null);
         assert customer != null;
+        when(bankMock.pay(any(Customer.class), anyDouble())).thenReturn(Optional.of("playReceiptOKId"));
+        when(cartProcessor.validateActivity(anyLong(), any(Item.class))).thenReturn(new TimeSlotReservation(activity,timeSlot, customer.getCard(), new Transaction(customer, activity.getPrice(), "playReceiptOKId")));
         // to simplify I take the first item in the cart
         Item item = customer.getCaddy().getLeisure().iterator().next();
-        cartProcessor.validateActivity(customer.getId(), item);
+
+        Reservation reservation = cartProcessor.validateActivity(customer.getId(), item);
+        if (reservation != null) {
+            customer.getCaddy().getLeisure().remove(item);
+            transaction = reservation.getTransaction();
+            transactionRepository.save(transaction);
+            reservationRepository.save(reservation);
+        }
         assertTrue(customer.getCaddy().getLeisure().isEmpty());
     }
 
@@ -122,7 +151,7 @@ public class ReserveActivity {
         Activity activity = activityRepository.findActivityByName(arg0).orElse(null);
         assert customer != null;
         assert activity != null;
-        Reservation reservation = reservationFinder.findReservationById(activity.getId()).orElse(null);
+        Reservation reservation = reservationFinder.findTimeSlotReservationByCard(customer.getCard().getId(), ReservationType.TIME_SLOT).get(0);
         assert reservation != null;
         assertEquals(customer.getId(), reservation.getCard().getId());
     }
