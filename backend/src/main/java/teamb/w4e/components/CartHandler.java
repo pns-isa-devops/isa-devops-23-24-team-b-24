@@ -74,6 +74,7 @@ public class CartHandler implements CartProcessor, CartModifier {
     }
 
     @Override
+    @Transactional
     public SkiPassItem skiPassUpdate(Long customerId, Activity activity, String type, int duration) throws IdNotFoundException, CustomerIdNotFoundException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         Set<Item> items = customer.getCaddy().getActivities();
@@ -121,7 +122,7 @@ public class CartHandler implements CartProcessor, CartModifier {
         }
         if (item.getType().equals(ReservationType.SKI_PASS)) {
             SkiPassItem skiPassItem = (SkiPassItem) item;
-            if (skiPass.reserve(customer.getName(), skiPassItem.getActivity().getName(),null).isPresent()) {
+            if (skiPass.reserve( skiPassItem.getActivity().getName(),skiPassItem.getSkiPassType(),skiPassItem.getDuration()).isPresent()) {
                 SkiPassReservation reservation = (SkiPassReservation) payment.payReservationFromCart(customer, skiPassItem);
                 customer.getCaddy().getActivities().remove(item);
                 return reservation;

@@ -29,7 +29,7 @@ public class SkiPassProxy implements SkiPass {
 
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
-    public Optional<String> reserve(String name, String activity, Long duration) {
+    public Optional<String> reserve(String name, String activity, int duration) {
         try {
             ResponseEntity<ReservationReceiptDTO> result = restTemplate.postForEntity(
                     skipassHostedPort + "/ccskipass",
