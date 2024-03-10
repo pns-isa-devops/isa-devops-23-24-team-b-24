@@ -8,20 +8,26 @@ describe('AppController', () => {
   let appController: AppController;
 
   const goodSkiPassReservation: ReservationRequestDto = {
-    name: 'Nikan the great',
-    activity: 'ski',
+    name: 'ski',
+    activity: 'day',
     duration: 3,
   };
 
+  const badSkiPassReservationName: ReservationRequestDto = {
+    name: 'surfing',
+    activity: 'day',
+    duration: 1,
+  };
+
   const badSkiPassReservationDuration: ReservationRequestDto = {
-    name: "Clement the not-so-great, but still good, but not that good, I mean, let's face it, he is not THAT great, yes he's kinda funny, but still, not that great, you know what I mean ?",
-    activity: 'ski',
+    name: 'ski',
+    activity: 'day',
     duration: -3,
   };
 
   const badSkiPassReservationActivity: ReservationRequestDto = {
-    name: 'Arnaud the great',
-    activity: 'surfing',
+    name: 'ski',
+    activity: 'night',
     duration: 1,
   };
 
@@ -41,11 +47,20 @@ describe('AppController', () => {
   });
 
   describe('reserve()', () => {
-    it('should return a ReservationReceiptDto (TO MODIFY) with transaction success', () => {
+    it('should return a ReservationReceiptDto with transaction success', () => {
       const reservation = appController.reserve(goodSkiPassReservation);
       expect(reservation.isReserved).toBe(true);
       expect(reservation.reservationReceiptId.substring(0, 8)).toBe('RECEIPT:');
       expect(appController.getAllTransactions().length).toBe(1);
+    });
+  });
+
+  describe('reserveWithWrongName()', () => {
+    it('should throw an exception transaction failure', () => {
+      expect(() => appController.reserve(badSkiPassReservationName)).toThrow(
+        HttpException,
+      );
+      expect(appController.getAllTransactions().length).toBe(0);
     });
   });
 

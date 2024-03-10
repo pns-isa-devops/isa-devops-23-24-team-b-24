@@ -11,7 +11,7 @@ import { AppService } from './app.service';
 import { ReservationRequestDto } from './dto/reservationRequest.dto';
 import { ReservationReceiptDto } from './dto/reservationReceipt.dto';
 
-@Controller('cctransactions')
+@Controller('ccskipass')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
