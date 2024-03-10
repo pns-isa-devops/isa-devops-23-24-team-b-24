@@ -6,7 +6,7 @@ customers
 advantages
 register-advantage free-juice COCKTAIL 2
 register-advantage cookies LOCAL_SPECIALITY 3
-register-leisure KinderGarden kids 10 -a false --ad cookies
+register-leisure KinderGarden kids 10 --ad cookies
 services
 add-service-to-cart Emma KinderGarden
 show-cart Emma
