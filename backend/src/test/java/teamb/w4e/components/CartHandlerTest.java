@@ -40,6 +40,9 @@ class CartHandlerTest {
     @MockBean
     private Scheduler scheduler;
 
+    @MockBean
+    private SkiPass skiPass;
+
     private Customer customer;
     private Activity activity;
 
@@ -68,6 +71,15 @@ class CartHandlerTest {
     void update() {
         when(scheduler.checkAvailability(activity, "07-11 21:30")).thenReturn(true);
         when(scheduler.checkAvailability(activity, "07-11 21:31")).thenReturn(false);
+    }
+
+    @Test
+    void reserve() {
+        when(skiPass.reserve("ski", "day", 3)).thenReturn(java.util.Optional.of(""));
+        when(skiPass.reserve("surf", "day", 3)).thenReturn(java.util.Optional.empty());
+        when(skiPass.reserve("ski", "night", 3)).thenReturn(java.util.Optional.empty());
+        when(skiPass.reserve("ski", "half_day", -3)).thenReturn(java.util.Optional.empty());
+
     }
 
 
