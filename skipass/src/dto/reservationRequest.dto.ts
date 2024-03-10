@@ -1,11 +1,15 @@
 import { IsNotEmpty, IsPositive, IsString } from 'class-validator';
 
-export class PaymentRequestDto {
+export class ReservationRequestDto {
   @IsNotEmpty()
   @IsString()
-  creditCard: string;
+  name: string;
+
+  @IsNotEmpty()
+  @IsString()
+  activity: string;
 
   @IsNotEmpty()
   @IsPositive()
-  amount: number;
+  duration: number;
 }

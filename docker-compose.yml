@@ -10,8 +10,9 @@ services:
     environment:
       - BANK_WITH_PORT=bank-system:9090
       - SCHEDULER_WITH_PORT=scheduler-system:9091
+      - SKIPASS_WITH_PORT=skipass-system:9092
       - POSTGRES_HOST=postgres:5432
-    entrypoint: "java -jar /opt/app/app.jar --bank.host.baseurl=http://$${BANK_WITH_PORT} --scheduler.host.baseurl=http://$${SCHEDULER_WITH_PORT}"
+    entrypoint: "java -jar /opt/app/app.jar --bank.host.baseurl=http://$${BANK_WITH_PORT} --scheduler.host.baseurl=http://$${SCHEDULER_WITH_PORT} --skipass.host.baseurl=http://$${SKIPASS_WITH_PORT}"
     restart: always
     depends_on:
       bank-system:
@@ -81,6 +82,18 @@ services:
     container_name: scheduler
     ports:
       - 9091:9091
+    healthcheck:
+      test: [ "CMD", "/nodejs/bin/node" , "healthcheck.js" ]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  skipass-system:
+    image: teamb/w4e-skipass-service
+    container_name: skipass
+    ports:
+      - 9092:9092
     healthcheck:
       test: [ "CMD", "/nodejs/bin/node" , "healthcheck.js" ]
       interval: 5s

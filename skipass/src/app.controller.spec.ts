@@ -1,20 +1,34 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PaymentRequestDto } from './dto/paymentRequest.dto';
+import { ReservationRequestDto } from './dto/reservationRequest.dto';
 import { HttpException } from '@nestjs/common';
 
 describe('AppController', () => {
   let appController: AppController;
 
-  const goodPaymentDto: PaymentRequestDto = {
-    creditCard: '1230896983',
-    amount: 43.7,
+  const goodSkiPassReservation: ReservationRequestDto = {
+    name: 'ski',
+    activity: 'day',
+    duration: 3,
   };
 
-  const badPaymentDto: PaymentRequestDto = {
-    creditCard: '1234567890',
-    amount: 43.7,
+  const badSkiPassReservationName: ReservationRequestDto = {
+    name: 'surfing',
+    activity: 'day',
+    duration: 1,
+  };
+
+  const badSkiPassReservationDuration: ReservationRequestDto = {
+    name: 'ski',
+    activity: 'day',
+    duration: -3,
+  };
+
+  const badSkiPassReservationActivity: ReservationRequestDto = {
+    name: 'ski',
+    activity: 'night',
+    duration: 1,
   };
 
   beforeEach(async () => {
@@ -32,21 +46,38 @@ describe('AppController', () => {
     });
   });
 
-  describe('payByCredit()', () => {
-    it('should return a PaymentReceiptDto (generated UUID and input amount) with transaction success', () => {
-      const paymentReceiptDto = appController.payByCreditCard(goodPaymentDto);
-      expect(paymentReceiptDto.amount).toBe(goodPaymentDto.amount);
-      expect(paymentReceiptDto.payReceiptId.substring(0, 8)).toBe('RECEIPT:');
-      expect(paymentReceiptDto.payReceiptId.length).toBe(44);
+  describe('reserve()', () => {
+    it('should return a ReservationReceiptDto with transaction success', () => {
+      const reservation = appController.reserve(goodSkiPassReservation);
+      expect(reservation.isReserved).toBe(true);
+      expect(reservation.reservationReceiptId.substring(0, 8)).toBe('RECEIPT:');
       expect(appController.getAllTransactions().length).toBe(1);
     });
   });
 
-  describe('payByCredit()', () => {
-    it('should throw exception transaction failure', () => {
-      expect(() => appController.payByCreditCard(badPaymentDto)).toThrow(
+  describe('reserveWithWrongName()', () => {
+    it('should throw an exception transaction failure', () => {
+      expect(() => appController.reserve(badSkiPassReservationName)).toThrow(
         HttpException,
       );
+      expect(appController.getAllTransactions().length).toBe(0);
+    });
+  });
+
+  describe('reserveWithWrongDuration()', () => {
+    it('should throw an exception transaction failure', () => {
+      expect(() =>
+        appController.reserve(badSkiPassReservationDuration),
+      ).toThrow(HttpException);
+      expect(appController.getAllTransactions().length).toBe(0);
+    });
+  });
+
+  describe('reserveWithWrongActivity()', () => {
+    it('should throw an exception transaction failure', () => {
+      expect(() =>
+        appController.reserve(badSkiPassReservationActivity),
+      ).toThrow(HttpException);
       expect(appController.getAllTransactions().length).toBe(0);
     });
   });
