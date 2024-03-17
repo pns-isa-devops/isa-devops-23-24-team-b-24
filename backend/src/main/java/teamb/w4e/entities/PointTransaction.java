@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 
 @Entity
-@Table(name = "transactions")
+@Table(name = "point-transactions")
 public class PointTransaction {
 
     @Id
@@ -16,27 +16,27 @@ public class PointTransaction {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    // @ManyToOne
-    // @JoinColumn(name = "issuer_id")
-    // private Partner issuer;
-
     @Positive
-    private int amount;
+    private int points;
 
-//    @NotBlank
-//    private String paymentId;
+    @NotBlank
+    private String trade;
 
     public PointTransaction() {
     }
 
-    public PointTransaction(Customer customer, int amount) {//, Partner issuer) {
+    public PointTransaction(Customer customer, int points, String trade) {
         this.customer = customer;
-        this.amount = amount;
-        // this.issuer = issuer;
+        this.points = points;
+        this.trade = trade;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Customer getCustomer() {
@@ -47,12 +47,20 @@ public class PointTransaction {
         this.customer = customer;
     }
 
-    public double getAmount() {
-        return amount;
+    public int getPoints() {
+        return points;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
+    public String getTrade() {
+        return trade;
+    }
+
+    public void setTrade(String trade) {
+        this.trade = trade;
     }
 
 }

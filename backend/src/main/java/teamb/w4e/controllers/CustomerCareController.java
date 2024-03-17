@@ -6,10 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import teamb.w4e.dto.CardDTO;
-import teamb.w4e.dto.CustomerDTO;
-import teamb.w4e.dto.ErrorDTO;
-import teamb.w4e.dto.GroupDTO;
+import teamb.w4e.dto.*;
 import teamb.w4e.entities.Card;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Group;
@@ -34,6 +31,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class CustomerCareController {
 
     public static final String BASE_URI = "/customers";
+    public static final String GROUP_URI = "/groups";
 
     private final CustomerRegistration registry;
 
@@ -83,10 +81,10 @@ public class CustomerCareController {
         return ResponseEntity.ok(convertCustomerToDto(customerFinder.retrieveCustomer(customerId)));
     }
 
-    @PostMapping(path = "/groups/{customerId}/group", consumes = APPLICATION_JSON_VALUE)
+    @PostMapping(path = GROUP_URI + "/{customerId}/group", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<GroupDTO> createGroup(@PathVariable("customerId") Long customerId, @RequestBody @Valid GroupDTO groupDTO) throws IdNotFoundException, AlreadyLeaderException, NotEnoughMembersException {
         Customer leader = customerFinder.retrieveCustomer(customerId);
-        Set<Customer>  members = new HashSet<>();
+        Set<Customer> members = new HashSet<>();
         for (CustomerDTO member : groupDTO.members()) {
             members.add(customerFinder.retrieveCustomer(member.id()));
         }
@@ -99,17 +97,15 @@ public class CustomerCareController {
         }
     }
 
-    @GetMapping(path = "/groups/{customerId}/group")
+    @GetMapping(path = GROUP_URI + "/{customerId}/group")
     public ResponseEntity<GroupDTO> getGroup(@PathVariable("customerId") Long customerId) throws IdNotFoundException {
         return ResponseEntity.ok(convertGroupToDto(groupFinder.retrieveGroup(customerId)));
     }
 
-    @GetMapping(path = "/groups")
+    @GetMapping(path = GROUP_URI)
     public ResponseEntity<Set<GroupDTO>> getGroups() {
         return ResponseEntity.ok(groupFinder.findAll().stream().map(CustomerCareController::convertGroupToDto).collect(Collectors.toSet()));
     }
-
-
     public static CustomerDTO convertCustomerToDto(Customer customer) { // In more complex cases, we could use a ModelMapper such as MapStruct
 
         return new CustomerDTO(customer.getId(), customer.getName(), customer.getCreditCard(), convertCardToDto(customer.getCard()));

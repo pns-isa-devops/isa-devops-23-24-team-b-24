@@ -7,6 +7,7 @@ import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Partner;
 import teamb.w4e.entities.PointTransaction;
 import teamb.w4e.entities.Transaction;
+import teamb.w4e.interfaces.TradeCreator;
 import teamb.w4e.interfaces.TransactionCreator;
 import teamb.w4e.interfaces.TransactionFinder;
 import teamb.w4e.repositories.PointTransactionRepository;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TransactionRegistry implements TransactionFinder, TransactionCreator {
+public class TransactionRegistry implements TransactionFinder, TransactionCreator, TradeCreator {
 
     private final TransactionRepository transactionRepository;
 
@@ -78,8 +79,19 @@ public class TransactionRegistry implements TransactionFinder, TransactionCreato
     @Override
     public PointTransaction createPointTransaction(Customer customer, int amount, Partner issuer) {
 //        PointTransaction pointTransaction = new PointTransaction(customer, amount, issuer);
-        PointTransaction pointTransaction = new PointTransaction(customer, amount);
+        PointTransaction pointTransaction = new PointTransaction(customer, amount, issuer.getName());
 
         return pointTransactionRepository.save(pointTransaction);
+    }
+
+    @Override
+    public PointTransaction createTrade(Customer sender, Customer receiver, int points) {
+        sender.getCard().setPoints(sender.getCard().getPoints() - points);
+        receiver.getCard().setPoints(receiver.getCard().getPoints() + points);
+        PointTransaction senderTransaction = new PointTransaction(sender, -points, "Trade with " + receiver.getName());
+        PointTransaction receiverTransaction = new PointTransaction(receiver, points, "Trade with " + sender.getName());
+        pointTransactionRepository.save(senderTransaction);
+        pointTransactionRepository.save(receiverTransaction);
+        return senderTransaction;
     }
 }
