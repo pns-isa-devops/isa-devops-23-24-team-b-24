@@ -85,11 +85,16 @@ public class TransactionRegistry implements TransactionFinder, TransactionCreato
     }
 
     @Override
-    public PointTransaction createTrade(Customer sender, Customer receiver, int points) {
-        sender.getCard().setPoints(sender.getCard().getPoints() - points);
-        receiver.getCard().setPoints(receiver.getCard().getPoints() + points);
-        PointTransaction senderTransaction = new PointTransaction(sender, -points, "Trade with " + receiver.getName());
-        PointTransaction receiverTransaction = new PointTransaction(receiver, points, "Trade with " + sender.getName());
+    public PointTransaction createTrade(Customer sender, Customer receiver, int points, boolean inSameGroup) {
+        if (inSameGroup) {
+            sender.getCard().setPoints(sender.getCard().getPoints() - points);
+            receiver.getCard().setPoints(receiver.getCard().getPoints() + points);
+        } else {
+            sender.getCard().setPoints(sender.getCard().getPoints() - points);
+            receiver.getCard().setPoints(receiver.getCard().getPoints() + (int) (points * 0.5));
+        }
+        PointTransaction senderTransaction = new PointTransaction(sender, sender.getCard().getPoints(), "Trade with " + receiver.getName());
+        PointTransaction receiverTransaction = new PointTransaction(receiver, receiver.getCard().getPoints(), "Trade with " + sender.getName());
         pointTransactionRepository.save(senderTransaction);
         pointTransactionRepository.save(receiverTransaction);
         return senderTransaction;

@@ -1,20 +1,16 @@
 package teamb.w4e.components;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Group;
-import teamb.w4e.entities.PointTransaction;
 import teamb.w4e.interfaces.GroupFinder;
 import teamb.w4e.interfaces.TransactionCreator;
 import teamb.w4e.interfaces.TransactionFinder;
 import teamb.w4e.repositories.CustomerRepository;
 import teamb.w4e.repositories.GroupRepository;
-import teamb.w4e.repositories.PointTransactionRepository;
 import teamb.w4e.repositories.TransactionRepository;
 
 import java.util.List;
