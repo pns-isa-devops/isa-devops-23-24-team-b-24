@@ -72,12 +72,9 @@ public class TransactionController {
                     boolean isReceiverInGroup = group.getLeader().equals(receiver) || group.getMembers().contains(receiver);
                     return isSenderInGroup && isReceiverInGroup;
                 });
-        if (areInSameGroup) {
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(convertPointTransactionToDto(tradeCreator.createTrade(sender, receiver, pointTradeDTO.points())));
-        } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+                    .body(convertPointTransactionToDto(tradeCreator.createTrade(sender, receiver, pointTradeDTO.points(), areInSameGroup)));
+
     }
 
     public static TransactionDTO convertTransactionToDto(Transaction transaction) {
