@@ -2,8 +2,10 @@ package teamb.w4e.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import teamb.w4e.entities.catalog.Leisure;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Partner {
@@ -16,14 +18,15 @@ public class Partner {
     @Column(unique = true)
     private String name;
 
-    @Column(name = "address")
-    private String address;
+    @OneToMany
+    private Set<Leisure> leisure = Set.of();
 
     public Partner() {
     }
 
     public Partner(String n) {
         this.name = n;
+
     }
 
     public Long getId() {
@@ -42,12 +45,20 @@ public class Partner {
         this.name = name;
     }
 
-    public String getAddress() {
-        return address;
+    public Set<Leisure> getLeisure() {
+        return leisure;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setLeisure(Set<Leisure> leisure) {
+        this.leisure = leisure;
+    }
+
+    public void addLeisure(Leisure l) {
+        this.leisure.add(l);
+    }
+
+    public void removeLeisure(Leisure l) {
+        this.leisure.remove(l);
     }
 
     @Override
