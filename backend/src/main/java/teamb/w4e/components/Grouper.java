@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Group;
-import teamb.w4e.exceptions.CustomerIdNotFoundException;
+import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.exceptions.group.AlreadyLeaderException;
 import teamb.w4e.exceptions.group.NotEnoughMembersException;
 import teamb.w4e.interfaces.CustomerFinder;
@@ -31,7 +31,7 @@ public class Grouper implements GroupCreator, GroupFinder {
 
     @Override
     @Transactional
-    public Group createGroup(Customer leader, Set<Customer> members) throws NotEnoughMembersException, AlreadyLeaderException, CustomerIdNotFoundException {
+    public Group createGroup(Customer leader, Set<Customer> members) throws NotEnoughMembersException, AlreadyLeaderException, IdNotFoundException {
         if (groupRepository.findGroupByLeader(leader.getId()).isPresent()) {
             throw new AlreadyLeaderException(leader + " is already a leader");
         }
@@ -43,11 +43,11 @@ public class Grouper implements GroupCreator, GroupFinder {
         }
 
         if(customerFinder.findByName(leader.getName()).isEmpty()) {
-            throw new CustomerIdNotFoundException(leader.getId());
+            throw new IdNotFoundException(leader.getId());
         }
         for (Customer member : members) {
             if(customerFinder.findByName(member.getName()).isEmpty()) {
-                throw new CustomerIdNotFoundException(member.getId());
+                throw new IdNotFoundException(member.getId());
             }
         }
         Group newGroup = new Group(leader, members);
@@ -62,8 +62,8 @@ public class Grouper implements GroupCreator, GroupFinder {
 
     @Override
     @Transactional(readOnly = true)
-    public Group retrieveGroup(Long leaderId) throws CustomerIdNotFoundException {
-        return findGroupByLeader(leaderId).orElseThrow(() -> new CustomerIdNotFoundException(leaderId));
+    public Group retrieveGroup(Long leaderId) throws IdNotFoundException {
+        return findGroupByLeader(leaderId).orElseThrow(() -> new IdNotFoundException(leaderId));
     }
 
     @Override

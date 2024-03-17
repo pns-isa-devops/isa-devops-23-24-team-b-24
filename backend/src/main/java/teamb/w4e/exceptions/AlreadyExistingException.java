@@ -1,14 +1,14 @@
 package teamb.w4e.exceptions;
 
-public class AlreadyExistingCustomerException extends Exception {
+public class AlreadyExistingException extends Exception {
 
     private String conflictingName;
 
-    public AlreadyExistingCustomerException(String name) {
+    public AlreadyExistingException(String name) {
         conflictingName = name;
     }
 
-    public AlreadyExistingCustomerException() {
+    public AlreadyExistingException() {
     }
 
     public String getConflictingName() {

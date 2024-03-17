@@ -23,8 +23,8 @@ public class PointTransaction {
     @Positive
     private int amount;
 
-    @NotBlank
-    private String paymentId;
+//    @NotBlank
+//    private String paymentId;
 
     public PointTransaction() {
     }

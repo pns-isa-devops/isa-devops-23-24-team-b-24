@@ -97,7 +97,6 @@ class TransactionRegistryTest {
         customerRepository.save(customer);
         transactionCreator.createPointTransaction(customer, (int) amount, null);
         transactionCreator.createPointTransaction(customer, (int) amount2, null);
-        assertFalse(transactionFinder.findPointTransactionsByCustomer(customer.getId()).isEmpty());
         assertEquals(2, transactionFinder.findPointTransactionsByCustomer(customer.getId()).size());
         // delete all transactions
         pointTransactionRepository.deleteAll(transactionFinder.findPointTransactionsByCustomer(customer.getId()));

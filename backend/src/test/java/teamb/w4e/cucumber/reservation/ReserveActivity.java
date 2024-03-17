@@ -116,7 +116,7 @@ public class ReserveActivity {
 
 
     @And("^he proceeds to checkout$")
-    public void heProceedsToCheckout() throws EmptyCartException, NegativeAmountTransactionException, PaymentException, IdNotFoundException, CustomerIdNotFoundException {
+    public void heProceedsToCheckout() throws EmptyCartException, NegativeAmountTransactionException, PaymentException, IdNotFoundException {
         cartProcessor = Mockito.mock(CartProcessor.class);
         bankMock = Mockito.mock(Bank.class);
         Customer customer = customerRepository.findCustomerByName("John").orElse(null);

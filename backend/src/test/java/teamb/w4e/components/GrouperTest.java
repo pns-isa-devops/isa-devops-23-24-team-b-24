@@ -7,8 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Group;
-import teamb.w4e.exceptions.AlreadyExistingCustomerException;
-import teamb.w4e.exceptions.CustomerIdNotFoundException;
+import teamb.w4e.exceptions.AlreadyExistingException;
+import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.exceptions.group.AlreadyLeaderException;
 import teamb.w4e.exceptions.group.NotEnoughMembersException;
 import teamb.w4e.interfaces.CustomerFinder;
@@ -50,7 +50,7 @@ class GrouperTest {
     }
 
     @Test
-    void leaderIsMember() throws AlreadyExistingCustomerException {
+    void leaderIsMember() throws AlreadyExistingException {
         Customer johnCustomer = customerRegistration.register(john, creditCard);
         Customer janeCustomer = customerRegistration.register(jane, creditCard);
 
@@ -58,7 +58,7 @@ class GrouperTest {
     }
 
     @Test
-    void alreadyLeader() throws AlreadyExistingCustomerException, AlreadyLeaderException, NotEnoughMembersException, CustomerIdNotFoundException {
+    void alreadyLeader() throws AlreadyExistingException, AlreadyLeaderException, NotEnoughMembersException, IdNotFoundException {
         Customer johnCustomer = customerRegistration.register(john, creditCard);
         Customer janeCustomer = customerRegistration.register(jane, creditCard);
         Customer mattCustomer = customerRegistration.register(matt, creditCard);
@@ -68,13 +68,13 @@ class GrouperTest {
     }
 
     @Test
-    void notEnoughMembers() throws AlreadyExistingCustomerException {
+    void notEnoughMembers() throws AlreadyExistingException {
         Customer johnCustomer = customerRegistration.register(john, creditCard);
         Assertions.assertThrows(NotEnoughMembersException.class, () -> grouper.createGroup(johnCustomer, Set.of()));
     }
 
     @Test
-    void findGroupByLeader() throws AlreadyExistingCustomerException, AlreadyLeaderException, NotEnoughMembersException, CustomerIdNotFoundException {
+    void findGroupByLeader() throws AlreadyExistingException, AlreadyLeaderException, NotEnoughMembersException, IdNotFoundException {
         Customer johnCustomer = customerRegistration.register(john, creditCard);
         Customer janeCustomer = customerRegistration.register(jane, creditCard);
         Customer mattCustomer = customerRegistration.register(matt, creditCard);

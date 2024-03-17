@@ -8,6 +8,6 @@ import teamb.w4e.exceptions.*;
 
 public interface CartProcessor {
 
-    Reservation validateActivity(Long customerId, Item item) throws IdNotFoundException, EmptyCartException, PaymentException, CustomerIdNotFoundException, NegativeAmountTransactionException;
-    Transaction validateService(Long customerId, ServiceItem item) throws EmptyCartException, PaymentException, CustomerIdNotFoundException, NegativeAmountTransactionException;
+    Reservation validateActivity(Long customerId, Item item) throws EmptyCartException, PaymentException, IdNotFoundException, NegativeAmountTransactionException;
+    Transaction validateService(Long customerId, ServiceItem item) throws EmptyCartException, PaymentException, IdNotFoundException, NegativeAmountTransactionException;
 }

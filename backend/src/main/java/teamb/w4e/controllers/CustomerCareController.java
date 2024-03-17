@@ -13,8 +13,8 @@ import teamb.w4e.dto.GroupDTO;
 import teamb.w4e.entities.Card;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Group;
-import teamb.w4e.exceptions.AlreadyExistingCustomerException;
-import teamb.w4e.exceptions.CustomerIdNotFoundException;
+import teamb.w4e.exceptions.AlreadyExistingException;
+import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.exceptions.group.AlreadyLeaderException;
 import teamb.w4e.exceptions.group.NotEnoughMembersException;
 import teamb.w4e.interfaces.CustomerFinder;
@@ -67,7 +67,7 @@ public class CustomerCareController {
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(convertCustomerToDto(registry.register(customerDTO.name(), customerDTO.creditCard())));
-        } catch (AlreadyExistingCustomerException e) {
+        } catch (AlreadyExistingException e) {
             // Note: Returning 409 (Conflict) can also be seen a security/privacy vulnerability, exposing a service for account enumeration
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
@@ -79,12 +79,12 @@ public class CustomerCareController {
     }
 
     @GetMapping(path = "/{customerId}")
-    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable("customerId") Long customerId) throws CustomerIdNotFoundException {
+    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable("customerId") Long customerId) throws IdNotFoundException {
         return ResponseEntity.ok(convertCustomerToDto(customerFinder.retrieveCustomer(customerId)));
     }
 
     @PostMapping(path = "/groups/{customerId}/group", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<GroupDTO> createGroup(@PathVariable("customerId") Long customerId, @RequestBody @Valid GroupDTO groupDTO) throws CustomerIdNotFoundException, AlreadyLeaderException, NotEnoughMembersException {
+    public ResponseEntity<GroupDTO> createGroup(@PathVariable("customerId") Long customerId, @RequestBody @Valid GroupDTO groupDTO) throws IdNotFoundException, AlreadyLeaderException, NotEnoughMembersException {
         Customer leader = customerFinder.retrieveCustomer(customerId);
         Set<Customer>  members = new HashSet<>();
         for (CustomerDTO member : groupDTO.members()) {
@@ -100,7 +100,7 @@ public class CustomerCareController {
     }
 
     @GetMapping(path = "/groups/{customerId}/group")
-    public ResponseEntity<GroupDTO> getGroup(@PathVariable("customerId") Long customerId) throws CustomerIdNotFoundException {
+    public ResponseEntity<GroupDTO> getGroup(@PathVariable("customerId") Long customerId) throws IdNotFoundException {
         return ResponseEntity.ok(convertGroupToDto(groupFinder.retrieveGroup(customerId)));
     }
 

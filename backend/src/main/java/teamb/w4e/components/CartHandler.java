@@ -33,7 +33,7 @@ public class CartHandler implements CartProcessor, CartModifier {
 
     @Override
     @Transactional
-    public TimeSlotItem timeSlotUpdate(Long customerId, Activity activity, String date) throws NonValidDateForActivity, CustomerIdNotFoundException {
+    public TimeSlotItem timeSlotUpdate(Long customerId, Activity activity, String date) throws NonValidDateForActivity, IdNotFoundException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         Set<Item> items = customer.getCaddy().getLeisure();
         if (!scheduler.checkAvailability(activity, date)) {
@@ -53,7 +53,7 @@ public class CartHandler implements CartProcessor, CartModifier {
 
     @Override
     @Transactional
-    public GroupItem groupUpdate(Long customerId, Activity activity, Group group) throws CustomerIdNotFoundException {
+    public GroupItem groupUpdate(Long customerId, Activity activity, Group group) throws IdNotFoundException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         Set<Item> items = customer.getCaddy().getLeisure();
         Optional<GroupItem> existingItem = items.stream()
@@ -70,7 +70,7 @@ public class CartHandler implements CartProcessor, CartModifier {
 
     @Override
     @Transactional
-    public SkiPassItem skiPassUpdate(Long customerId, Activity activity, String type, int duration) throws CustomerIdNotFoundException {
+    public SkiPassItem skiPassUpdate(Long customerId, Activity activity, String type, int duration) throws IdNotFoundException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         Set<Item> items = customer.getCaddy().getLeisure();
         Optional<SkiPassItem> existingItem = items.stream()
@@ -88,7 +88,7 @@ public class CartHandler implements CartProcessor, CartModifier {
 
     @Override
     @Transactional
-    public ServiceItem serviceUpdate(Long customerId, teamb.w4e.entities.catalog.Service service) throws CustomerIdNotFoundException {
+    public ServiceItem serviceUpdate(Long customerId, teamb.w4e.entities.catalog.Service service) throws IdNotFoundException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         Set<Item> items = customer.getCaddy().getLeisure();
         items.add(new ServiceItem(service));
@@ -97,14 +97,14 @@ public class CartHandler implements CartProcessor, CartModifier {
 
     @Override
     @Transactional
-    public Set<Item> cartContent(Long customerId) throws CustomerIdNotFoundException {
+    public Set<Item> cartContent(Long customerId) throws IdNotFoundException {
         return customerFinder.retrieveCustomer(customerId).getCaddy().getLeisure();
     }
 
 
     @Override
     @Transactional
-    public Reservation validateActivity(Long customerId, Item item) throws EmptyCartException, PaymentException, CustomerIdNotFoundException, NegativeAmountTransactionException {
+    public Reservation validateActivity(Long customerId, Item item) throws EmptyCartException, PaymentException, NegativeAmountTransactionException, IdNotFoundException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         if (customer.getCaddy().getLeisure().isEmpty()) {
             throw new EmptyCartException(customer.getName());
@@ -138,7 +138,7 @@ public class CartHandler implements CartProcessor, CartModifier {
 
     @Override
     @Transactional
-    public Transaction validateService(Long customerId, ServiceItem item) throws EmptyCartException, PaymentException, CustomerIdNotFoundException, NegativeAmountTransactionException {
+    public Transaction validateService(Long customerId, ServiceItem item) throws EmptyCartException, PaymentException, NegativeAmountTransactionException, IdNotFoundException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         if (customer.getCaddy().getLeisure().isEmpty()) {
             throw new EmptyCartException(customer.getName());

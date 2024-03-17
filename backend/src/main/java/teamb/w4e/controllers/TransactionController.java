@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import teamb.w4e.dto.CustomerDTO;
 import teamb.w4e.dto.ErrorDTO;
 import teamb.w4e.dto.TransactionDTO;
-import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Transaction;
-import teamb.w4e.exceptions.CustomerIdNotFoundException;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.TransactionFinder;
@@ -40,7 +38,7 @@ public class TransactionController {
     }
 
     @GetMapping(path = "/{idCustomer}/transactions")
-    public ResponseEntity<List<TransactionDTO>> getTransactionOfCustomer(@PathVariable Long idCustomer) throws CustomerIdNotFoundException {
+    public ResponseEntity<List<TransactionDTO>> getTransactionOfCustomer(@PathVariable Long idCustomer) throws IdNotFoundException {
         CustomerDTO customer = CustomerCareController.convertCustomerToDto(customerFinder.retrieveCustomer(idCustomer));
         List<TransactionDTO> transactionDTOs = transactionFinder.findTransactionsByCustomer(customer.id()).stream().map(TransactionController::convertTransactionToDto).toList();
         return ResponseEntity.ok(transactionDTOs);

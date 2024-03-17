@@ -50,7 +50,7 @@ public class CartController {
     }
 
     @PostMapping(path = CART_URI, consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<CartElementDTO> updateCustomerCart(@PathVariable("customerId") Long customerId, @RequestBody @Valid CartElementDTO cartDTO) throws IdNotFoundException, NonValidDateForActivity, CustomerIdNotFoundException {
+    public ResponseEntity<CartElementDTO> updateCustomerCart(@PathVariable("customerId") Long customerId, @RequestBody @Valid CartElementDTO cartDTO) throws IdNotFoundException, NonValidDateForActivity {
         if (cartDTO.getType().equals(ReservationType.NONE)) {
             Service service = serviceFinder.retrieveService(cartDTO.getLeisure().id());
             return ResponseEntity.ok(convertServiceElementToDTO(cart.serviceUpdate(customerId, service)));
@@ -67,7 +67,7 @@ public class CartController {
     }
 
     @GetMapping(path = CART_URI)
-    public ResponseEntity<Set<CartElementDTO>> getCustomerCartContents(@PathVariable("customerId") Long customerId) throws IdNotFoundException, CustomerIdNotFoundException {
+    public ResponseEntity<Set<CartElementDTO>> getCustomerCartContents(@PathVariable("customerId") Long customerId) throws IdNotFoundException {
         Set<CartElementDTO> cartElements = cart.cartContent(customerId).stream().map(item -> {
             ReservationType type = item.getType();
             return switch (type) {
@@ -81,7 +81,7 @@ public class CartController {
     }
 
     @PostMapping(path = CART_URI + "/reservation", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<ReservationDTO> reserve(@PathVariable("customerId") Long customerId, @RequestBody @Valid CartElementDTO cartElementDTO) throws EmptyCartException, PaymentException, IdNotFoundException, CustomerIdNotFoundException, NegativeAmountTransactionException {
+    public ResponseEntity<ReservationDTO> reserve(@PathVariable("customerId") Long customerId, @RequestBody @Valid CartElementDTO cartElementDTO) throws EmptyCartException, PaymentException, IdNotFoundException, NegativeAmountTransactionException {
 
         ReservationType type = cartElementDTO.getType();
         return switch (type) {
@@ -96,7 +96,7 @@ public class CartController {
     }
 
     @PostMapping(path = CART_URI + "/use-service", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<TransactionDTO> serviceUtilisation(@PathVariable("customerId") Long customerId, @RequestBody @Valid CartElementDTO cartElementDTO) throws EmptyCartException, PaymentException, IdNotFoundException, CustomerIdNotFoundException, NegativeAmountTransactionException {
+    public ResponseEntity<TransactionDTO> serviceUtilisation(@PathVariable("customerId") Long customerId, @RequestBody @Valid CartElementDTO cartElementDTO) throws EmptyCartException, PaymentException, IdNotFoundException, NegativeAmountTransactionException {
         if (cartElementDTO.getType().equals(ReservationType.NONE)) {
             ServiceItem serviceItem = new ServiceItem(serviceFinder.retrieveService(cartElementDTO.getLeisure().id()));
             return ResponseEntity.ok().body(TransactionController.convertTransactionToDto(processor.validateService(customerId, serviceItem)));

@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.Customer;
-import teamb.w4e.exceptions.AlreadyExistingCustomerException;
-import teamb.w4e.exceptions.CustomerIdNotFoundException;
+import teamb.w4e.exceptions.AlreadyExistingException;
+import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.CustomerRegistration;
 import teamb.w4e.repositories.CustomerRepository;
@@ -26,9 +26,9 @@ public class CustomerRegistry implements CustomerRegistration, CustomerFinder {
     @Override
     @Transactional
     public Customer register(String name, String creditCard)
-            throws AlreadyExistingCustomerException {
+            throws AlreadyExistingException {
         if (findByName(name).isPresent())
-            throw new AlreadyExistingCustomerException(name);
+            throw new AlreadyExistingException(name);
         Customer newcustomer = new Customer(name, creditCard);
         return customerRepository.save(newcustomer);
     }
@@ -47,8 +47,8 @@ public class CustomerRegistry implements CustomerRegistration, CustomerFinder {
 
     @Override
     @Transactional(readOnly = true)
-    public Customer retrieveCustomer(Long customerId) throws CustomerIdNotFoundException {
-        return findById(customerId).orElseThrow(() -> new CustomerIdNotFoundException(customerId));
+    public Customer retrieveCustomer(Long customerId) throws IdNotFoundException {
+        return findById(customerId).orElseThrow(() -> new IdNotFoundException(customerId));
     }
 
     @Override

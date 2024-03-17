@@ -77,7 +77,9 @@ public class TransactionRegistry implements TransactionFinder, TransactionCreato
 
     @Override
     public PointTransaction createPointTransaction(Customer customer, int amount, Partner issuer) {
-        PointTransaction pointTransaction = new PointTransaction(customer, amount, issuer);
+//        PointTransaction pointTransaction = new PointTransaction(customer, amount, issuer);
+        PointTransaction pointTransaction = new PointTransaction(customer, amount);
+
         return pointTransactionRepository.save(pointTransaction);
     }
 }
