@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.Customer;
-import teamb.w4e.entities.PointTransaction;
 import teamb.w4e.entities.Transaction;
 import teamb.w4e.entities.cart.*;
 import teamb.w4e.entities.reservations.Reservation;
@@ -34,11 +33,13 @@ public class Cashier implements Payment {
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
     public Reservation payReservationFromCart(Customer customer, Item item) throws NegativeAmountTransactionException, PaymentException {
-        if (item.getLeisure().getPrice() < 0) {
+        double price = item.getLeisure().getPrice();
+        if (price < 0) {
             throw new NegativeAmountTransactionException(item.getLeisure().getPrice());
         }
-        String payment = bank.pay(customer, item.getLeisure().getPrice()).orElseThrow(() -> new PaymentException(customer.getName(), item.getLeisure().getPrice()));
-        Transaction transaction = transactionCreator.createTransaction(customer, item.getLeisure().getPrice(), payment);
+        String payment = bank.pay(customer, item.getLeisure().getPrice()).orElseThrow(() -> new PaymentException(customer.getName(), price));
+        customer.getCard().addPoints(convertPriceToPoints(price));
+        Transaction transaction = transactionCreator.createTransaction(customer, price, payment);
         ReservationType itemType = item.getType();
         return switch (itemType) {
             case TIME_SLOT -> reservationCreator.createTimeSlotReservation(customer, (TimeSlotItem) item, transaction);
@@ -47,16 +48,27 @@ public class Cashier implements Payment {
             case NONE -> null;
         };
     }
+
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
     public Transaction payServiceFromCart(Customer customer, ServiceItem item) throws NegativeAmountTransactionException, PaymentException {
         if (item.getLeisure().getPrice() < 0) {
             throw new NegativeAmountTransactionException(item.getLeisure().getPrice());
-        PointTransaction pointTransaction = transactionCreator.createPointTransaction(customer, ((int) item.getActivity().getPrice()) * 100, null);
-        // TODO: better way of translating price to points and provide an actual issuer. Also, see if returned object is useful somehow.
+//            PointTransaction pointTransaction = transactionCreator.createPointTransaction(customer, ((int) item.getActivity().getPrice()) * 100, null);
+//            // TODO: better way of translating price to points and provide an actual issuer. Also, see if returned object is useful somehow.
         }
         String payment = bank.pay(customer, item.getLeisure().getPrice()).orElseThrow(() -> new PaymentException(customer.getName(), item.getLeisure().getPrice()));
         return transactionCreator.createTransaction(customer, item.getLeisure().getPrice(), payment);
     }
 
+    private int convertPriceToPoints(double amount) {
+        if (amount < 25)
+            return (int) (amount * 0.25);
+        else if (amount < 50)
+            return (int) (amount * 0.5);
+        else if (amount < 75)
+            return (int) (amount * 0.75);
+        else
+            return (int) (amount * 0.9);
+    }
 }

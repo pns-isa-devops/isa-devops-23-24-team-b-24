@@ -61,6 +61,8 @@ class CashierTest {
         payment.payReservationFromCart(customer, item);
         Transaction transaction = transactionRepository.findTransactionByCustomer(customer.getId()).orElse(null);
         assertEquals(customer, transaction.getCustomer());
+        Customer ed = customerRepository.findById(this.customer.getId()).orElse(customer);
+        assertEquals(ed.getCard().getPoints(), 100 * 0.9);
         assertEquals(100, transaction.getAmount());
         assertNotNull(transaction.getPaymentId());
         assertEquals(transaction, transactionRepository.findById(transaction.getId()).get());
