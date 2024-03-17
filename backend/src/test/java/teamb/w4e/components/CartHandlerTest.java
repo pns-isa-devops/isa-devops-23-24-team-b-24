@@ -6,13 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
+import teamb.w4e.entities.Partner;
 import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.cart.Item;
 import teamb.w4e.entities.cart.TimeSlotItem;
+import teamb.w4e.exceptions.AlreadyExistingException;
 import teamb.w4e.interfaces.*;
 import teamb.w4e.repositories.catalog.ActivityCatalogRepository;
 import teamb.w4e.repositories.CustomerRepository;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,6 +37,9 @@ class CartHandlerTest {
     @Autowired
     private Payment payment;
 
+    @Autowired
+    private PartnerRegistration partnerRegistration;
+
     @MockBean
     private Scheduler scheduler;
 
@@ -51,9 +57,12 @@ class CartHandlerTest {
 
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws AlreadyExistingException {
+        Partner partner = new Partner("partner");
+        partnerRegistration.register("partner");
+
         customer = new Customer("Marcus", "1230896983");
-        activity = new Activity("Tennis", "Tennis court",123, Set.of());
+        activity = new Activity(partner, "Tennis", "Tennis court", 123, Set.of());
         customerRepository.save(customer);
         activityCatalogRepository.save(activity);
         TimeSlotItem i = new TimeSlotItem(activity, "07-11 21:30");
@@ -78,7 +87,6 @@ class CartHandlerTest {
         when(skiPass.reserve("ski", "half_day", -3)).thenReturn(java.util.Optional.empty());
 
     }
-
 
 
 }

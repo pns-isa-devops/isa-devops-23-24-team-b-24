@@ -22,6 +22,7 @@ import teamb.w4e.interfaces.*;
 import teamb.w4e.interfaces.leisure.ActivityRegistration;
 import teamb.w4e.interfaces.reservation.ReservationFinder;
 import teamb.w4e.repositories.CustomerRepository;
+import teamb.w4e.repositories.PartnerRepository;
 import teamb.w4e.repositories.TransactionRepository;
 import teamb.w4e.repositories.catalog.ActivityCatalogRepository;
 import teamb.w4e.repositories.reservation.ReservationRepository;
@@ -30,7 +31,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @Transactional
@@ -39,7 +39,8 @@ public class ReserveActivity {
     // We autowire the mock here because there are some bugs with the cucumber/spring integration
     @MockBean
     private Bank bankMock;
-
+    @Autowired
+    private PartnerRepository partnerRepository;
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -71,6 +72,12 @@ public class ReserveActivity {
     @Autowired
     private ReservationFinder reservationFinder;
 
+    @Autowired
+    private PartnerRegistration partnerRegistration;
+
+    @Autowired
+    private PartnerFinder partnerFinder;
+
     private Activity activity;
     private String timeSlot;
     private Transaction transaction;
@@ -82,7 +89,7 @@ public class ReserveActivity {
         reservationRepository.deleteAll();
         activityRepository.deleteAll();
     }
-    
+
 
     @Given("^a customer named \"([^\"]*)\" with the credit card number \"([^\"]*)\"$")
     public void aCustomerNamedWithTheCreditCardNumber(String customerName, String creditCardNumber) throws Throwable {
@@ -92,8 +99,10 @@ public class ReserveActivity {
 
     @And("^a Activity named \"([^\"]*)\" with the description \"([^\"]*)\" and the price (\\d+) without advantages$")
     public void aActivityNamedWithTheDescriptionAndThePriceWithoutAdvantages(String activityName, String activityDescription, int price) throws Throwable {
+        partnerRegistration.register("name");
+        Long partnerId = partnerFinder.findByName("name").get().getId();
         // Write code here that turns the phrase above into concrete actions
-        activityRegistration.register(activityName, activityDescription, price, null);
+        activityRegistration.registerActivity(partnerId, activityName, activityDescription, price, null);
     }
 
     // Dans votre test
@@ -122,7 +131,7 @@ public class ReserveActivity {
         Customer customer = customerRepository.findCustomerByName("John").orElse(null);
         assert customer != null;
         when(bankMock.pay(any(Customer.class), anyDouble())).thenReturn(Optional.of("playReceiptOKId"));
-        when(cartProcessor.validateActivity(anyLong(), any(Item.class))).thenReturn(new TimeSlotReservation(activity,timeSlot, customer.getCard(), new Transaction(customer, activity.getPrice(), "playReceiptOKId")));
+        when(cartProcessor.validateActivity(anyLong(), any(Item.class))).thenReturn(new TimeSlotReservation(activity, timeSlot, customer.getCard(), new Transaction(customer, activity.getPrice(), "playReceiptOKId")));
         // to simplify I take the first item in the cart
         Item item = customer.getCaddy().getLeisure().iterator().next();
 

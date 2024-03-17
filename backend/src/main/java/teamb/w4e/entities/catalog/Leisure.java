@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import teamb.w4e.entities.Partner;
 
 import java.util.Set;
 
@@ -16,6 +17,10 @@ public abstract class Leisure {
     @Id
     @GeneratedValue
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "partner_id")
+    private Partner partner;
     @NotBlank
     @Column(unique = true)
     private String name;
@@ -33,7 +38,8 @@ public abstract class Leisure {
     protected Leisure() {
     }
 
-    protected Leisure(String name, String description, double price, boolean booked, Set<Advantage> advantages) {
+    protected Leisure(Partner partner, String name, String description, double price, boolean booked, Set<Advantage> advantages) {
+        this.partner = partner;
         this.name = name;
         this.description = description;
         this.price = price;
@@ -47,6 +53,14 @@ public abstract class Leisure {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Partner getPartner() {
+        return partner;
+    }
+
+    public void setPartner(Partner partner) {
+        this.partner = partner;
     }
 
     public String getName() {

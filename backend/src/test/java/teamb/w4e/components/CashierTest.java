@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.Customer;
+import teamb.w4e.entities.Partner;
 import teamb.w4e.entities.Transaction;
 import teamb.w4e.entities.cart.Item;
 import teamb.w4e.entities.cart.TimeSlotItem;
@@ -15,6 +16,7 @@ import teamb.w4e.exceptions.NegativeAmountTransactionException;
 import teamb.w4e.interfaces.Bank;
 import teamb.w4e.interfaces.Payment;
 import teamb.w4e.repositories.CustomerRepository;
+import teamb.w4e.repositories.PartnerRepository;
 import teamb.w4e.repositories.TransactionRepository;
 import teamb.w4e.repositories.catalog.ActivityCatalogRepository;
 
@@ -40,13 +42,20 @@ class CashierTest {
     @Autowired
     private ActivityCatalogRepository activityCatalogRepository;
 
+    @Autowired
+    private PartnerRepository partnerRepository;
+
     @MockBean
     private Bank bankProxy;
 
     // the 896983 is the magic key for the bank
     private Customer customer;
+    private Partner partner;
+
     @BeforeEach
     void setUpContext() {
+        partner = new Partner("partner");
+        partnerRepository.save(partner);
         customer = new Customer("John", "5251896983");
         customerRepository.save(customer);
         when(bankProxy.pay(customer, 100.0)).thenReturn(Optional.of("playReceiptOKId"));
@@ -55,7 +64,7 @@ class CashierTest {
     @Test
     void payRegularAmount() throws Exception {
         customerRepository.save(customer);
-        Activity activity = new Activity("a", "a", 100, Set.of());
+        Activity activity = new Activity(partner, "a", "a", 100, Set.of());
         activityCatalogRepository.save(activity);
         Item item = new TimeSlotItem(activity, "01-10 23:56");
         payment.payReservationFromCart(customer, item);
@@ -71,7 +80,7 @@ class CashierTest {
     @Test
     void payNegativeAmount() {
         customerRepository.save(customer);
-        Item item = new TimeSlotItem(new Activity("a", "a", -12, Set.of()), "01-10 23:56");
+        Item item = new TimeSlotItem(new Activity(partner, "a", "a", -12, Set.of()), "01-10 23:56");
         assertThrows(NegativeAmountTransactionException.class, () -> payment.payReservationFromCart(customer, item));
         assertNull(transactionRepository.findTransactionByCustomer(customer.getId()).orElse(null));
     }

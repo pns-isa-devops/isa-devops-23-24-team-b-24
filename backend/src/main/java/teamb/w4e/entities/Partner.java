@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import teamb.w4e.entities.catalog.Leisure;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -18,9 +19,8 @@ public class Partner {
     @Column(unique = true)
     private String name;
 
-    @OneToMany
-    private Set<Leisure> leisure = Set.of();
-
+    @OneToMany(mappedBy = "partner")
+    private Set<Leisure> leisure = new HashSet<>();
     public Partner() {
     }
 
@@ -51,14 +51,6 @@ public class Partner {
 
     public void setLeisure(Set<Leisure> leisure) {
         this.leisure = leisure;
-    }
-
-    public void addLeisure(Leisure l) {
-        this.leisure.add(l);
-    }
-
-    public void removeLeisure(Leisure l) {
-        this.leisure.remove(l);
     }
 
     @Override

@@ -6,16 +6,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import teamb.w4e.dto.*;
+import teamb.w4e.dto.AdvantageDTO;
+import teamb.w4e.dto.ErrorDTO;
+import teamb.w4e.dto.LeisureDTO;
 import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.catalog.Advantage;
 import teamb.w4e.entities.catalog.AdvantageType;
 import teamb.w4e.entities.catalog.Service;
 import teamb.w4e.exceptions.IdNotFoundException;
-import teamb.w4e.interfaces.leisure.ActivityFinder;
-import teamb.w4e.interfaces.leisure.ActivityRegistration;
 import teamb.w4e.interfaces.AdvantageFinder;
 import teamb.w4e.interfaces.AdvantageRegistration;
+import teamb.w4e.interfaces.leisure.ActivityFinder;
+import teamb.w4e.interfaces.leisure.ActivityRegistration;
 import teamb.w4e.interfaces.leisure.ServiceFinder;
 import teamb.w4e.interfaces.leisure.ServiceRegistration;
 
@@ -40,7 +42,9 @@ public class LeisureController {
     private final ServiceFinder serviceFinder;
 
     @Autowired
-    public LeisureController(AdvantageRegistration advantageRegistry, AdvantageFinder advantageFinder, ActivityRegistration activityRegistry, ServiceRegistration serviceRegistry, ActivityFinder activityFinder, ServiceFinder serviceFinder) {
+    public LeisureController(AdvantageRegistration advantageRegistry, AdvantageFinder advantageFinder,
+                             ActivityRegistration activityRegistry, ServiceRegistration serviceRegistry,
+                             ActivityFinder activityFinder, ServiceFinder serviceFinder) {
         this.advantageRegistry = advantageRegistry;
         this.activityRegistry = activityRegistry;
         this.advantageFinder = advantageFinder;
@@ -85,13 +89,13 @@ public class LeisureController {
         return ResponseEntity.ok(advantageFinder.findByType(type).stream().map(LeisureController::convertAdvantageToDto).toList());
     }
 
-    @PostMapping(path = "/activities", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<LeisureDTO> registerActivity(@RequestBody @Valid LeisureDTO activityDTO) {
+    @PostMapping(path = "/{partnerId}/activities", consumes = APPLICATION_JSON_VALUE)
+    public ResponseEntity<LeisureDTO> registerActivity(@RequestBody @Valid LeisureDTO activityDTO, @PathVariable Long partnerId) throws IdNotFoundException {
         Set<Advantage> advantages = activityDTO.advantages().stream()
                 .map(advantage -> advantageFinder.findByName(advantage.name()).orElseThrow())
                 .collect(Collectors.toSet());
         try {
-            Activity activity = activityRegistry.register(activityDTO.name(), activityDTO.description(), activityDTO.price(), advantages);
+            Activity activity = activityRegistry.registerActivity(partnerId, activityDTO.name(), activityDTO.description(), activityDTO.price(), advantages);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(convertActivityToDto(activityFinder.retrieveActivity(activity.getId())));
         } catch (Exception e) {
@@ -109,14 +113,16 @@ public class LeisureController {
         return ResponseEntity.ok(convertActivityToDto(activityFinder.retrieveActivity(activityId)));
     }
 
-    @PostMapping(path = "/services", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<LeisureDTO> registerService(@RequestBody @Valid LeisureDTO serviceDTO) {
+    @PostMapping(path = "/{partnerId}/services", consumes = APPLICATION_JSON_VALUE)
+    public ResponseEntity<LeisureDTO> registerService(@RequestBody @Valid LeisureDTO serviceDTO, @PathVariable Long partnerId) throws IdNotFoundException {
         Set<Advantage> advantages = serviceDTO.advantages().stream()
                 .map(advantage -> advantageFinder.findByName(advantage.name()).orElseThrow())
                 .collect(Collectors.toSet());
         try {
+            Service service = serviceRegistry.registerService(partnerId, serviceDTO.name(), serviceDTO.description(), serviceDTO.price(), advantages);
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(convertServiceToDto(serviceRegistry.registerService(serviceDTO.name(), serviceDTO.description(), serviceDTO.price(), advantages)));
+                    .body(convertActivityToDto(activityFinder.retrieveActivity(service.getId())));
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
         }
@@ -140,7 +146,7 @@ public class LeisureController {
         return ResponseEntity.ok(leisure);
     }
 
-    private static AdvantageDTO convertAdvantageToDto(Advantage advantage) {
+    public static AdvantageDTO convertAdvantageToDto(Advantage advantage) {
         return new AdvantageDTO(advantage.getId(), advantage.getName(), advantage.getType(), advantage.getPoints());
     }
 

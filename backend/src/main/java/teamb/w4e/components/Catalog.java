@@ -3,12 +3,15 @@ package teamb.w4e.components;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import teamb.w4e.entities.Partner;
 import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.catalog.Advantage;
 import teamb.w4e.entities.catalog.AdvantageType;
+import teamb.w4e.exceptions.AlreadyExistingException;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.interfaces.AdvantageFinder;
 import teamb.w4e.interfaces.AdvantageRegistration;
+import teamb.w4e.interfaces.PartnerFinder;
 import teamb.w4e.interfaces.leisure.ActivityFinder;
 import teamb.w4e.interfaces.leisure.ActivityRegistration;
 import teamb.w4e.interfaces.leisure.ServiceFinder;
@@ -28,13 +31,17 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
     private final AdvantageCatalogRepository advantageCatalogRepository;
     private final ActivityCatalogRepository activityCatalogRepository;
     private final ServiceCatalogRepository serviceCatalogRepository;
+    private final PartnerFinder partnerFinder;
 
 
     @Autowired
-    public Catalog(AdvantageCatalogRepository catalogRepository, ActivityCatalogRepository activityCatalogRepository, ServiceCatalogRepository serviceCatalogRepository) {
+    public Catalog(AdvantageCatalogRepository catalogRepository, ActivityCatalogRepository activityCatalogRepository,
+                   ServiceCatalogRepository serviceCatalogRepository,
+                   PartnerFinder partnerFinder) {
         this.advantageCatalogRepository = catalogRepository;
         this.activityCatalogRepository = activityCatalogRepository;
         this.serviceCatalogRepository = serviceCatalogRepository;
+        this.partnerFinder = partnerFinder;
     }
 
     @Override
@@ -85,8 +92,9 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
 
     @Override
     @Transactional
-    public Activity register(String name, String description, double price ,Set<Advantage> advantages) {
-        Activity newActivity = new Activity(name, description, price, advantages);
+    public Activity registerActivity(Long partnerId, String name, String description, double price, Set<Advantage> advantages) throws IdNotFoundException, AlreadyExistingException {
+        Partner partner = partnerFinder.retrievePartner(partnerId);
+        Activity newActivity = new Activity(partner, name, description, price, advantages);
         return activityCatalogRepository.save(newActivity);
     }
 
@@ -135,8 +143,9 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
 
     @Override
     @Transactional
-    public teamb.w4e.entities.catalog.Service registerService(String name, String description, double price, Set<Advantage> advantages) {
-        teamb.w4e.entities.catalog.Service newService = new teamb.w4e.entities.catalog.Service(name, description, price, advantages);
+    public teamb.w4e.entities.catalog.Service registerService(Long partnerId, String name, String description, double price, Set<Advantage> advantages) throws IdNotFoundException, AlreadyExistingException {
+        Partner partner = partnerFinder.retrievePartner(partnerId);
+        teamb.w4e.entities.catalog.Service newService = new teamb.w4e.entities.catalog.Service(partner, name, description, price, advantages);
         return serviceCatalogRepository.save(newService);
     }
 }

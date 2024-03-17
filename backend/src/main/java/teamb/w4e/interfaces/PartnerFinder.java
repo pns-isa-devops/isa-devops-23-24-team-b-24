@@ -12,7 +12,7 @@ public interface PartnerFinder {
 
     Optional<Partner> findById(Long id);
 
-    Partner retrievePartner(Long customerId) throws IdNotFoundException;
+    Partner retrievePartner(Long partnerId) throws IdNotFoundException;
 
     List<Partner> findAll();
 

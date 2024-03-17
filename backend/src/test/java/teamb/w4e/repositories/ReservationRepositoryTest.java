@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import teamb.w4e.entities.Partner;
 import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Group;
@@ -38,12 +39,19 @@ class ReservationRepositoryTest {
     @Autowired
     private CustomerRepository customerRepository;
 
-    private final Activity activity = new Activity("activity", "desc", 123, Set.of());
+    @Autowired
+    private PartnerRepository partnerRepository;
+    private Activity activity;
+
+    private Partner partner;
     private final Customer customer = new Customer("john", "1234567890");
     private final Transaction transaction = new Transaction(customer, 123, "1234567890");
 
     @BeforeEach
     void setUp() {
+        partner = new Partner("partner");
+        partnerRepository.saveAndFlush(partner);
+        activity = new Activity(partner, "activity", "desc", 123, Set.of());
         customerRepository.saveAndFlush(customer);
         transactionRepository.saveAndFlush(transaction);
         activityCatalogRepository.saveAndFlush(activity);
@@ -90,7 +98,7 @@ class ReservationRepositoryTest {
 
     @Test
     void testReservationWithoutRegisteredActivity() {
-        Activity activity = new Activity("activity", "desc", 123, Set.of());
+        Activity activity = new Activity(partner, "activity", "desc", 123, Set.of());
         Reservation reservation = new TimeSlotReservation(activity, "15-06 12:30", customer.getCard(), transaction);
         assertNull(reservation.getId());
         assertThrows(InvalidDataAccessApiUsageException.class, () -> reservationRepository.saveAndFlush(reservation));

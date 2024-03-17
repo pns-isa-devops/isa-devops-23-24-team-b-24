@@ -5,6 +5,5 @@ import teamb.w4e.exceptions.AlreadyExistingException;
 
 public interface PartnerRegistration {
 
-    Partner register(String name, String creditCard)
-            throws AlreadyExistingException;
+    Partner register(String name) throws AlreadyExistingException;
 }

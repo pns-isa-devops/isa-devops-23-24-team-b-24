@@ -25,8 +25,7 @@ public class PartnerRegistry implements PartnerRegistration, PartnerFinder {
 
     @Override
     @Transactional
-    public Partner register(String name, String creditCard)
-            throws AlreadyExistingException {
+    public Partner register(String name) throws AlreadyExistingException {
         if (findByName(name).isPresent())
             throw new AlreadyExistingException(name);
         Partner newPartner = new Partner(name);
@@ -47,8 +46,8 @@ public class PartnerRegistry implements PartnerRegistration, PartnerFinder {
 
     @Override
     @Transactional(readOnly = true)
-    public Partner retrievePartner(Long customerId) throws IdNotFoundException {
-        return findById(customerId).orElseThrow(() -> new IdNotFoundException(customerId));
+    public Partner retrievePartner(Long partnerId) throws IdNotFoundException {
+        return findById(partnerId).orElseThrow(() -> new IdNotFoundException(partnerId));
     }
 
     @Override
