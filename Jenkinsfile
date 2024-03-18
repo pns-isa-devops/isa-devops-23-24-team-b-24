@@ -1,15 +1,12 @@
 pipeline {
-    agent any
-
+    agent {label "agent1"}
+    tools {
+        maven 'Maven'
+    }
     stages {
-        stage('Clean') {
+        stage('Build') {
             steps {
-                sh 'mvn clean'
-            }
-        }
-        stage('Verify') {
-            steps {
-                sh 'mvn verify'
+                sh 'pwd'
             }
         }
     }
