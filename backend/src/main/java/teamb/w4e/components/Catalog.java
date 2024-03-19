@@ -99,16 +99,19 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Activity> findActivityByName(String name) {
         return activityCatalogRepository.findActivityByName(name);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Activity> findActivityById(Long id) {
         return activityCatalogRepository.findById(id);
     }
 
     @Override
+    @Transactional
     public Activity retrieveActivity(Long activityId) throws IdNotFoundException {
         return findActivityById(activityId).orElseThrow(() -> new IdNotFoundException(activityId));
     }
@@ -120,11 +123,13 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<teamb.w4e.entities.catalog.Service> findServiceByName(String name) {
         return serviceCatalogRepository.findServiceByName(name);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<teamb.w4e.entities.catalog.Service> findServiceById(Long id) {
         return serviceCatalogRepository.findById(id);
     }
