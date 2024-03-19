@@ -39,6 +39,7 @@ public class Cashier implements Payment {
         }
         String payment = bank.pay(customer, item.getLeisure().getPrice()).orElseThrow(() -> new PaymentException(customer.getName(), price));
         customer.getCard().addPoints(convertPriceToPoints(price));
+        transactionCreator.createPointTransaction(customer, convertPriceToPoints(price), item.getLeisure().getPartner());
         Transaction transaction = transactionCreator.createTransaction(customer, price, payment);
         ReservationType itemType = item.getType();
         return switch (itemType) {
@@ -54,10 +55,10 @@ public class Cashier implements Payment {
     public Transaction payServiceFromCart(Customer customer, ServiceItem item) throws NegativeAmountTransactionException, PaymentException {
         if (item.getLeisure().getPrice() < 0) {
             throw new NegativeAmountTransactionException(item.getLeisure().getPrice());
-//            PointTransaction pointTransaction = transactionCreator.createPointTransaction(customer, ((int) item.getActivity().getPrice()) * 100, null);
-//            // TODO: better way of translating price to points and provide an actual issuer. Also, see if returned object is useful somehow.
         }
         String payment = bank.pay(customer, item.getLeisure().getPrice()).orElseThrow(() -> new PaymentException(customer.getName(), item.getLeisure().getPrice()));
+        customer.getCard().addPoints(convertPriceToPoints(item.getLeisure().getPrice()));
+        transactionCreator.createPointTransaction(customer, convertPriceToPoints(item.getLeisure().getPrice()), item.getLeisure().getPartner());
         return transactionCreator.createTransaction(customer, item.getLeisure().getPrice(), payment);
     }
 

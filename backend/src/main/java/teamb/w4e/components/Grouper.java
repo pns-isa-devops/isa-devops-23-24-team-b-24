@@ -7,7 +7,7 @@ import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Group;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.exceptions.group.AlreadyLeaderException;
-import teamb.w4e.exceptions.group.NotEnoughMembersException;
+import teamb.w4e.exceptions.group.NotEnoughException;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.GroupCreator;
 import teamb.w4e.interfaces.GroupFinder;
@@ -31,7 +31,7 @@ public class Grouper implements GroupCreator, GroupFinder {
 
     @Override
     @Transactional
-    public Group createGroup(Customer leader, Set<Customer> members) throws NotEnoughMembersException, AlreadyLeaderException, IdNotFoundException {
+    public Group createGroup(Customer leader, Set<Customer> members) throws NotEnoughException, AlreadyLeaderException, IdNotFoundException {
         if (groupRepository.findGroupByLeader(leader.getId()).isPresent()) {
             throw new AlreadyLeaderException(leader + " is already a leader");
         }
@@ -39,7 +39,7 @@ public class Grouper implements GroupCreator, GroupFinder {
             throw new AlreadyLeaderException("This member is already a leader");
         }
         if (members.isEmpty()) {
-            throw new NotEnoughMembersException("There must be at least one member in the group");
+            throw new NotEnoughException("There must be at least one member in the group");
         }
 
         if(customerFinder.findByName(leader.getName()).isEmpty()) {
@@ -55,6 +55,7 @@ public class Grouper implements GroupCreator, GroupFinder {
     }
 
     @Override
+    @Transactional
     public String deleteGroup(Long leaderId) throws IdNotFoundException {
         Group group = retrieveGroup(leaderId);
         groupRepository.delete(group);

@@ -12,6 +12,7 @@ import teamb.w4e.entities.Group;
 import teamb.w4e.entities.PointTransaction;
 import teamb.w4e.entities.Transaction;
 import teamb.w4e.exceptions.IdNotFoundException;
+import teamb.w4e.exceptions.group.NotEnoughException;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.GroupFinder;
 import teamb.w4e.interfaces.TradeCreator;
@@ -62,7 +63,7 @@ public class TransactionController {
     }
 
     @PostMapping(path = "/groups/trade", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<PointTransactionDTO> tradePoints(@RequestBody @Valid PointTradeDTO pointTradeDTO) throws IdNotFoundException {
+    public ResponseEntity<PointTransactionDTO> tradePoints(@RequestBody @Valid PointTradeDTO pointTradeDTO) throws IdNotFoundException, NotEnoughException {
         List<Group> groups = groupFinder.findAll();
         Customer sender = customerFinder.retrieveCustomer(pointTradeDTO.sender().id());
         Customer receiver = customerFinder.retrieveCustomer(pointTradeDTO.receiver().id());

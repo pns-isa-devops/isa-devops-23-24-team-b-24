@@ -2,7 +2,8 @@ package teamb.w4e.interfaces;
 
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.PointTransaction;
+import teamb.w4e.exceptions.group.NotEnoughException;
 
 public interface TradeCreator {
-    PointTransaction createTrade(Customer sender, Customer receiver, int points, boolean inSameGroup);
+    PointTransaction createTrade(Customer sender, Customer receiver, int points, boolean inSameGroup) throws NotEnoughException;
 }

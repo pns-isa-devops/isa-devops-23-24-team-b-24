@@ -13,7 +13,7 @@ import teamb.w4e.entities.Group;
 import teamb.w4e.exceptions.AlreadyExistingException;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.exceptions.group.AlreadyLeaderException;
-import teamb.w4e.exceptions.group.NotEnoughMembersException;
+import teamb.w4e.exceptions.group.NotEnoughException;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.CustomerRegistration;
 import teamb.w4e.interfaces.GroupCreator;
@@ -82,7 +82,7 @@ public class CustomerCareController {
     }
 
     @PostMapping(path = GROUP_URI + "/{customerId}/group", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<GroupDTO> createGroup(@PathVariable("customerId") Long customerId, @RequestBody @Valid GroupDTO groupDTO) throws IdNotFoundException, AlreadyLeaderException, NotEnoughMembersException {
+    public ResponseEntity<GroupDTO> createGroup(@PathVariable("customerId") Long customerId, @RequestBody @Valid GroupDTO groupDTO) throws IdNotFoundException, AlreadyLeaderException, NotEnoughException {
         Customer leader = customerFinder.retrieveCustomer(customerId);
         Set<Customer> members = new HashSet<>();
         for (CustomerDTO member : groupDTO.members()) {

@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Group;
+import teamb.w4e.exceptions.group.NotEnoughException;
 import teamb.w4e.interfaces.GroupFinder;
 import teamb.w4e.interfaces.TransactionCreator;
 import teamb.w4e.interfaces.TransactionFinder;
@@ -107,7 +108,7 @@ class TransactionRegistryTest {
     }
 
     @Test
-    void pointTradeOutOfGroup() {
+    void pointTradeOutOfGroup() throws NotEnoughException {
         Customer sender = new Customer("John", "1234567890");
         Customer receiver = new Customer("Jane", "0987654321");
         customerRepository.save(sender);
@@ -121,7 +122,7 @@ class TransactionRegistryTest {
     }
 
     @Test
-    void pointTradeInGroup() {
+    void pointTradeInGroup() throws NotEnoughException {
         Customer sender = new Customer("John", "1234567890");
         Customer receiver = new Customer("Jane", "0987654321");
         customerRepository.save(sender);

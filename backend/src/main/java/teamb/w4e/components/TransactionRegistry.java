@@ -7,6 +7,7 @@ import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Partner;
 import teamb.w4e.entities.PointTransaction;
 import teamb.w4e.entities.Transaction;
+import teamb.w4e.exceptions.group.NotEnoughException;
 import teamb.w4e.interfaces.TradeCreator;
 import teamb.w4e.interfaces.TransactionCreator;
 import teamb.w4e.interfaces.TransactionFinder;
@@ -78,14 +79,15 @@ public class TransactionRegistry implements TransactionFinder, TransactionCreato
 
     @Override
     public PointTransaction createPointTransaction(Customer customer, int amount, Partner issuer) {
-//        PointTransaction pointTransaction = new PointTransaction(customer, amount, issuer);
         PointTransaction pointTransaction = new PointTransaction(customer, amount, issuer.getName());
-
         return pointTransactionRepository.save(pointTransaction);
     }
 
     @Override
-    public PointTransaction createTrade(Customer sender, Customer receiver, int points, boolean inSameGroup) {
+    public PointTransaction createTrade(Customer sender, Customer receiver, int points, boolean inSameGroup) throws NotEnoughException {
+        if (sender.getCard().getPoints() < points) {
+            throw new NotEnoughException("Not enough points to trade");
+        }
         if (inSameGroup) {
             sender.getCard().setPoints(sender.getCard().getPoints() - points);
             receiver.getCard().setPoints(receiver.getCard().getPoints() + points);
@@ -93,8 +95,8 @@ public class TransactionRegistry implements TransactionFinder, TransactionCreato
             sender.getCard().setPoints(sender.getCard().getPoints() - points);
             receiver.getCard().setPoints(receiver.getCard().getPoints() + (int) (points * 0.5));
         }
-        PointTransaction senderTransaction = new PointTransaction(sender, sender.getCard().getPoints(), "Trade with " + receiver.getName());
-        PointTransaction receiverTransaction = new PointTransaction(receiver, receiver.getCard().getPoints(), "Trade with " + sender.getName());
+        PointTransaction senderTransaction = new PointTransaction(sender, points, "Give " + points + " points to " + receiver.getName());
+        PointTransaction receiverTransaction = new PointTransaction(receiver, points, "Receive " + points + " points from " + sender.getName());
         pointTransactionRepository.save(senderTransaction);
         pointTransactionRepository.save(receiverTransaction);
         return senderTransaction;
