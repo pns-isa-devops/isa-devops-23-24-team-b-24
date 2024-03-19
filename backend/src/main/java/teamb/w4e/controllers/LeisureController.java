@@ -121,7 +121,7 @@ public class LeisureController {
         try {
             Service service = serviceRegistry.registerService(partnerId, serviceDTO.name(), serviceDTO.description(), serviceDTO.price(), advantages);
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(convertActivityToDto(activityFinder.retrieveActivity(service.getId())));
+                    .body(convertServiceToDto(serviceFinder.retrieveService(service.getId())));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
@@ -151,11 +151,11 @@ public class LeisureController {
     }
 
     public static LeisureDTO convertActivityToDto(Activity activity) {
-        return new LeisureDTO(activity.getId(), activity.getName(), activity.getDescription(), activity.getPrice(), true, activity.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
+        return new LeisureDTO(activity.getId(), PartnerController.convertPartnerToDto(activity.getPartner()), activity.getName(), activity.getDescription(), activity.getPrice(), true, activity.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
     }
 
     public static LeisureDTO convertServiceToDto(Service service) {
-        return new LeisureDTO(service.getId(), service.getName(), service.getDescription(), service.getPrice(), false, service.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
+        return new LeisureDTO(service.getId(), PartnerController.convertPartnerToDto(service.getPartner()), service.getName(), service.getDescription(), service.getPrice(), false, service.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
     }
 
 }

@@ -31,7 +31,7 @@ public class PartnerCommands {
 
     @ShellMethod("Register a partner in the CoD backend (register PARTNER_NAME)")
     public CliPartner registerPartner(String name) {
-        CliPartner res = restTemplate.postForObject(BASE_URI, new CliPartner(name), CliPartner.class);
+        CliPartner res = restTemplate.postForObject(BASE_URI, new CliPartner(name, null), CliPartner.class);
         cliContext.getPartners().put(Objects.requireNonNull(res).getName(), res);
         return res;
     }

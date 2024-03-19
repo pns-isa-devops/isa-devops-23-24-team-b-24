@@ -7,6 +7,7 @@ import java.util.Set;
 
 public record LeisureDTO(
         Long id,
+        PartnerDTO partner,
         @NotBlank(message = "name should not be blank")
         String name,
         @NotBlank(message = "description should not be blank")

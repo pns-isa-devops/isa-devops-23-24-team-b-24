@@ -6,6 +6,7 @@ import java.util.Set;
 
 public class CliLeisure {
     private Long id;
+    private CliPartner partner;
     private String name;
     private String description;
     private double price;
@@ -15,7 +16,8 @@ public class CliLeisure {
     public CliLeisure() {
     }
 
-    public CliLeisure(String name, String description, double price, boolean booked, Set<CliAdvantage> advantages) {
+    public CliLeisure(CliPartner partner, String name, String description, double price, boolean booked, Set<CliAdvantage> advantages) {
+        this.partner = partner;
         this.name = name;
         this.description = description;
         this.price = price;
@@ -29,6 +31,14 @@ public class CliLeisure {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public CliPartner getPartner() {
+        return partner;
+    }
+
+    public void setPartner(CliPartner partner) {
+        this.partner = partner;
     }
 
     public String getName() {

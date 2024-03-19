@@ -69,11 +69,11 @@ public class PartnerController {
         return ResponseEntity.ok(convertPartnerToDto(finder.retrievePartner(partnerId)));
     }
 
-    private static PartnerDTO convertPartnerToDto(Partner partner) {
+    public static PartnerDTO convertPartnerToDto(Partner partner) {
         return new PartnerDTO(partner.getId(), partner.getName(), partner.getLeisure().stream().map(PartnerController::convertLeisureToDto).collect(Collectors.toSet()));
     }
 
-    public static LeisureDTO convertLeisureToDto(Leisure leisure) {
-        return new LeisureDTO(leisure.getId(), leisure.getName(), leisure.getDescription(), leisure.getPrice(), leisure.isBooked(), leisure.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
+    private static LeisureDTO convertLeisureToDto(Leisure leisure) {
+        return new LeisureDTO(leisure.getId(), null, leisure.getName(), leisure.getDescription(), leisure.getPrice(), leisure.isBooked(), leisure.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
     }
 }

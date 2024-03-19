@@ -19,8 +19,9 @@ public class Partner {
     @Column(unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "partner")
+    @OneToMany(mappedBy ="partner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Leisure> leisure = new HashSet<>();
+
     public Partner() {
     }
 

@@ -51,12 +51,12 @@ public class LeisureCommands {
             }
         }
         if (isActivity) {
-            CliLeisure newActivity = new CliLeisure(leisureName, description, price, true, advantagesSet);
+            CliLeisure newActivity = new CliLeisure(partner, leisureName, description, price, true, advantagesSet);
             CliLeisure res = restTemplate.postForObject(BASE_URI + "/" + partner.getId() + "/activities", newActivity, CliLeisure.class);
             cliContext.getLeisure().put(Objects.requireNonNull(res).getName(), res);
             return res;
         } else {
-            CliLeisure newService = new CliLeisure(leisureName, description, price, false, advantagesSet);
+            CliLeisure newService = new CliLeisure(partner, leisureName, description, price, false, advantagesSet);
             CliLeisure res = restTemplate.postForObject(BASE_URI + "/" + partner.getId() + "/services", newService, CliLeisure.class);
             cliContext.getLeisure().put(Objects.requireNonNull(res).getName(), res);
             return res;

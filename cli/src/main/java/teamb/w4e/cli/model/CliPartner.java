@@ -1,6 +1,7 @@
 package teamb.w4e.cli.model;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class CliPartner {
@@ -9,9 +10,9 @@ public class CliPartner {
     private String name;
     private Set<CliLeisure> leisure;
 
-    public CliPartner(String name) {
+    public CliPartner(String name, Set<CliLeisure> leisure) {
         this.name = name;
-        this.leisure = new HashSet<>();
+        this.leisure = Objects.requireNonNullElseGet(leisure, HashSet::new);
     }
 
     public Long getId() {

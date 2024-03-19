@@ -18,7 +18,7 @@ public abstract class Leisure {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "partner_id")
     private Partner partner;
     @NotBlank
