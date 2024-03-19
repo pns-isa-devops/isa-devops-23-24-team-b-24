@@ -124,6 +124,6 @@ public abstract class Leisure {
 
     @Override
     public int hashCode() {
-        return id.hashCode() + name.hashCode();
+        return id.hashCode();
     }
 }

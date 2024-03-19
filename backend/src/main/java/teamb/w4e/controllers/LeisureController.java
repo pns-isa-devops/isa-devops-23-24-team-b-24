@@ -31,7 +31,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequestMapping(path = LeisureController.BASE_URI, produces = APPLICATION_JSON_VALUE)
 public class LeisureController {
-
     public static final String BASE_URI = "/catalog";
 
     private final AdvantageRegistration advantageRegistry;
@@ -151,11 +150,11 @@ public class LeisureController {
     }
 
     public static LeisureDTO convertActivityToDto(Activity activity) {
-        return new LeisureDTO(activity.getId(), PartnerController.convertPartnerToDto(activity.getPartner()), activity.getName(), activity.getDescription(), activity.getPrice(), true, activity.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
+        return new LeisureDTO(activity.getId(), activity.getPartner().getName(), activity.getName(), activity.getDescription(), activity.getPrice(), true, activity.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
     }
 
     public static LeisureDTO convertServiceToDto(Service service) {
-        return new LeisureDTO(service.getId(), PartnerController.convertPartnerToDto(service.getPartner()), service.getName(), service.getDescription(), service.getPrice(), false, service.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
+        return new LeisureDTO(service.getId(), service.getPartner().getName(), service.getName(), service.getDescription(), service.getPrice(), false, service.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
     }
 
 }

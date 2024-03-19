@@ -74,6 +74,6 @@ public class PartnerController {
     }
 
     private static LeisureDTO convertLeisureToDto(Leisure leisure) {
-        return new LeisureDTO(leisure.getId(), null, leisure.getName(), leisure.getDescription(), leisure.getPrice(), leisure.isBooked(), leisure.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
+        return new LeisureDTO(leisure.getId(), leisure.getPartner().getName(), leisure.getName(), leisure.getDescription(), leisure.getPrice(), leisure.isBooked(), leisure.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
     }
 }
