@@ -1,25 +1,42 @@
 echo "start of demo"
 echo "SCENARIO: create reservation"
+echo "CUSTOMERS"
 register Emma 0110896983
 register John 0110896983
 customers
+echo "PARTNERS"
+register-partner Marta
+register-partner Tom
+partners
+echo "ADVANTAGES"
 advantages
 register-advantage free-juice COCKTAIL 2
 register-advantage cookies LOCAL_SPECIALITY 3
-register-leisure Yoga relaxing 20 -a --ad cookies
-register-leisure Pilates hard 30 -a  --ad free-juice
-register-leisure ski hard 30 -a
+advantages
+echo "ACTIVITIES"
+register-leisure Tom Yoga relaxing 20 -a --ad cookies
+register-leisure Tom Pilates hard 30 -a  --ad free-juice
+register-leisure Marta ski hard 30 -a
 activities
+echo "SERVICES"
+register-leisure Tom vente-de-cookies delicious 12.10 --ad cookies
+services
+echo "GROUPS"
+create-group Emma --m John
+groups
 echo "ADD TO CART"
-add-activity-to-cart Emma Yoga -t --day 07-11 --hour 21:30
 add-activity-to-cart Emma Pilates -t --day 04-07 --hour 13:00
 add-activity-to-cart Emma ski -p --ski day --duration 3
-show-cart Emma
-create-group Emma --m John
 add-activity-to-cart Emma Yoga -g
+add-service-to-cart Emma vente-de-cookies
 show-cart Emma
 echo "RESERVATION"
 reserve Emma
 show-reservations Emma
+echo "USE-SERVICE"
+use-service Emma vente-de-cookies
+echo "TRANSACTIONS"
 show-transactions Emma
+echo "POINTS-TRANSACTIONS"
+trade-points Emma John 1
 echo "END OF DEMO"
