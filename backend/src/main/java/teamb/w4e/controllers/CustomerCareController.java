@@ -97,6 +97,15 @@ public class CustomerCareController {
         }
     }
 
+    @DeleteMapping(path = GROUP_URI + "/{leaderId}/group/delete")
+    public ResponseEntity<String> deleteGroup(@PathVariable("leaderId") Long leaderId) throws IdNotFoundException {
+        Group group = groupFinder.retrieveGroup(leaderId);
+        if(group == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(createGroup.deleteGroup(leaderId));
+    }
+
     @GetMapping(path = GROUP_URI + "/{customerId}/group")
     public ResponseEntity<GroupDTO> getGroup(@PathVariable("customerId") Long customerId) throws IdNotFoundException {
         return ResponseEntity.ok(convertGroupToDto(groupFinder.retrieveGroup(customerId)));

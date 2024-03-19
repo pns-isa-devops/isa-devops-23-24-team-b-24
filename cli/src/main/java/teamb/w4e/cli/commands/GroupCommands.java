@@ -52,6 +52,13 @@ public class GroupCommands {
         return restTemplate.postForObject(getUriForGroup(leaderName), group, CliGroup.class);
     }
 
+    @ShellMethod("Create a group in the backend (delete-group LEADER_NAME)")
+    public String deleteGroup(String leaderName) {
+        restTemplate.delete(getUriForGroup(leaderName) + "/delete");
+        return "Group deleted";
+    }
+
+
     @ShellMethod("List all known groups")
     public Set<CliGroup> groups() {
         return Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(BASE_URI + GROUP_URI, CliGroup[].class)

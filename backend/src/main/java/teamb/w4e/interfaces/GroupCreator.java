@@ -10,4 +10,8 @@ import java.util.Set;
 
 public interface GroupCreator {
     Group createGroup(Customer leader, Set<Customer> members) throws NotEnoughMembersException, AlreadyLeaderException, IdNotFoundException;
+
+    String deleteGroup(Long id) throws IdNotFoundException;
+
+
 }

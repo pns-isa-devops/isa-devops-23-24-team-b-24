@@ -55,6 +55,13 @@ public class Grouper implements GroupCreator, GroupFinder {
     }
 
     @Override
+    public String deleteGroup(Long leaderId) throws IdNotFoundException {
+        Group group = retrieveGroup(leaderId);
+        groupRepository.delete(group);
+        return "Group deleted";
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Optional<Group> findGroupByLeader(Long leaderId) {
         return groupRepository.findGroupByLeader(leaderId);
