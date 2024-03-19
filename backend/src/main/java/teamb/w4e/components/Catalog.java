@@ -7,7 +7,6 @@ import teamb.w4e.entities.Partner;
 import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.catalog.Advantage;
 import teamb.w4e.entities.catalog.AdvantageType;
-import teamb.w4e.exceptions.AlreadyExistingException;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.interfaces.AdvantageFinder;
 import teamb.w4e.interfaces.AdvantageRegistration;
@@ -92,7 +91,7 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
 
     @Override
     @Transactional
-    public Activity registerActivity(Long partnerId, String name, String description, double price, Set<Advantage> advantages) throws IdNotFoundException, AlreadyExistingException {
+    public Activity registerActivity(Long partnerId, String name, String description, double price, Set<Advantage> advantages) throws IdNotFoundException {
         Partner partner = partnerFinder.retrievePartner(partnerId);
         Activity newActivity = new Activity(partner, name, description, price, advantages);
         return activityCatalogRepository.save(newActivity);
@@ -148,7 +147,7 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
 
     @Override
     @Transactional
-    public teamb.w4e.entities.catalog.Service registerService(Long partnerId, String name, String description, double price, Set<Advantage> advantages) throws IdNotFoundException, AlreadyExistingException {
+    public teamb.w4e.entities.catalog.Service registerService(Long partnerId, String name, String description, double price, Set<Advantage> advantages) throws IdNotFoundException {
         Partner partner = partnerFinder.retrievePartner(partnerId);
         teamb.w4e.entities.catalog.Service newService = new teamb.w4e.entities.catalog.Service(partner, name, description, price, advantages);
         return serviceCatalogRepository.save(newService);

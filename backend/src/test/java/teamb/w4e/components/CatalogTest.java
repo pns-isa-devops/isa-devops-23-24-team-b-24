@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import teamb.w4e.entities.Partner;
 import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.catalog.Advantage;
 import teamb.w4e.entities.catalog.AdvantageType;
@@ -19,7 +18,6 @@ import teamb.w4e.interfaces.leisure.ActivityFinder;
 import teamb.w4e.interfaces.leisure.ActivityRegistration;
 import teamb.w4e.interfaces.leisure.ServiceFinder;
 import teamb.w4e.interfaces.leisure.ServiceRegistration;
-import teamb.w4e.repositories.catalog.ServiceCatalogRepository;
 
 import java.util.Collections;
 import java.util.Optional;

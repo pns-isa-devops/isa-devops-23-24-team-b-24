@@ -82,7 +82,7 @@ public class CustomerCareController {
     }
 
     @PostMapping(path = GROUP_URI + "/{customerId}/group", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<GroupDTO> createGroup(@PathVariable("customerId") Long customerId, @RequestBody @Valid GroupDTO groupDTO) throws IdNotFoundException, AlreadyLeaderException, NotEnoughException {
+    public ResponseEntity<GroupDTO> createGroup(@PathVariable("customerId") Long customerId, @RequestBody @Valid GroupDTO groupDTO) throws IdNotFoundException, NotEnoughException {
         Customer leader = customerFinder.retrieveCustomer(customerId);
         Set<Customer> members = new HashSet<>();
         for (CustomerDTO member : groupDTO.members()) {

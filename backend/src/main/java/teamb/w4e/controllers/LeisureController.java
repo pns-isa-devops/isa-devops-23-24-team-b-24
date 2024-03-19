@@ -89,7 +89,7 @@ public class LeisureController {
     }
 
     @PostMapping(path = "/{partnerId}/activities", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<LeisureDTO> registerActivity(@RequestBody @Valid LeisureDTO activityDTO, @PathVariable Long partnerId) throws IdNotFoundException {
+    public ResponseEntity<LeisureDTO> registerActivity(@RequestBody @Valid LeisureDTO activityDTO, @PathVariable Long partnerId) {
         Set<Advantage> advantages = activityDTO.advantages().stream()
                 .map(advantage -> advantageFinder.findByName(advantage.name()).orElseThrow())
                 .collect(Collectors.toSet());
@@ -113,7 +113,7 @@ public class LeisureController {
     }
 
     @PostMapping(path = "/{partnerId}/services", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<LeisureDTO> registerService(@RequestBody @Valid LeisureDTO serviceDTO, @PathVariable Long partnerId) throws IdNotFoundException {
+    public ResponseEntity<LeisureDTO> registerService(@RequestBody @Valid LeisureDTO serviceDTO, @PathVariable Long partnerId) {
         Set<Advantage> advantages = serviceDTO.advantages().stream()
                 .map(advantage -> advantageFinder.findByName(advantage.name()).orElseThrow())
                 .collect(Collectors.toSet());
