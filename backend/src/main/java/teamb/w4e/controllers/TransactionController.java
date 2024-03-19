@@ -27,6 +27,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class TransactionController {
 
     public static final String TRANSACTION_URI = "/transactions";
+    public static final String POINT_TRANSACTION = "/point-transactions";
     private final TransactionFinder transactionFinder;
     private final CustomerFinder customerFinder;
     private final GroupFinder groupFinder;
@@ -47,11 +48,18 @@ public class TransactionController {
         return new ErrorDTO("Cannot process Transaction information", e.getMessage());
     }
 
-    @GetMapping(path = TRANSACTION_URI + "/{idCustomer}/transactions")
+    @GetMapping(path = TRANSACTION_URI + "/{idCustomer}/transaction")
     public ResponseEntity<List<TransactionDTO>> getTransactionOfCustomer(@PathVariable Long idCustomer) throws IdNotFoundException {
         CustomerDTO customer = CustomerCareController.convertCustomerToDto(customerFinder.retrieveCustomer(idCustomer));
         List<TransactionDTO> transactionDTOs = transactionFinder.findTransactionsByCustomer(customer.id()).stream().map(TransactionController::convertTransactionToDto).toList();
         return ResponseEntity.ok(transactionDTOs);
+    }
+
+    @GetMapping(path = POINT_TRANSACTION + "/{idCustomer}/transaction")
+    public ResponseEntity<List<PointTransactionDTO>> getPointTransactionOfCustomer(@PathVariable Long idCustomer) throws IdNotFoundException {
+        CustomerDTO customer = CustomerCareController.convertCustomerToDto(customerFinder.retrieveCustomer(idCustomer));
+        List<PointTransactionDTO> pointTransactionDTOs = transactionFinder.findPointTransactionsByCustomer(customer.id()).stream().map(TransactionController::convertPointTransactionToDto).toList();
+        return ResponseEntity.ok(pointTransactionDTOs);
     }
 
     @GetMapping(path = TRANSACTION_URI)
@@ -59,6 +67,14 @@ public class TransactionController {
         return ResponseEntity.ok(transactionFinder.findAllTransactions()
                 .stream()
                 .map(TransactionController::convertTransactionToDto)
+                .toList());
+    }
+
+    @GetMapping(path = POINT_TRANSACTION)
+    public ResponseEntity<List<PointTransactionDTO>> getPointTransactions() {
+        return ResponseEntity.ok(transactionFinder.findAllPointTransactions()
+                .stream()
+                .map(TransactionController::convertPointTransactionToDto)
                 .toList());
     }
 

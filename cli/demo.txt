@@ -36,7 +36,10 @@ show-reservations Emma
 echo "USE-SERVICE"
 use-service Emma vente-de-cookies
 echo "TRANSACTIONS"
-show-transactions Emma
+transactions
 echo "POINTS-TRANSACTIONS"
 trade-points Emma John 1
+show-all-transactions Emma
+show-all-transactions John
+point-transactions
 echo "END OF DEMO"
