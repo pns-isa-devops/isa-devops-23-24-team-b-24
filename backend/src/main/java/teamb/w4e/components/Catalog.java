@@ -91,6 +91,14 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
     }
 
     @Override
+    public String deleteActivity(Long id) throws IdNotFoundException {
+        Activity activity = retrieveActivity(id);
+        activityCatalogRepository.delete(activity);
+        return "Activity deleted";
+    }
+
+
+    @Override
     public Optional<Activity> findActivityByName(String name) {
         return activityCatalogRepository.findActivityByName(name);
     }
@@ -138,5 +146,12 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
     public teamb.w4e.entities.catalog.Service registerService(String name, String description, double price, Set<Advantage> advantages) {
         teamb.w4e.entities.catalog.Service newService = new teamb.w4e.entities.catalog.Service(name, description, price, advantages);
         return serviceCatalogRepository.save(newService);
+    }
+
+    @Override
+    public String deleteService(Long id) throws IdNotFoundException {
+        teamb.w4e.entities.catalog.Service service = retrieveService(id);
+        serviceCatalogRepository.delete(service);
+        return "Service deleted";
     }
 }

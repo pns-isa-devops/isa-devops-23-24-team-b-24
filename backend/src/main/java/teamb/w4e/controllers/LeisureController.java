@@ -138,11 +138,11 @@ public class LeisureController {
     }
 
     @DeleteMapping(path = BASE_URI + "/{leisureId}/delete")
-    public ResponseEntity<String> deleteLeisure(@PathVariable Long leisureId) {
+    public ResponseEntity<String> deleteLeisure(@PathVariable Long leisureId) throws IdNotFoundException {
         if (activityFinder.findActivityById(leisureId).isPresent()) {
-            return ResponseEntity.ok(activityRegistry.delete(leisureId));
+            return ResponseEntity.ok(activityRegistry.deleteActivity(leisureId));
         } else if (serviceFinder.findServiceById(leisureId).isPresent()) {
-            return ResponseEntity.ok(serviceRegistry.delete(leisureId));
+            return ResponseEntity.ok(serviceRegistry.deleteService(leisureId));
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
