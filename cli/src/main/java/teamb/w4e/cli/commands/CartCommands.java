@@ -90,6 +90,9 @@ public class CartCommands {
     public Set<CliReservation> reserve(String customerName) {
         Set<CliReservation> reservations = new HashSet<>();
         for (CartElement element : showCart(customerName)) {
+            if (element.getType().equals(ReservationType.NONE)) {
+                continue;
+            }
             reservations.add(restTemplate.postForObject(getUriForCustomer(customerName) + "/reservation", element, CliReservation.class));
         }
         return reservations;
