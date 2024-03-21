@@ -81,6 +81,18 @@ public class LeisureCommands {
         return activityMap.toString();
     }
 
+    @ShellMethod("Remove leisure by name (remove-leisure NAME)")
+    public String removeLeisure(
+            String name,
+            @ShellOption(value = "-a", defaultValue = "false") boolean isActivity) {
+        if (isActivity) {
+            restTemplate.delete(BASE_URI + "/activities/" + name);
+        } else {
+            restTemplate.delete(BASE_URI + "/services/" + name);
+        }
+        return "Leisure " + name + " removed";
+    }
+
 
     private String getUriForAdvantage(String name) {
         return AdvantageCommands.BASE_URI + "/" + cliContext.getAdvantages().get(name).getId();
