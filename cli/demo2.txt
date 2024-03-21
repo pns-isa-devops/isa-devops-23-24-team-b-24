@@ -1,16 +1,14 @@
 echo "start of demo2"
 echo "SCENARIO: create Service"
-register Emma 0110896983
-register John 0110896983
+register Niki 0110896983
 customers
 advantages
-register-advantage free-juice COCKTAIL 2
-register-advantage cookies LOCAL_SPECIALITY 3
-register-leisure KinderGarden kids 10 --ad cookies
+register-advantage cookies2 LOCAL_SPECIALITY 3
+register-leisure KinderGarden kids 10 --ad cookies2
 services
-add-service-to-cart Emma KinderGarden
-show-cart Emma
+add-service-to-cart Niki KinderGarden
+show-cart Niki
 echo "CHECKOUT"
-use-service Emma KinderGarden
-show-cart Emma
-show-transactions Emma
+use-service Niki KinderGarden
+show-cart Niki
+show-transactions Niki

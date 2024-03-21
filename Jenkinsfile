@@ -13,17 +13,26 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'chmod -R 777 scheduler'
+                //sh 'chmod -R 777 scheduler'
                 sh './build-all.sh'
             }
         }
 
         stage('Up') {
             steps {
-                //sh "ls -ali scheduler"
-                sh 'docker compose up -d'
-                //sh 'docker compose up --abort-on-container-exit --exit-code-from tcf-cli'
+                sh 'docker compose up -d --scale tcf-cli=0'
+
+            }
+        }
+        stage('Tests') {
+            steps {
+                //tests unitaires
                 sh 'mvn clean package -f backend/pom.xml'
+                //tests e2e
+                sh 'cd cli && docker compose run tcf-cli script demo.txt && exit'
+                //sh 'docker compose stop tcf-cli'
+                sh 'cd cli && docker compose run tcf-cli script demo2.txt && exit'
+
             }
         }
         stage('Cleanup') {
