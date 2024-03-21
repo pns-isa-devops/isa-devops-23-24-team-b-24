@@ -7,12 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import teamb.w4e.dto.TransactionDTO;
 import teamb.w4e.dto.cart.CartElementDTO;
 import teamb.w4e.dto.reservations.ReservationDTO;
+import teamb.w4e.entities.cart.*;
 import teamb.w4e.entities.catalog.Activity;
+import teamb.w4e.entities.catalog.Leisure;
 import teamb.w4e.entities.catalog.Service;
-import teamb.w4e.entities.cart.GroupItem;
-import teamb.w4e.entities.cart.ServiceItem;
-import teamb.w4e.entities.cart.SkiPassItem;
-import teamb.w4e.entities.cart.TimeSlotItem;
 import teamb.w4e.entities.reservations.ReservationType;
 import teamb.w4e.exceptions.*;
 import teamb.w4e.interfaces.CartModifier;
@@ -21,6 +19,7 @@ import teamb.w4e.interfaces.GroupFinder;
 import teamb.w4e.interfaces.leisure.ActivityFinder;
 import teamb.w4e.interfaces.leisure.ServiceFinder;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -105,6 +104,12 @@ public class CartController {
         return ResponseEntity.noContent().build();
         // on dit que ça n'est bien passé mais qu'il y a rien
     }
+
+    @DeleteMapping(path = CART_URI + "/{itemId}")
+    public ResponseEntity<String> removeItemFromCart(@PathVariable("customerId") Long customerId, @PathVariable("itemId") Long itemId) throws IdNotFoundException, CustomerIdNotFoundException {
+        return ResponseEntity.ok(cart.removeItem(customerId, itemId));
+    }
+
 
 
     private static CartElementDTO convertTimeSlotElementToDTO(TimeSlotItem item) {

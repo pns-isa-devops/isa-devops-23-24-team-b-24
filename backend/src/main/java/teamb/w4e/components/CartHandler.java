@@ -8,6 +8,7 @@ import teamb.w4e.entities.Customer;
 import teamb.w4e.entities.Group;
 import teamb.w4e.entities.Transaction;
 import teamb.w4e.entities.cart.*;
+import teamb.w4e.entities.catalog.Leisure;
 import teamb.w4e.entities.reservations.*;
 import teamb.w4e.exceptions.*;
 import teamb.w4e.interfaces.*;
@@ -96,6 +97,20 @@ public class CartHandler implements CartProcessor, CartModifier {
     }
 
     @Override
+    public String removeItem(Long customerId, Long itemId) throws IdNotFoundException, CustomerIdNotFoundException {
+        Customer customer = customerFinder.retrieveCustomer(customerId);
+        Set<Item> items = customer.getCaddy().getLeisure();
+        for (Item item : items) {
+            Leisure leisure = item.getLeisure();
+            if (leisure.getId().equals(itemId)) {
+                items.remove(item);
+                return "Item removed";
+            }
+        }
+        throw new IdNotFoundException(itemId);
+    }
+
+    @Override
     @Transactional
     public Set<Item> cartContent(Long customerId) throws CustomerIdNotFoundException {
         return customerFinder.retrieveCustomer(customerId).getCaddy().getLeisure();
@@ -147,4 +162,6 @@ public class CartHandler implements CartProcessor, CartModifier {
         customer.getCaddy().getLeisure().remove(item);
         return transaction;
     }
+
+
 }

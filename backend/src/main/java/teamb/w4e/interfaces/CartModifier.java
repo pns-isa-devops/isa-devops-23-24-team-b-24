@@ -21,4 +21,6 @@ public interface CartModifier {
     Set<Item> cartContent(Long customerId) throws IdNotFoundException, CustomerIdNotFoundException;
 
     ServiceItem serviceUpdate(Long customerId, Service service) throws CustomerIdNotFoundException;
+
+    String removeItem(Long customerId, Long itemId) throws IdNotFoundException, CustomerIdNotFoundException;
 }
