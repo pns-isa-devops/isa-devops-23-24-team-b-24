@@ -28,6 +28,8 @@ pipeline {
             steps {
                 //tests unitaires
                 sh 'mvn clean package -f backend/pom.xml'
+                //test d'intégration
+                sh 'mvn clean verify -f backend/pom.xml'
                 //tests e2e
                 sh 'cd cli && docker compose run tcf-cli script demo.txt && exit'
                 //sh 'docker compose stop tcf-cli'
