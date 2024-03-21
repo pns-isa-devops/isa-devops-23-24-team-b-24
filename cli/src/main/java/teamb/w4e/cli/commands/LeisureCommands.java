@@ -81,16 +81,14 @@ public class LeisureCommands {
         return activityMap.toString();
     }
 
-    @ShellMethod("Remove leisure by name (remove-leisure NAME)")
-    public String removeLeisure(
-            String name,
-            @ShellOption(value = "-a", defaultValue = "false") boolean isActivity) {
-        if (isActivity) {
-            restTemplate.delete(BASE_URI + "/activities/" + name);
-        } else {
-            restTemplate.delete(BASE_URI + "/services/" + name);
-        }
+    @ShellMethod("delete leisure by name (delete-leisure NAME)")
+    public String deleteLeisure(String name) {
+        restTemplate.delete(getUriForLeisure(name));
         return "Leisure " + name + " removed";
+    }
+
+    private String getUriForLeisure(String name) {
+        return BASE_URI + "/" + cliContext.getLeisure().get(name).getId();
     }
 
 

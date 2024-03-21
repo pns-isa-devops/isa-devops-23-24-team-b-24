@@ -140,6 +140,21 @@ public class LeisureController {
         return ResponseEntity.ok(leisure);
     }
 
+    @DeleteMapping(path = BASE_URI + "/{leisureId}/delete")
+    public ResponseEntity<String> deleteLeisure(@PathVariable Long leisureId) {
+        try {
+            activityFinder.deleteActivity(leisureId);
+            return ResponseEntity.ok("Leisure " + leisureId + " removed");
+        } catch (IdNotFoundException e) {
+            try {
+                serviceFinder.deleteService(leisureId);
+                return ResponseEntity.ok("Leisure " + leisureId + " removed");
+            } catch (IdNotFoundException ex) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Leisure " + leisureId + " not found");
+            }
+        }
+    }
+
     private static AdvantageDTO convertAdvantageToDto(Advantage advantage) {
         return new AdvantageDTO(advantage.getId(), advantage.getName(), advantage.getType(), advantage.getPoints());
     }
