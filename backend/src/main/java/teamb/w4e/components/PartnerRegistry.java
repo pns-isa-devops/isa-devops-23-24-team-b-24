@@ -35,7 +35,7 @@ public class PartnerRegistry implements PartnerRegistration, PartnerFinder {
     @Override
     @Transactional(readOnly = true)
     public Optional<Partner> findByName(String name) {
-        return partnerRepository.findCustomerByName(name);
+        return partnerRepository.findPartnerByName(name);
     }
 
     @Override
