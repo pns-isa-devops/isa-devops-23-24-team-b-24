@@ -20,4 +20,5 @@ public interface ActivityFinder {
 
     @Query("SELECT a FROM Activity a WHERE a.booked = true")
     List<Activity> findAllActivities();
+
 }

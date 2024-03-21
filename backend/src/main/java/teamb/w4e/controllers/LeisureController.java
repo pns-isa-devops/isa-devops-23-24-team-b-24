@@ -7,10 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import teamb.w4e.dto.*;
-import teamb.w4e.entities.catalog.Activity;
-import teamb.w4e.entities.catalog.Advantage;
-import teamb.w4e.entities.catalog.AdvantageType;
-import teamb.w4e.entities.catalog.Service;
+import teamb.w4e.entities.catalog.*;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.interfaces.leisure.ActivityFinder;
 import teamb.w4e.interfaces.leisure.ActivityRegistration;
@@ -142,17 +139,12 @@ public class LeisureController {
 
     @DeleteMapping(path = BASE_URI + "/{leisureId}/delete")
     public ResponseEntity<String> deleteLeisure(@PathVariable Long leisureId) {
-        try {
-            activityFinder.deleteActivity(leisureId);
-            return ResponseEntity.ok("Leisure " + leisureId + " removed");
-        } catch (IdNotFoundException e) {
-            try {
-                serviceFinder.deleteService(leisureId);
-                return ResponseEntity.ok("Leisure " + leisureId + " removed");
-            } catch (IdNotFoundException ex) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Leisure " + leisureId + " not found");
-            }
+        if (activityFinder.findActivityById(leisureId).isPresent()) {
+            return ResponseEntity.ok(activityRegistry.delete(leisureId));
+        } else if (serviceFinder.findServiceById(leisureId).isPresent()) {
+            return ResponseEntity.ok(serviceRegistry.delete(leisureId));
         }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     private static AdvantageDTO convertAdvantageToDto(Advantage advantage) {

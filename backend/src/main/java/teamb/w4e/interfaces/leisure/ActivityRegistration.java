@@ -7,4 +7,6 @@ import java.util.Set;
 
 public interface ActivityRegistration {
     Activity register(String name, String description, double price, Set<Advantage> advantages);
+
+    String delete(Long id);
 }

@@ -20,4 +20,5 @@ public interface ServiceFinder {
 
     @Query("SELECT s FROM Service s WHERE s.booked = false")
     List<Service> findAllServices();
+
 }
