@@ -3,37 +3,37 @@ package teamb.w4e.cli.model;
 public class CliReservation {
     private Long id;
     private ReservationType type;
-    private CliLeisure leisure;
+    private CliLeisure activity;
     private String date;
     private CliGroup group;
     private String skiPassType;
-    private int duration;
+    private int skiPassDuration;
 
     public CliReservation() {
     }
 
-    public CliReservation(ReservationType type, CliLeisure leisure) {
+    public CliReservation(ReservationType type, CliLeisure activity) {
         this.type = type;
-        this.leisure = leisure;
+        this.activity = activity;
     }
 
-    public CliReservation(ReservationType type, CliLeisure leisure, String date) {
+    public CliReservation(ReservationType type, CliLeisure activity, String date) {
         this.type = type;
-        this.leisure = leisure;
+        this.activity = activity;
         this.date = date;
     }
 
-    public CliReservation(ReservationType type, CliLeisure leisure, CliGroup group) {
+    public CliReservation(ReservationType type, CliLeisure activity, CliGroup group) {
         this.type = type;
-        this.leisure = leisure;
+        this.activity = activity;
         this.group = group;
     }
 
-    public CliReservation(ReservationType type, CliLeisure leisure, String skiPassType, int duration) {
+    public CliReservation(ReservationType type, CliLeisure activity, String skiPassType, int duration) {
         this.type = type;
-        this.leisure = leisure;
+        this.activity = activity;
         this.skiPassType = skiPassType;
-        this.duration = duration;
+        this.skiPassDuration = duration;
     }
 
     public Long getId() {
@@ -52,12 +52,12 @@ public class CliReservation {
         this.type = type;
     }
 
-    public CliLeisure getLeisure() {
-        return leisure;
+    public CliLeisure getActivity() {
+        return activity;
     }
 
-    public void setLeisure(CliLeisure leisure) {
-        this.leisure = leisure;
+    public void setActivity(CliLeisure activity) {
+        this.activity = activity;
     }
 
     public String getDate() {
@@ -84,19 +84,19 @@ public class CliReservation {
         this.skiPassType = skiPassType;
     }
 
-    public int getDuration() {
-        return duration;
+    public int getSkiPassDuration() {
+        return skiPassDuration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    public void setSkiPassDuration(int skiPassDuration) {
+        this.skiPassDuration = skiPassDuration;
     }
 
     @Override
     public String toString() {
         String base = "id=" + id + '\'' +
                 "type=" + type + '\'' +
-                "activity=" + leisure + '\'';
+                "activity=" + activity + '\'';
         return switch (type) {
             case TIME_SLOT -> "TimeSlotReservation{" + '\'' +
                     base + '\'' +
@@ -109,7 +109,7 @@ public class CliReservation {
             case SKI_PASS -> "SkiPassReservation{" + '\'' +
                     base + '\'' +
                     "skiPassType=" + skiPassType + '\'' +
-                    "duration=" + duration + '\'' +
+                    "duration=" + skiPassDuration + '\'' +
                     "}";
             default -> "Reservation{" + '\'' +
                     base + '\'' +

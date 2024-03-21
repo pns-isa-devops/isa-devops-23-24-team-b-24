@@ -7,7 +7,7 @@ import teamb.w4e.entities.reservations.ReservationType;
 public class ReservationDTO {
     Long id;
     ReservationType type;
-    LeisureDTO leisure;
+    LeisureDTO activity;
     String date;
     GroupDTO group;
     String skiPassType;
@@ -16,30 +16,30 @@ public class ReservationDTO {
     public ReservationDTO() {
     }
 
-    public ReservationDTO(Long id, ReservationType type, LeisureDTO leisure) {
+    public ReservationDTO(Long id, ReservationType type, LeisureDTO activity) {
         this.id = id;
         this.type = type;
-        this.leisure = leisure;
+        this.activity = activity;
     }
 
-    public ReservationDTO(Long id, ReservationType type, LeisureDTO leisure, String date) {
+    public ReservationDTO(Long id, ReservationType type, LeisureDTO activity, String date) {
         this.id = id;
         this.type = type;
-        this.leisure = leisure;
+        this.activity = activity;
         this.date = date;
     }
 
-    public ReservationDTO(Long id, ReservationType type, LeisureDTO leisure, GroupDTO group) {
+    public ReservationDTO(Long id, ReservationType type, LeisureDTO activity, GroupDTO group) {
         this.id = id;
         this.type = type;
-        this.leisure = leisure;
+        this.activity = activity;
         this.group = group;
     }
 
-    public ReservationDTO(Long id, ReservationType type, LeisureDTO leisure, String skiPassType, int skiPassDuration) {
+    public ReservationDTO(Long id, ReservationType type, LeisureDTO activity, String skiPassType, int skiPassDuration) {
         this.id = id;
         this.type = type;
-        this.leisure = leisure;
+        this.activity = activity;
         this.skiPassType = skiPassType;
         this.skiPassDuration = skiPassDuration;
     }
@@ -62,11 +62,11 @@ public class ReservationDTO {
     }
 
     public LeisureDTO getActivity() {
-        return leisure;
+        return activity;
     }
 
     public void setActivity(LeisureDTO activity) {
-        this.leisure = activity;
+        this.activity = activity;
     }
 
     public String getDate() {
@@ -105,7 +105,7 @@ public class ReservationDTO {
     public String toString() {
         String base = "id=" + id + '\'' +
                 "type=" + type + '\'' +
-                "activity=" + leisure + '\'';
+                "activity=" + activity + '\'';
         if (date != null) {
             return "TimeSlotReservationDTO{" + '\'' +
                     base + '\'' +
@@ -133,14 +133,14 @@ public class ReservationDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ReservationDTO that)) return false;
-        return id.equals(that.id) && type.equals(that.type) && leisure.equals(that.leisure) && date.equals(that.date) && group.equals(that.group) && skiPassType.equals(that.skiPassType) && skiPassDuration == that.skiPassDuration;
+        return id.equals(that.id) && type.equals(that.type) && activity.equals(that.activity) && date.equals(that.date) && group.equals(that.group) && skiPassType.equals(that.skiPassType) && skiPassDuration == that.skiPassDuration;
     }
 
     @Override
     public int hashCode() {
         int result = id.hashCode();
         result = 31 * result + type.hashCode();
-        result = 31 * result + leisure.hashCode();
+        result = 31 * result + activity.hashCode();
         return result;
     }
 
