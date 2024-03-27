@@ -55,6 +55,7 @@ services:
     volumes:
       - ./cli/demo.txt:/opt/app/demo.txt
       - ./cli/demo2.txt:/opt/app/demo2.txt
+      - ./cli/demo3.txt:/opt/app/demo3.txt
     stdin_open: true
     tty: true
     healthcheck:

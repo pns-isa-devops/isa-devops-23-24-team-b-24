@@ -105,7 +105,7 @@ public class CartController {
         // on dit que ça n'est bien passé mais qu'il y a rien
     }
 
-    @DeleteMapping(path = CART_URI + "/{itemId}")
+    @DeleteMapping(path = CART_URI + "/{itemId}" + "/remove")
     public ResponseEntity<String> removeItemFromCart(@PathVariable("customerId") Long customerId, @PathVariable("itemId") Long itemId) throws IdNotFoundException, CustomerIdNotFoundException {
         return ResponseEntity.ok(cart.removeItem(customerId, itemId));
     }

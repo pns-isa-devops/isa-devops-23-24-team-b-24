@@ -97,6 +97,7 @@ public class CartHandler implements CartProcessor, CartModifier {
     }
 
     @Override
+    @Transactional
     public String removeItem(Long customerId, Long itemId) throws IdNotFoundException, CustomerIdNotFoundException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         Set<Item> items = customer.getCaddy().getLeisure();

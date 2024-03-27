@@ -1,0 +1,16 @@
+echo "start of demo3"
+echo "Scenario: delete a element of the cart"
+register Arnaud 0123896983
+customers
+advantages
+register-advantage juice COCKTAIL 1
+register-advantage chocolate LOCAL_SPECIALITY 2
+advantages
+register-leisure Karaoke relaxing 10 -a --ad juice
+activities
+echo "Add to Cart"
+add-activity-to-cart Arnaud Karaoke -t --day 07-11 --hour 21:30
+show-cart Arnaud
+echo "Delete from Cart"
+remove-from-cart Arnaud Karaoke
+show-cart Arnaud

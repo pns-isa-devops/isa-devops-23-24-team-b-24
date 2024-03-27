@@ -108,6 +108,20 @@ public class CartCommands {
                 .findFirst().orElseThrow(), CliTransaction.class);
     }
 
+    @ShellMethod("Remove an element from the cart (remove-from-cart CUSTOMER_NAME ELEMENT_NAME)")
+    public void removeFromCart(String customerName, String elementName) {
+        Set<CartElement> cart = showCart(customerName);
+        if (cart.isEmpty()) {
+            throw new IllegalArgumentException("Cart is empty.");
+        }
+        if (cart.stream().noneMatch(element -> element.getLeisure().getName().equals(elementName))) {
+            throw new IllegalArgumentException("Element not found in cart.");
+        }
+        restTemplate.delete(getUriForCustomer(customerName) + "/" + cart.stream()
+                .filter(element -> element.getLeisure().getName().equals(elementName))
+                .findFirst().orElseThrow().getLeisure().getId() + "/remove");
+    }
+
     private String getUriForActivity(String name) {
         return CATALOG_URI + "/activities/" + cliContext.getLeisure().get(name).getId();
     }
