@@ -6,6 +6,7 @@ function extract_jar()
         --rm \
         -t \
         -v "$PWD:/out" \
+        --user "$(id -u):$(id -g)" \
         --entrypoint /bin/bash \
         $1 \
         -c "cp ./app.jar /out/$2.jar" || exit 1
@@ -21,6 +22,7 @@ function extract_zip()
         --rm \
         -t \
         -v "$PWD:/out" \
+        --user "$(id -u):$(id -g)" \
         --entrypoint /bin/ash \
         $1 \
         -c "cp -R ./node_modules ./dist /out/" || exit 1
