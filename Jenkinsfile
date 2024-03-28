@@ -15,7 +15,7 @@ pipeline {
         }
         
         stage('Staging') {
-            when { branch : 'staging' }
+            when { branch 'staging' }
             steps {
                 // Build all modules
                 sh './build-all.sh'
