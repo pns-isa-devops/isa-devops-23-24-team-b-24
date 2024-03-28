@@ -122,5 +122,5 @@ public class CartController {
     private static CartElementDTO convertServiceElementToDTO(ServiceItem item) {
         return new CartElementDTO(item.getType(), LeisureController.convertServiceToDto((Service) item.getLeisure()));
     }
-    // change for jenkis
+    // add a comment to triggered j
 }
