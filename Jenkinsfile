@@ -15,7 +15,7 @@ pipeline {
         }
         
         stage('Staging') {
-            when { branch : 'staging' }
+            when { branch 'staging' }
             steps {
                 // Build all modules
                 sh './build-all.sh'
@@ -23,7 +23,7 @@ pipeline {
                 // Run end to end tests
                 sh 'docker compose up -d --scale tcf-cli=0'
                 sh 'cd cli && docker compose run tcf-cli script demo.txt && exit'
-                sh 'cd cli && docker compose run tcf-cli script demo.txt2 && exit'
+                sh 'cd cli && docker compose run tcf-cli script demo2.txt && exit'
                 sh 'docker compose down -v --remove-orphans'
 
                 // Build artifacts
