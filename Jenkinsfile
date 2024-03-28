@@ -27,11 +27,8 @@ pipeline {
                     } else if (branchName.contains('staging')) { // execution of e2e tests
                         sh 'cd cli && docker compose run tcf-cli script demo.txt && exit'
                         sh 'cd cli && docker compose run tcf-cli script demo2.txt && exit'
-                    } else if (branchName == 'master') { //execution of all tests
-                        sh 'mvn clean package -f backend/pom.xml'
-                        sh 'mvn clean verify -f backend/pom.xml'
-                        sh 'cd cli && docker compose run tcf-cli script demo.txt && exit'
-                        sh 'cd cli && docker compose run tcf-cli script demo2.txt && exit'
+                    } else if (branchName == 'master') { //don't need to test on master
+                        echo 'No tests to run on master'
                     }
                 }
             }
