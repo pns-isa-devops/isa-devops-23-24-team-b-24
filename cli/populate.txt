@@ -1,0 +1,47 @@
+echo "start of demo"
+echo "populate : creations and filling of the database"
+echo "register good users"
+register Emma 0110896983
+register John 0110896983
+register ChipaChapa 8969830110
+register Niki 8969837856
+register Duolingo 0110896983
+register MaxiBestOff 8969830110
+register Horloge 0110896983
+register Jul 3265896983
+register Naps 8969830110
+register Soso 8969837856
+echo "register bad users (bad credit card number)"
+register Jack 0110372451
+register Jill 3724510110
+echo "list of registered users"
+customers
+echo "register advantages"
+register-advantage free-juice COCKTAIL 2
+register-advantage cookies LOCAL_SPECIALITY 3
+register-advantage spa-resort REDUCTION 4
+register-advantage free-wine COCKTAIL 2
+echo "list of registered advantages"
+advantages
+echo "register activities"
+register-leisure Yoga relaxing 20 -a --ad cookies free-wine
+register-leisure Pilates hard 30 -a  --ad free-juice
+register-leisure Ski hard 30 -a
+echo "list of registered activities"
+activities
+echo "register services"
+register-leisure KinderGarden kids 10 --ad cookies
+register-leisure SpaResort relaxing 20 --ad spa-resort
+register-leisure SkiRental hard 30
+echo "list of registered services"
+services
+echo "register groups"
+create-group Emma --m John
+create-group ChipaChapa --m Niki Duolingo
+create-group MaxiBestOff --m Horloge Jul
+create-group Naps --m Soso
+echo "list of registered groups"
+groups
+echo "end of populate"
+
+

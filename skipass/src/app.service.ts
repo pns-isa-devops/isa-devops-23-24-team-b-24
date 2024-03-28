@@ -26,7 +26,7 @@ export class AppService {
     let reservationReceiptDto: ReservationReceiptDto;
 
     if (
-      reservationRequestDto.name === AppService.magicKeyName &&
+      reservationRequestDto.name.toLowerCase() === AppService.magicKeyName &&
       reservationRequestDto.duration > 0 &&
       this.magicKeyActivty.includes(reservationRequestDto.activity)
     ) {
@@ -51,7 +51,9 @@ export class AppService {
           '): ',
       );
       throw new DurationException();
-    } else if (reservationRequestDto.name !== AppService.magicKeyName) {
+    } else if (
+      reservationRequestDto.name.toLowerCase() !== AppService.magicKeyName
+    ) {
       console.log(
         'Reservation rejected, due to the activity name ' +
           reservationRequestDto.name +
