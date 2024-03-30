@@ -1,12 +1,13 @@
-package teamb.w4e.repositories;
+package teamb.w4e.repositories.customers;
 
-import teamb.w4e.entities.Customer;
+import teamb.w4e.entities.customers.Customer;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import teamb.w4e.repositories.customers.CustomerRepository;
 
 @DataJpaTest // Only run a test container with the JPA layer (only repositories are up)
 // @DataJpaTest is "transactional rollback by default

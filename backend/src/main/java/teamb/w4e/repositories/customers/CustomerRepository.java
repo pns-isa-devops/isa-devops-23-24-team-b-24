@@ -1,6 +1,6 @@
-package teamb.w4e.repositories;
+package teamb.w4e.repositories.customers;
 
-import teamb.w4e.entities.Customer;
+import teamb.w4e.entities.customers.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

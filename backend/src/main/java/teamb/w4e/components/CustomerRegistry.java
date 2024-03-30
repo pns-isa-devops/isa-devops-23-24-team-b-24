@@ -3,12 +3,12 @@ package teamb.w4e.components;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import teamb.w4e.entities.Customer;
+import teamb.w4e.entities.customers.Customer;
 import teamb.w4e.exceptions.AlreadyExistingException;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.CustomerRegistration;
-import teamb.w4e.repositories.CustomerRepository;
+import teamb.w4e.repositories.customers.CustomerRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +18,7 @@ public class CustomerRegistry implements CustomerRegistration, CustomerFinder {
 
     private final CustomerRepository customerRepository;
 
-    @Autowired // annotation is optional since Spring 4.3 if component has only one constructor
+    @Autowired
     public CustomerRegistry(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
