@@ -3,22 +3,19 @@ package teamb.w4e.components;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import teamb.w4e.entities.Customer;
+import teamb.w4e.entities.customers.Customer;
 import teamb.w4e.entities.Partner;
-import teamb.w4e.entities.PointTransaction;
-import teamb.w4e.entities.Transaction;
-import teamb.w4e.exceptions.group.NotEnoughException;
-import teamb.w4e.interfaces.TradeCreator;
-import teamb.w4e.interfaces.TransactionCreator;
-import teamb.w4e.interfaces.TransactionFinder;
-import teamb.w4e.repositories.PointTransactionRepository;
-import teamb.w4e.repositories.TransactionRepository;
+import teamb.w4e.entities.transactions.PointTransaction;
+import teamb.w4e.entities.transactions.Transaction;
+import teamb.w4e.interfaces.*;
+import teamb.w4e.repositories.transactions.PointTransactionRepository;
+import teamb.w4e.repositories.transactions.TransactionRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TransactionRegistry implements TransactionFinder, TransactionCreator, TradeCreator {
+public class TransactionRegistry implements TransactionFinder, TransactionCreator, PointTransactionCreator, PointTransactionFinder {
 
     private final TransactionRepository transactionRepository;
 
@@ -78,25 +75,15 @@ public class TransactionRegistry implements TransactionFinder, TransactionCreato
     }
 
     @Override
-    public PointTransaction createPointTransaction(Customer customer, int amount, Partner issuer) {
+    public PointTransaction createPointTransactionWithPartner(Customer customer, int amount, Partner issuer) {
         PointTransaction pointTransaction = new PointTransaction(customer, amount, issuer.getName());
         return pointTransactionRepository.save(pointTransaction);
     }
 
     @Override
-    public PointTransaction createTrade(Customer sender, Customer receiver, int points, boolean inSameGroup) throws NotEnoughException {
-        if (sender.getCard().getPoints() < points) {
-            throw new NotEnoughException("Not enough points to trade");
-        }
-        if (inSameGroup) {
-            sender.getCard().setPoints(sender.getCard().getPoints() - points);
-            receiver.getCard().setPoints(receiver.getCard().getPoints() + points);
-        } else {
-            sender.getCard().setPoints(sender.getCard().getPoints() - points);
-            receiver.getCard().setPoints(receiver.getCard().getPoints() + (int) (points * 0.5));
-        }
-        PointTransaction senderTransaction = new PointTransaction(sender, points, "Give " + points + " points to " + receiver.getName());
-        PointTransaction receiverTransaction = new PointTransaction(receiver, points, "Receive " + points + " points from " + sender.getName());
+    public PointTransaction createPointTransaction(Customer sender, Customer receiver, int amount) {
+        PointTransaction senderTransaction = new PointTransaction(sender, amount, "Give " + amount + " points to " + receiver.getName());
+        PointTransaction receiverTransaction = new PointTransaction(receiver, amount, "Receive " + amount + " points from " + sender.getName());
         pointTransactionRepository.save(senderTransaction);
         pointTransactionRepository.save(receiverTransaction);
         return senderTransaction;
