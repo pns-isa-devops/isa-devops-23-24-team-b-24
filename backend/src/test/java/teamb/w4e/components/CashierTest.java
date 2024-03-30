@@ -6,22 +6,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
-import teamb.w4e.entities.Customer;
+import teamb.w4e.entities.customers.Customer;
 import teamb.w4e.entities.Partner;
-import teamb.w4e.entities.Transaction;
-import teamb.w4e.entities.cart.Item;
-import teamb.w4e.entities.cart.TimeSlotItem;
+import teamb.w4e.entities.transactions.Transaction;
+import teamb.w4e.entities.items.Item;
+import teamb.w4e.entities.items.TimeSlotItem;
 import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.exceptions.NegativeAmountTransactionException;
 import teamb.w4e.interfaces.Bank;
 import teamb.w4e.interfaces.Payment;
-import teamb.w4e.repositories.CustomerRepository;
+import teamb.w4e.repositories.customers.CustomerRepository;
 import teamb.w4e.repositories.PartnerRepository;
-import teamb.w4e.repositories.TransactionRepository;
+import teamb.w4e.repositories.transactions.TransactionRepository;
 import teamb.w4e.repositories.catalog.ActivityCatalogRepository;
 
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -64,7 +63,7 @@ class CashierTest {
     @Test
     void payRegularAmount() throws Exception {
         customerRepository.save(customer);
-        Activity activity = new Activity(partner, "a", "a", 100, Set.of());
+        Activity activity = new Activity(partner, "a", "a", 100);
         activityCatalogRepository.save(activity);
         Item item = new TimeSlotItem(activity, "01-10 23:56");
         payment.payReservationFromCart(customer, item);
@@ -80,7 +79,7 @@ class CashierTest {
     @Test
     void payNegativeAmount() {
         customerRepository.save(customer);
-        Item item = new TimeSlotItem(new Activity(partner, "a", "a", -12, Set.of()), "01-10 23:56");
+        Item item = new TimeSlotItem(new Activity(partner, "a", "a", -12), "01-10 23:56");
         assertThrows(NegativeAmountTransactionException.class, () -> payment.payReservationFromCart(customer, item));
         assertNull(transactionRepository.findTransactionByCustomer(customer.getId()).orElse(null));
     }

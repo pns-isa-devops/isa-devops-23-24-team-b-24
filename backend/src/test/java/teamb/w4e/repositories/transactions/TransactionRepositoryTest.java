@@ -1,4 +1,4 @@
-package teamb.w4e.repositories;
+package teamb.w4e.repositories.transactions;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,11 +8,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import teamb.w4e.entities.Partner;
 import teamb.w4e.entities.catalog.Activity;
-import teamb.w4e.entities.Customer;
-import teamb.w4e.entities.Transaction;
+import teamb.w4e.entities.customers.Customer;
+import teamb.w4e.entities.transactions.Transaction;
+import teamb.w4e.repositories.PartnerRepository;
 import teamb.w4e.repositories.catalog.ActivityCatalogRepository;
-
-import java.util.Set;
+import teamb.w4e.repositories.customers.CustomerRepository;
+import teamb.w4e.repositories.transactions.TransactionRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,7 +36,7 @@ class TransactionRepositoryTest {
     void setUp() {
         Partner partner = new Partner("partner");
         partnerRepository.saveAndFlush(partner);
-        Activity activity = new Activity(partner, "activity", "desc", 123, Set.of());
+        Activity activity = new Activity(partner, "activity", "desc", 123);
         customerRepository.saveAndFlush(customer);
         activityCatalogRepository.saveAndFlush(activity);
     }

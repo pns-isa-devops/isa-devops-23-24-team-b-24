@@ -1,9 +1,11 @@
 package teamb.w4e.components;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import teamb.w4e.entities.Partner;
 import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.catalog.Advantage;
 import teamb.w4e.entities.catalog.AdvantageType;
@@ -19,9 +21,7 @@ import teamb.w4e.interfaces.leisure.ActivityRegistration;
 import teamb.w4e.interfaces.leisure.ServiceFinder;
 import teamb.w4e.interfaces.leisure.ServiceRegistration;
 
-import java.util.Collections;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -56,18 +56,27 @@ class CatalogTest {
     @Autowired
     private PartnerFinder partnerFinder;
 
+    private Partner partner;
+
+    @BeforeEach
+    void setUp() throws AlreadyExistingException {
+        partnerRegistration.register("name");
+        partner = partnerFinder.findByName("name").get();
+    }
+
     @Test
     void registerAdvantageSuccess() {
-        Advantage advantage = catalog.register("name", AdvantageType.VIP, 10);
+
+        Advantage advantage = catalog.register(partner, "name", AdvantageType.VIP, 10);
         Optional<Advantage> found = advantageFinder.findByName(advantage.getName());
         assertTrue(found.isPresent());
     }
 
     @Test
     void registerAdvantageFailure() {
-        assertThrows(Exception.class, () -> catalog.register("name", AdvantageType.VIP, -10));
-        assertThrows(Exception.class, () -> catalog.register("name", AdvantageType.VIP, 0));
-        assertThrows(Exception.class, () -> catalog.register("name", null, 1001));
+        assertThrows(Exception.class, () -> catalog.register(partner,"name", AdvantageType.VIP, -10));
+        assertThrows(Exception.class, () -> catalog.register(partner,"name", AdvantageType.VIP, 0));
+        assertThrows(Exception.class, () -> catalog.register(partner,"name", null, 1001));
     }
 
     @Test
@@ -78,40 +87,32 @@ class CatalogTest {
 
     @Test
     void registerActivityWithAdvantageSuccess() throws AlreadyExistingException, IdNotFoundException {
-        partnerRegistration.register("name");
         Long partnerId = partnerFinder.findByName("name").get().getId();
-
-        Advantage advantage = advantageRegistration.register("name", AdvantageType.VIP, 10);
-        Activity activity = activityRegistration.registerActivity(partnerId,"name", "description", 10.0, Set.of(advantage));
+        Activity activity = activityRegistration.registerActivity(partnerId, "name", "description", 10.0);
         Optional<Activity> found = activityFinder.findActivityByName(activity.getName());
         assertTrue(found.isPresent());
     }
 
     @Test
     void registerActivityWithoutAdvantages() throws AlreadyExistingException, IdNotFoundException {
-        partnerRegistration.register("name");
         Long partnerId = partnerFinder.findByName("name").get().getId();
-        Activity activity = activityRegistration.registerActivity(partnerId,"name", "description", 10.0, Collections.emptySet());
+        Activity activity = activityRegistration.registerActivity(partnerId, "name", "description", 10.0);
         Optional<Activity> found = activityFinder.findActivityByName(activity.getName());
         assertTrue(found.isPresent());
     }
 
     @Test
     void registerServiceWithAdvantageSuccess() throws AlreadyExistingException, IdNotFoundException {
-        partnerRegistration.register("name");
         Long partnerId = partnerFinder.findByName("name").get().getId();
-
-        Advantage advantage = advantageRegistration.register("name", AdvantageType.VIP, 10);
-        Service service = serviceRegistration.registerService(partnerId,"name", "description", 10.0, Set.of(advantage));
+        Service service = serviceRegistration.registerService(partnerId, "name", "description", 10.0);
         Optional<Service> found = serviceFinder.findAllServices().stream().filter(s -> s.getName().equals(service.getName())).findFirst();
         assertTrue(found.isPresent());
     }
 
     @Test
     void registerServiceWithWithoutAdvantages() throws AlreadyExistingException, IdNotFoundException {
-        partnerRegistration.register("name");
         Long partnerId = partnerFinder.findByName("name").get().getId();
-        Service service = serviceRegistration.registerService(partnerId,"name", "description", 10.0, Collections.emptySet());
+        Service service = serviceRegistration.registerService(partnerId, "name", "description", 10.0);
         Optional<Service> found = serviceFinder.findAllServices().stream().filter(s -> s.getName().equals(service.getName())).findFirst();
         assertTrue(found.isPresent());
     }
