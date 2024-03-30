@@ -1,4 +1,4 @@
-package teamb.w4e.repositories.reservation;
+package teamb.w4e.repositories.reservations;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

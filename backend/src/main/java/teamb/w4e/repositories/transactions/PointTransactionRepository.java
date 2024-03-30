@@ -1,10 +1,10 @@
-package teamb.w4e.repositories;
+package teamb.w4e.repositories.transactions;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import teamb.w4e.entities.PointTransaction;
+import teamb.w4e.entities.transactions.PointTransaction;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,8 +1,10 @@
-package teamb.w4e.entities;
+package teamb.w4e.entities.transactions;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import teamb.w4e.entities.customers.Customer;
 
 @Entity
 @Table(name = "point-transactions")
@@ -11,7 +13,7 @@ public class PointTransaction {
     @Id
     @GeneratedValue
     private Long id;
-
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;

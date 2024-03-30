@@ -1,4 +1,4 @@
-package teamb.w4e.repositories;
+package teamb.w4e.repositories.reservations;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,12 +8,15 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import teamb.w4e.entities.Partner;
 import teamb.w4e.entities.catalog.Activity;
-import teamb.w4e.entities.Customer;
-import teamb.w4e.entities.Group;
+import teamb.w4e.entities.customers.Customer;
+import teamb.w4e.entities.customers.Group;
 import teamb.w4e.entities.reservations.*;
-import teamb.w4e.entities.Transaction;
+import teamb.w4e.entities.transactions.Transaction;
+import teamb.w4e.repositories.PartnerRepository;
 import teamb.w4e.repositories.catalog.ActivityCatalogRepository;
-import teamb.w4e.repositories.reservation.ReservationRepository;
+import teamb.w4e.repositories.customers.CustomerRepository;
+import teamb.w4e.repositories.customers.GroupRepository;
+import teamb.w4e.repositories.transactions.TransactionRepository;
 
 import java.util.Arrays;
 import java.util.List;
@@ -51,7 +54,7 @@ class ReservationRepositoryTest {
     void setUp() {
         partner = new Partner("partner");
         partnerRepository.saveAndFlush(partner);
-        activity = new Activity(partner, "activity", "desc", 123, Set.of());
+        activity = new Activity(partner, "activity", "desc", 123);
         customerRepository.saveAndFlush(customer);
         transactionRepository.saveAndFlush(transaction);
         activityCatalogRepository.saveAndFlush(activity);
@@ -98,7 +101,7 @@ class ReservationRepositoryTest {
 
     @Test
     void testReservationWithoutRegisteredActivity() {
-        Activity activity = new Activity(partner, "activity", "desc", 123, Set.of());
+        Activity activity = new Activity(partner, "activity", "desc", 123);
         Reservation reservation = new TimeSlotReservation(activity, "15-06 12:30", customer.getCard(), transaction);
         assertNull(reservation.getId());
         assertThrows(InvalidDataAccessApiUsageException.class, () -> reservationRepository.saveAndFlush(reservation));

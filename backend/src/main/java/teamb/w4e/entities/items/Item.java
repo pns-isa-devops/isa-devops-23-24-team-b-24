@@ -1,4 +1,4 @@
-package teamb.w4e.entities.cart;
+package teamb.w4e.entities.items;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -18,7 +18,7 @@ public abstract class Item {
     private ReservationType type;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Leisure leisure;
 
     protected Item() {

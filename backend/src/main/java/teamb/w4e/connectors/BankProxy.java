@@ -2,7 +2,7 @@ package teamb.w4e.connectors;
 
 import teamb.w4e.connectors.externaldto.PaymentReceiptDTO;
 import teamb.w4e.connectors.externaldto.PaymentRequestDTO;
-import teamb.w4e.entities.Customer;
+import teamb.w4e.entities.customers.Customer;
 import teamb.w4e.interfaces.Bank;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;

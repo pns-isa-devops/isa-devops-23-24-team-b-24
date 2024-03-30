@@ -17,7 +17,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 
 @RestController
-@RequestMapping(path = CustomerCareController.BASE_URI, produces = APPLICATION_JSON_VALUE)
+@RequestMapping(path = CustomerController.BASE_URI, produces = APPLICATION_JSON_VALUE)
 public class ReservationController {
 
     private static final String RESERVATION_URI = "/{customerId}/reservations";
@@ -57,7 +57,7 @@ public class ReservationController {
     }
 
     private static ReservationDTO convertGroupReservationToDTO(GroupReservation reservation) {
-        return new ReservationDTO(reservation.getId(), reservation.getType(), LeisureController.convertActivityToDto(reservation.getActivity()), CustomerCareController.convertGroupToDto(reservation.getGroup()));
+        return new ReservationDTO(reservation.getId(), reservation.getType(), LeisureController.convertActivityToDto(reservation.getActivity()), GroupController.convertGroupToDto(reservation.getGroup()));
     }
 
     private static ReservationDTO convertSkiPassReservationToDTO(SkiPassReservation reservation) {

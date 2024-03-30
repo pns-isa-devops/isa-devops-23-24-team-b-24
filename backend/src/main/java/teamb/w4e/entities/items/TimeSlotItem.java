@@ -1,4 +1,4 @@
-package teamb.w4e.entities.cart;
+package teamb.w4e.entities.items;
 
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.Pattern;
