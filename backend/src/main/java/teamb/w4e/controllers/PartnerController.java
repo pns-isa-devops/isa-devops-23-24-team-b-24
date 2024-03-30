@@ -70,10 +70,10 @@ public class PartnerController {
     }
 
     public static PartnerDTO convertPartnerToDto(Partner partner) {
-        return new PartnerDTO(partner.getId(), partner.getName(), partner.getLeisure().stream().map(PartnerController::convertLeisureToDto).collect(Collectors.toSet()));
+        return new PartnerDTO(partner.getId(), partner.getName(), partner.getLeisure().stream().map(PartnerController::convertLeisureToDto).collect(Collectors.toSet()), partner.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
     }
 
     private static LeisureDTO convertLeisureToDto(Leisure leisure) {
-        return new LeisureDTO(leisure.getId(), leisure.getPartner().getName(), leisure.getName(), leisure.getDescription(), leisure.getPrice(), leisure.isBooked(), leisure.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
+        return new LeisureDTO(leisure.getId(), leisure.getPartner().getName(), leisure.getName(), leisure.getDescription(), leisure.getPrice(), leisure.isBooked());
     }
 }

@@ -2,6 +2,7 @@ package teamb.w4e.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import teamb.w4e.entities.catalog.Advantage;
 import teamb.w4e.entities.catalog.Leisure;
 
 import java.util.HashSet;
@@ -13,14 +14,17 @@ public class Partner {
 
     @Id
     @GeneratedValue
-    private Long id; // Whether Long/Int or UUID are better primary keys, exposable outside is a vast issue, keep it simple here
+    private Long id;
 
     @NotBlank
     @Column(unique = true)
     private String name;
 
-    @OneToMany(mappedBy ="partner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
     private Set<Leisure> leisure = new HashSet<>();
+
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
+    private Set<Advantage> advantages = new HashSet<>();
 
     public Partner() {
     }
@@ -52,6 +56,34 @@ public class Partner {
 
     public void setLeisure(Set<Leisure> leisure) {
         this.leisure = leisure;
+    }
+
+    public Set<Advantage> getAdvantages() {
+        return advantages;
+    }
+
+    public void setAdvantages(Set<Advantage> advantages) {
+        this.advantages = advantages;
+    }
+
+    public void addLeisure(Leisure l) {
+        this.leisure.add(l);
+        l.setPartner(this);
+    }
+
+    public void removeLeisure(Leisure l) {
+        this.leisure.remove(l);
+        l.setPartner(null);
+    }
+
+    public void addAdvantage(Advantage a) {
+        this.advantages.add(a);
+        a.setPartner(this);
+    }
+
+    public void removeAdvantage(Advantage a) {
+        this.advantages.remove(a);
+        a.setPartner(null);
     }
 
     @Override

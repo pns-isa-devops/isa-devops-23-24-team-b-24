@@ -45,11 +45,11 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
 
     @Override
     @Transactional
-    public Advantage register(String name, AdvantageType type, int points) {
+    public Advantage register(Partner partner, String name, AdvantageType type, int points) {
         if (type == null || points < 1) {
             throw new IllegalArgumentException("Invalid Advantage");
         }
-        Advantage newAdvantage = new Advantage(name, type, points);
+        Advantage newAdvantage = new Advantage(partner, name, type, points);
         return advantageCatalogRepository.save(newAdvantage);
     }
 
@@ -91,10 +91,11 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
 
     @Override
     @Transactional
-    public Activity registerActivity(Long partnerId, String name, String description, double price, Set<Advantage> advantages) throws IdNotFoundException {
+    public Activity registerActivity(Long partnerId, String name, String description, double price) throws IdNotFoundException {
         Partner partner = partnerFinder.retrievePartner(partnerId);
-        Activity newActivity = new Activity(partner, name, description, price, advantages);
-        return activityCatalogRepository.save(newActivity);
+        Activity newActivity = activityCatalogRepository.save(new Activity(partner, name, description, price));
+        partner.getLeisure().add(newActivity);
+        return newActivity;
     }
 
     @Override
@@ -106,7 +107,7 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
     @Override
     @Transactional(readOnly = true)
     public Optional<Activity> findActivityById(Long id) {
-        return activityCatalogRepository.findById(id);
+        return activityCatalogRepository.findById(id).map(Activity.class::cast);
     }
 
     @Override
@@ -147,9 +148,10 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
 
     @Override
     @Transactional
-    public teamb.w4e.entities.catalog.Service registerService(Long partnerId, String name, String description, double price, Set<Advantage> advantages) throws IdNotFoundException {
+    public teamb.w4e.entities.catalog.Service registerService(Long partnerId, String name, String description, double price) throws IdNotFoundException {
         Partner partner = partnerFinder.retrievePartner(partnerId);
-        teamb.w4e.entities.catalog.Service newService = new teamb.w4e.entities.catalog.Service(partner, name, description, price, advantages);
+        teamb.w4e.entities.catalog.Service newService = new teamb.w4e.entities.catalog.Service(partner, name, description, price);
+        partner.getLeisure().add(newService);
         return serviceCatalogRepository.save(newService);
     }
 }

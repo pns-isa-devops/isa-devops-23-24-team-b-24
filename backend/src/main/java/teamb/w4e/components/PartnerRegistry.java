@@ -18,7 +18,7 @@ public class PartnerRegistry implements PartnerRegistration, PartnerFinder {
 
     private final PartnerRepository partnerRepository;
 
-    @Autowired // annotation is optional since Spring 4.3 if component has only one constructor
+    @Autowired
     public PartnerRegistry(PartnerRepository customerRepository) {
         this.partnerRepository = customerRepository;
     }
