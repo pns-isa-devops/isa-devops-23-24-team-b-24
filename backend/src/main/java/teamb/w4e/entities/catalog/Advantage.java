@@ -3,6 +3,7 @@ package teamb.w4e.entities.catalog;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import teamb.w4e.entities.Partner;
 
 @Entity
 public class Advantage {
@@ -21,10 +22,15 @@ public class Advantage {
     @Positive
     private int points;
 
+    @ManyToOne
+    @JoinColumn(name = "partner_id", referencedColumnName = "id")
+    private Partner partner;
+
     public Advantage() {
     }
 
-    public Advantage(String name, AdvantageType type, int points) {
+    public Advantage(Partner partner, String name, AdvantageType type, int points) {
+        this.partner = partner;
         this.name = name;
         this.type = type;
         this.points = points;
@@ -61,6 +67,14 @@ public class Advantage {
 
     public void setPoints(int points) {
         this.points = points;
+    }
+
+    public Partner getPartner() {
+        return partner;
+    }
+
+    public void setPartner(Partner partner) {
+        this.partner = partner;
     }
 
     @Override
