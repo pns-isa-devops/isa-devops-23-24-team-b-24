@@ -1,10 +1,10 @@
-package teamb.w4e.entities.cart;
+package teamb.w4e.entities.items;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import teamb.w4e.entities.catalog.Activity;
-import teamb.w4e.entities.Group;
+import teamb.w4e.entities.customers.Group;
 import teamb.w4e.entities.reservations.ReservationType;
 
 @Entity(name="group_items")

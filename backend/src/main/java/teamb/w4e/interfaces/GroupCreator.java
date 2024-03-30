@@ -1,7 +1,7 @@
 package teamb.w4e.interfaces;
 
-import teamb.w4e.entities.Customer;
-import teamb.w4e.entities.Group;
+import teamb.w4e.entities.customers.Customer;
+import teamb.w4e.entities.customers.Group;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.exceptions.group.AlreadyLeaderException;
 import teamb.w4e.exceptions.group.NotEnoughException;

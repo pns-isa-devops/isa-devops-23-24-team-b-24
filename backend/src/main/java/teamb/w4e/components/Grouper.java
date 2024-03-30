@@ -3,15 +3,15 @@ package teamb.w4e.components;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import teamb.w4e.entities.Customer;
-import teamb.w4e.entities.Group;
+import teamb.w4e.entities.customers.Customer;
+import teamb.w4e.entities.customers.Group;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.exceptions.group.AlreadyLeaderException;
 import teamb.w4e.exceptions.group.NotEnoughException;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.GroupCreator;
 import teamb.w4e.interfaces.GroupFinder;
-import teamb.w4e.repositories.GroupRepository;
+import teamb.w4e.repositories.customers.GroupRepository;
 
 import java.util.List;
 import java.util.Optional;

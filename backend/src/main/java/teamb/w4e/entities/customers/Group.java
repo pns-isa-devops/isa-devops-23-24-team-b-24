@@ -1,4 +1,4 @@
-package teamb.w4e.entities;
+package teamb.w4e.entities.customers;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.Fetch;

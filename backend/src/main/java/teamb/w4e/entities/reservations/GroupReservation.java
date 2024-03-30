@@ -5,8 +5,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
-import teamb.w4e.entities.*;
 import teamb.w4e.entities.catalog.Activity;
+import teamb.w4e.entities.customers.Card;
+import teamb.w4e.entities.customers.Group;
+import teamb.w4e.entities.transactions.Transaction;
 
 @Entity
 @DiscriminatorValue("GROUP")
