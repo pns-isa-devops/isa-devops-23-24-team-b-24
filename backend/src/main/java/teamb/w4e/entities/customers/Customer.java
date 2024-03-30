@@ -1,8 +1,9 @@
-package teamb.w4e.entities;
+package teamb.w4e.entities.customers;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import teamb.w4e.entities.cart.AdvantageCaddy;
 import teamb.w4e.entities.cart.Caddy;
 import teamb.w4e.entities.reservations.Reservation;
 
@@ -23,6 +24,7 @@ public class Customer {
     private String creditCard;
 
     private Caddy caddy = new Caddy();
+    private AdvantageCaddy advantageCaddy = new AdvantageCaddy();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "card_id", referencedColumnName = "id")
@@ -80,8 +82,12 @@ public class Customer {
         this.caddy = caddy;
     }
 
-    public void clearCaddy() {
-        this.caddy.clear();
+    public AdvantageCaddy getAdvantageCaddy() {
+        return advantageCaddy;
+    }
+
+    public void setAdvantageCaddy(AdvantageCaddy advantageCaddy) {
+        this.advantageCaddy = advantageCaddy;
     }
 
 

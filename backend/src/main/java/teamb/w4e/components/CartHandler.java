@@ -4,11 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.catalog.Activity;
-import teamb.w4e.entities.Customer;
-import teamb.w4e.entities.Group;
-import teamb.w4e.entities.Transaction;
-import teamb.w4e.entities.cart.*;
+import teamb.w4e.entities.catalog.Advantage;
+import teamb.w4e.entities.customers.Customer;
+import teamb.w4e.entities.customers.Group;
+import teamb.w4e.entities.items.*;
 import teamb.w4e.entities.reservations.*;
+import teamb.w4e.entities.transactions.Transaction;
 import teamb.w4e.exceptions.*;
 import teamb.w4e.interfaces.*;
 
@@ -23,8 +24,9 @@ public class CartHandler implements CartProcessor, CartModifier {
     private final Scheduler scheduler;
     private final SkiPass skiPass;
 
+
     @Autowired
-    public CartHandler(CustomerFinder customerFinder, Payment payment, Scheduler scheduler, SkiPass skiPass) {
+    public CartHandler(CustomerFinder customerFinder, Payment payment, AdvantagePayment advantagePayment, Scheduler scheduler, SkiPass skiPass) {
         this.customerFinder = customerFinder;
         this.payment = payment;
         this.scheduler = scheduler;
@@ -97,6 +99,28 @@ public class CartHandler implements CartProcessor, CartModifier {
 
     @Override
     @Transactional
+    public Advantage advantageUpdate(Long customerId, Advantage advantage) throws IdNotFoundException, AlreadyExistingException, NegativeAmountTransactionException {
+        Customer customer = customerFinder.retrieveCustomer(customerId);
+        if (customer.getCard().getPoints() < advantage.getPoints()) {
+            throw new NegativeAmountTransactionException(advantage.getPoints());
+        }
+        Set<Advantage> advantages = customer.getAdvantageCaddy().getAdvantages();
+        if (advantages.contains(advantage)) {
+            throw new AlreadyExistingException(advantage.getName());
+        }
+        advantages.add(advantage);
+        return advantage;
+    }
+
+    @Override
+    @Transactional
+    public Set<Advantage> advantageCartContent(Long customerId) throws IdNotFoundException {
+        return customerFinder.retrieveCustomer(customerId).getAdvantageCaddy().getAdvantages();
+    }
+
+
+    @Override
+    @Transactional
     public Set<Item> cartContent(Long customerId) throws IdNotFoundException {
         return customerFinder.retrieveCustomer(customerId).getCaddy().getLeisure();
     }
@@ -127,7 +151,7 @@ public class CartHandler implements CartProcessor, CartModifier {
         }
         if (item.getType().equals(ReservationType.SKI_PASS)) {
             SkiPassItem skiPassItem = (SkiPassItem) item;
-            if (skiPass.reserve( skiPassItem.getLeisure().getName(),skiPassItem.getSkiPassType(),skiPassItem.getDuration()).isPresent()) {
+            if (skiPass.reserve(skiPassItem.getLeisure().getName(), skiPassItem.getSkiPassType(), skiPassItem.getDuration()).isPresent()) {
                 SkiPassReservation reservation = (SkiPassReservation) payment.payReservationFromCart(customer, skiPassItem);
                 customer.getCaddy().getLeisure().remove(item);
                 return reservation;

@@ -1,10 +1,13 @@
 package teamb.w4e.interfaces;
 
-import teamb.w4e.entities.Transaction;
-import teamb.w4e.entities.cart.Item;
-import teamb.w4e.entities.cart.ServiceItem;
+import teamb.w4e.entities.items.Item;
+import teamb.w4e.entities.items.ServiceItem;
 import teamb.w4e.entities.reservations.Reservation;
-import teamb.w4e.exceptions.*;
+import teamb.w4e.entities.transactions.Transaction;
+import teamb.w4e.exceptions.EmptyCartException;
+import teamb.w4e.exceptions.IdNotFoundException;
+import teamb.w4e.exceptions.NegativeAmountTransactionException;
+import teamb.w4e.exceptions.PaymentException;
 
 public interface CartProcessor {
 
