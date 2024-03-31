@@ -10,5 +10,5 @@ public record AdvantageDTO(
         @NotBlank(message = "name should not be blank") String name,
         AdvantageType type,
         @Positive int points,
-        @NotNull PartnerDTO partner) {
+        @NotBlank String partner) {
 }

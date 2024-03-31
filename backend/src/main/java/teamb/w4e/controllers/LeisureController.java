@@ -15,6 +15,7 @@ import teamb.w4e.entities.catalog.Advantage;
 import teamb.w4e.entities.catalog.AdvantageType;
 import teamb.w4e.entities.catalog.Service;
 import teamb.w4e.exceptions.IdNotFoundException;
+import teamb.w4e.exceptions.NotFoundException;
 import teamb.w4e.interfaces.AdvantageFinder;
 import teamb.w4e.interfaces.AdvantageRegistration;
 import teamb.w4e.interfaces.PartnerFinder;
@@ -63,9 +64,9 @@ public class LeisureController {
     }
 
     @PostMapping(path = "/advantages", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<AdvantageDTO> register(@RequestBody @Valid AdvantageDTO advantage) {
+    public ResponseEntity<AdvantageDTO> registerAdvantage(@RequestBody @Valid AdvantageDTO advantage) {
         try {
-            Partner partner = partnerFinder.retrievePartner(advantage.partner().id());
+            Partner partner = partnerFinder.findByName(advantage.partner()).orElseThrow(() -> new NotFoundException("Partner " + advantage.partner() + " not found" ));
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(convertAdvantageToDto(advantageRegistry.register(partner, advantage.name(), advantage.type(), advantage.points())));
         } catch (Exception e) {
@@ -145,7 +146,7 @@ public class LeisureController {
     }
 
     public static AdvantageDTO convertAdvantageToDto(Advantage advantage) {
-        return new AdvantageDTO(advantage.getId(), advantage.getName(), advantage.getType(), advantage.getPoints(), PartnerController.convertPartnerToDto(advantage.getPartner()));
+        return new AdvantageDTO(advantage.getId(), advantage.getName(), advantage.getType(), advantage.getPoints(), advantage.getPartner().getName());
     }
 
     public static LeisureDTO convertActivityToDto(Activity activity) {

@@ -10,7 +10,9 @@ import teamb.w4e.cli.model.CliPartner;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -37,8 +39,9 @@ public class PartnerCommands {
     }
 
     @ShellMethod("List all known partners")
-    public String partners() {
-        return cliContext.getPartners().toString();
+    public Set<CliPartner> partners() {
+        return Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(BASE_URI, CliPartner[].class)
+                .getBody())).collect(Collectors.toSet());
     }
 
     @ShellMethod("Update all known partners from server")

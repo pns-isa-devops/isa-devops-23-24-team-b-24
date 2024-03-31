@@ -26,12 +26,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping(path = GroupController.BASE_URI, produces = APPLICATION_JSON_VALUE)
 public class GroupController {
 
-    public static final String BASE_URI = "/groups";
-
+    public static final String BASE_URI = "/customers/groups";
     private final CustomerFinder customerFinder;
-
     private final GroupCreator createGroup;
-
     private final GroupFinder groupFinder;
 
     @Autowired

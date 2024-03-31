@@ -20,10 +20,10 @@ public class Partner {
     @Column(unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Leisure> leisure = new HashSet<>();
 
-    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Advantage> advantages = new HashSet<>();
 
     public Partner() {

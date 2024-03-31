@@ -7,7 +7,6 @@ import org.springframework.web.client.RestTemplate;
 import teamb.w4e.cli.CliContext;
 import teamb.w4e.cli.model.AdvantageType;
 import teamb.w4e.cli.model.CliAdvantage;
-import teamb.w4e.cli.model.CliLeisure;
 import teamb.w4e.cli.model.CliPartner;
 
 import java.util.Arrays;
