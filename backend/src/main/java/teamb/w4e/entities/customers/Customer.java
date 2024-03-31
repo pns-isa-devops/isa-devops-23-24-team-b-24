@@ -3,7 +3,8 @@ package teamb.w4e.entities.customers;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import teamb.w4e.entities.cart.AdvantageCaddy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import teamb.w4e.entities.cart.Caddy;
 import teamb.w4e.entities.reservations.Reservation;
 
@@ -24,9 +25,9 @@ public class Customer {
     private String creditCard;
 
     private Caddy caddy = new Caddy();
-    private AdvantageCaddy advantageCaddy = new AdvantageCaddy();
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "card_id", referencedColumnName = "id")
     private Card card = new Card();
 
@@ -81,15 +82,6 @@ public class Customer {
     public void setCaddy(Caddy caddy) {
         this.caddy = caddy;
     }
-
-    public AdvantageCaddy getAdvantageCaddy() {
-        return advantageCaddy;
-    }
-
-    public void setAdvantageCaddy(AdvantageCaddy advantageCaddy) {
-        this.advantageCaddy = advantageCaddy;
-    }
-
 
     @Override
     public boolean equals(Object o) {

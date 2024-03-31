@@ -18,7 +18,7 @@ public class Group {
     @JoinColumn(name = "leader_id", referencedColumnName = "id")
     private Customer leader;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @Fetch(FetchMode.JOIN)
     @JoinTable(
             name = "members",

@@ -127,20 +127,20 @@ public class ReserveActivity {
     @When("he adds this activity to his cart for the date {string}")
     public void heAddsTheActivityForTheDateToHisCart(String date) throws Throwable {
         TimeSlotItem timeSlotItem = cartModifier.timeSlotUpdate(customer.getId(), activity, date);
-        customer.getCaddy().getLeisure().add(timeSlotItem);
-        assertEquals(1, customer.getCaddy().getLeisure().size());
+        customer.getCaddy().getCatalogItem().add(timeSlotItem);
+        assertEquals(1, customer.getCaddy().getCatalogItem().size());
     }
 
 
     @And("^he proceeds to checkout$")
     public void heProceedsToCheckout() throws EmptyCartException, NegativeAmountTransactionException, PaymentException, IdNotFoundException {
-        Item item = customer.getCaddy().getLeisure().iterator().next();
+        Item item = customer.getCaddy().getCatalogItem().iterator().next();
         Reservation reservation = cartProcessor.validateActivity(customer.getId(), item);
-        customer.getCaddy().getLeisure().remove(item);
+        customer.getCaddy().getCatalogItem().remove(item);
         Transaction transaction = reservation.getTransaction();
         transactionRepository.save(transaction);
         reservationRepository.save(reservation);
-        assertTrue(customer.getCaddy().getLeisure().isEmpty());
+        assertTrue(customer.getCaddy().getCatalogItem().isEmpty());
     }
 
     @Then("a transaction of {double} should appear on the Transaction History of {string}")

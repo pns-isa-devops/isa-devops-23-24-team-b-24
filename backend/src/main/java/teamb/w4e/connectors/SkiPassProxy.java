@@ -25,11 +25,11 @@ public class SkiPassProxy implements SkiPass {
 
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
-    public Optional<String> reserve(String name, String activity, int duration) {
+    public Optional<String> reserve(String activity, String type, int duration) {
         try {
             ResponseEntity<ReservationReceiptDTO> result = restTemplate.postForEntity(
                     skipassHostedPort + "/ccskipass",
-                    new ReservationRequestDTO(name, activity, duration),
+                    new ReservationRequestDTO(activity, type, duration),
                     ReservationReceiptDTO.class
             );
             if (result.getStatusCode().equals(HttpStatus.CREATED) && result.hasBody()) {

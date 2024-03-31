@@ -1,9 +1,6 @@
 package teamb.w4e.entities.reservations;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.customers.Card;
@@ -14,7 +11,7 @@ import teamb.w4e.entities.transactions.Transaction;
 @DiscriminatorValue("GROUP")
 public class GroupReservation extends Reservation {
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", referencedColumnName = "id")
     private Group group;
 

@@ -1,8 +1,11 @@
 package teamb.w4e.entities.items;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import teamb.w4e.entities.catalog.Leisure;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import teamb.w4e.entities.Partner;
 import teamb.w4e.entities.reservations.ReservationType;
 
 import java.util.Objects;
@@ -17,16 +20,24 @@ public abstract class Item {
     @Enumerated(EnumType.STRING)
     private ReservationType type;
 
+    @NotBlank
+    private String name;
+
     @NotNull
-    @ManyToOne
-    private Leisure leisure;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Partner partner;
+
+    @PositiveOrZero
+    private double amount;
 
     protected Item() {
     }
 
-    protected Item(ReservationType type, Leisure leisure) {
+    protected Item(ReservationType type, String name, Partner partner, double amount) {
         this.type = type;
-        this.leisure = leisure;
+        this.name = name;
+        this.partner = partner;
+        this.amount = amount;
     }
 
     public void setId(Long id) {
@@ -45,19 +56,34 @@ public abstract class Item {
         this.type = type;
     }
 
-    public Leisure getLeisure() {
-        return leisure;
+    public String getName() {
+        return name;
     }
 
-    public void setLeisure(Leisure leisure) {
-        this.leisure = leisure;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Partner getPartner() {
+        return partner;
+    }
+
+    public void setPartner(Partner partner) {
+        this.partner = partner;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 
     @Override
     public String toString() {
         return "Item{" +
                 "type=" + type +
-                "leisure=" + leisure +
                 '}';
     }
 
@@ -65,11 +91,11 @@ public abstract class Item {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Item item)) return false;
-        return Objects.equals(leisure, item.getLeisure()) && Objects.equals(type, item.getType());
+        return Objects.equals(type, item.getType()) &&Objects.equals(name, item.getName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, leisure);
+        return Objects.hash(type, name);
     }
 }

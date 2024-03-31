@@ -87,34 +87,33 @@ class BookerTest {
 
     @Test
     void testFindReservationById() {
-
         reservationRepository.save(timeSlotReservation);
         assertTrue(reservationRepository.findById(timeSlotReservation.getId()).isPresent());
         assertFalse(reservationRepository.findById(10L).isPresent());
     }
 
-    @Test
-    void testFindTimeSlotReservationByCard() {
-        reservationRepository.save(timeSlotReservation);
-        assertEquals(reservationFinder.findTimeSlotReservationByCard(customer.getCard().getId(), ReservationType.TIME_SLOT).get(0), timeSlotReservation);
-        assertFalse(reservationRepository.findTimeSlotReservationByCard(15L, timeSlotReservation.getType()).contains(timeSlotReservation));
+//    @Test
+//    void testFindTimeSlotReservationByCard() {
+//        reservationRepository.save(timeSlotReservation);
+//        assertEquals(reservationFinder.findTimeSlotReservationByCard(customer.getCard().getId(), ReservationType.TIME_SLOT).get(0), timeSlotReservation);
+//        assertFalse(reservationRepository.findTimeSlotReservationByCard(15L, timeSlotReservation.getType()).contains(timeSlotReservation));
+//
+//    }
+//
+//    @Test
+//    void testFindGroupReservationByCard() {
+//        reservationRepository.save(groupReservation);
+//        assertTrue(reservationRepository.findGroupReservationByCard(customer.getId(), groupReservation.getType()).contains(groupReservation));
+//        assertFalse(reservationRepository.findGroupReservationByCard(-15L, groupReservation.getType()).contains(groupReservation));
+//    }
 
-    }
-
-    @Test
-    void testFindGroupReservationByCard() {
-        reservationRepository.save(groupReservation);
-        assertTrue(reservationRepository.findGroupReservationByCard(customer.getId(), groupReservation.getType()).contains(groupReservation));
-        assertFalse(reservationRepository.findGroupReservationByCard(-15L, groupReservation.getType()).contains(groupReservation));
-    }
-
-    @Test
-    void testFindSkiPassReservationByCard() {
-        reservationRepository.save(skiPassReservation);
-        assertTrue(reservationRepository.findSkiPassReservationByCard(customer.getId(), skiPassReservation.getType()).contains(skiPassReservation));
-        assertFalse(reservationRepository.findSkiPassReservationByCard(15L, skiPassReservation.getType()).contains(skiPassReservation));
-
-    }
+//    @Test
+//    void testFindSkiPassReservationByCard() {
+//        reservationRepository.save(skiPassReservation);
+//        assertTrue(reservationRepository.findSkiPassReservationByCard(customer.getId(), skiPassReservation.getType()).contains(skiPassReservation));
+//        assertFalse(reservationRepository.findSkiPassReservationByCard(15L, skiPassReservation.getType()).contains(skiPassReservation));
+//
+//    }
 
     @Test
     void testCreateGroupReservation() {

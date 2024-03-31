@@ -92,7 +92,7 @@ public class CartCommands {
     @ShellMethod("Add service to cart of customer (add-service-to-cart CUSTOMER_NAME LEISURE_NAME)")
     public CartElement addServiceToCart(String customerName, String leisureName) {
         ResponseEntity<CliLeisure> serviceResponse = restTemplate.getForEntity(getUriForService(leisureName), CliLeisure.class);
-        CartElement serviceElement = new CartElement(ReservationType.NONE, Objects.requireNonNull(serviceResponse.getBody()));
+        CartElement serviceElement = new CartElement(ReservationType.SERVICE, Objects.requireNonNull(serviceResponse.getBody()));
         return restTemplate.postForObject(getUriForCustomer(customerName), serviceElement, CartElement.class);
     }
 
@@ -101,7 +101,7 @@ public class CartCommands {
     public Set<CliReservation> reserve(String customerName) {
         Set<CliReservation> reservations = new HashSet<>();
         for (CartElement element : showCart(customerName)) {
-            if (element.getType().equals(ReservationType.NONE)) {
+            if (element.getType().equals(ReservationType.SERVICE)) {
                 continue;
             }
             reservations.add(restTemplate.postForObject(getUriForCustomer(customerName) + "/reservation", element, CliReservation.class));

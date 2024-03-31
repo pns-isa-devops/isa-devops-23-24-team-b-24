@@ -56,7 +56,7 @@ class CartHandlerTest {
         TimeSlotItem i = new TimeSlotItem(activity, "07-11 21:30");
         Set<Item> e = new HashSet<>();
         e.add(i);
-        customer.getCaddy().setLeisure(e);
+        customer.getCaddy().setCatalogItem(e);
     }
 
     @Test

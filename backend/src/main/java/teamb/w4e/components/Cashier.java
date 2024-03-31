@@ -7,11 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.Partner;
 import teamb.w4e.entities.catalog.Advantage;
 import teamb.w4e.entities.customers.Customer;
-import teamb.w4e.entities.transactions.PointTransaction;
-import teamb.w4e.entities.transactions.Transaction;
 import teamb.w4e.entities.items.*;
 import teamb.w4e.entities.reservations.Reservation;
 import teamb.w4e.entities.reservations.ReservationType;
+import teamb.w4e.entities.transactions.PointTransaction;
+import teamb.w4e.entities.transactions.Transaction;
 import teamb.w4e.exceptions.NegativeAmountTransactionException;
 import teamb.w4e.exceptions.PaymentException;
 import teamb.w4e.interfaces.*;
@@ -37,33 +37,34 @@ public class Cashier implements Payment, AdvantagePayment {
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
     public Reservation payReservationFromCart(Customer customer, Item item) throws NegativeAmountTransactionException, PaymentException {
-        double price = item.getLeisure().getPrice();
+        double price = item.getAmount();
         if (price < 0) {
-            throw new NegativeAmountTransactionException(item.getLeisure().getPrice());
+            throw new NegativeAmountTransactionException(item.getAmount());
         }
-        String payment = bank.pay(customer, item.getLeisure().getPrice()).orElseThrow(() -> new PaymentException(customer.getName(), price));
+        String payment = bank.pay(customer, item.getAmount()).orElseThrow(() -> new PaymentException(customer.getName(), price));
         customer.getCard().addPoints(pointAdder.convertPriceToPoints(price));
-        pointTransactionCreator.createPointTransactionWithPartner(customer, pointAdder.convertPriceToPoints(price), item.getLeisure().getPartner());
+        pointTransactionCreator.createPointTransactionWithPartner(customer, pointAdder.convertPriceToPoints(price), item.getPartner());
         Transaction transaction = transactionCreator.createTransaction(customer, price, payment);
         ReservationType itemType = item.getType();
-        return switch (itemType) {
-            case TIME_SLOT -> reservationCreator.createTimeSlotReservation(customer, (TimeSlotItem) item, transaction);
-            case GROUP -> reservationCreator.createGroupReservation(customer, (GroupItem) item, transaction);
-            case SKI_PASS -> reservationCreator.createSkiPassReservation(customer, (SkiPassItem) item, transaction);
-            case NONE -> null;
-        };
+        if (itemType.equals(ReservationType.TIME_SLOT)) {
+            return reservationCreator.createTimeSlotReservation(customer, (TimeSlotItem) item, transaction);
+        } else if (itemType.equals(ReservationType.GROUP)) {
+            return reservationCreator.createGroupReservation(customer, (GroupItem) item, transaction);
+        } else {
+            return reservationCreator.createSkiPassReservation(customer, (SkiPassItem) item, transaction);
+        }
     }
 
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
     public Transaction payServiceFromCart(Customer customer, ServiceItem item) throws NegativeAmountTransactionException, PaymentException {
-        if (item.getLeisure().getPrice() < 0) {
-            throw new NegativeAmountTransactionException(item.getLeisure().getPrice());
+        if (item.getAmount() < 0) {
+            throw new NegativeAmountTransactionException(item.getAmount());
         }
-        String payment = bank.pay(customer, item.getLeisure().getPrice()).orElseThrow(() -> new PaymentException(customer.getName(), item.getLeisure().getPrice()));
-        customer.getCard().addPoints(pointAdder.convertPriceToPoints(item.getLeisure().getPrice()));
-        pointTransactionCreator.createPointTransactionWithPartner(customer, pointAdder.convertPriceToPoints(item.getLeisure().getPrice()), item.getLeisure().getPartner());
-        return transactionCreator.createTransaction(customer, item.getLeisure().getPrice(), payment);
+        String payment = bank.pay(customer, item.getAmount()).orElseThrow(() -> new PaymentException(customer.getName(), item.getAmount()));
+        customer.getCard().addPoints(pointAdder.convertPriceToPoints(item.getAmount()));
+        pointTransactionCreator.createPointTransactionWithPartner(customer, pointAdder.convertPriceToPoints(item.getAmount()), item.getPartner());
+        return transactionCreator.createTransaction(customer, item.getAmount(), payment);
     }
 
 

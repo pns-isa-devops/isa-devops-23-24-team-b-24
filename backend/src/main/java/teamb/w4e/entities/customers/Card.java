@@ -21,7 +21,7 @@ public class Card {
     @PositiveOrZero
     private int points = 0;
 
-    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
     @Fetch(FetchMode.JOIN)
     private Set<Reservation> reservations;
 

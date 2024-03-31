@@ -24,7 +24,7 @@ public interface CartModifier {
 
     ServiceItem serviceUpdate(Long customerId, Service service) throws IdNotFoundException;
 
-    Advantage advantageUpdate(Long customerId, Advantage advantage) throws IdNotFoundException, AlreadyExistingException, NegativeAmountTransactionException;
+    AdvantageItem advantageUpdate(Long customerId, Advantage advantage) throws IdNotFoundException, AlreadyExistingException, NegativeAmountTransactionException;
 
-    Set<Advantage> advantageCartContent(Long customerId) throws IdNotFoundException;
+    Set<AdvantageItem> advantageCartContent(Long customerId) throws IdNotFoundException;
 }

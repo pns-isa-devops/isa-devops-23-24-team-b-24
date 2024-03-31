@@ -42,4 +42,8 @@ trade-points Emma John 1
 show-all-transactions Emma
 show-all-transactions John
 point-transactions
+echo "USE-ADVANTAGE"
+add-advantage-to-cart Emma free-juice
+show-advantages-cart Emma
+use-advantage Emma free-juice Yoga -a
 echo "END OF DEMO"

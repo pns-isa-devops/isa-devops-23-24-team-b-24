@@ -15,6 +15,7 @@ import teamb.w4e.interfaces.*;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CartHandler implements CartProcessor, CartModifier {
@@ -26,7 +27,7 @@ public class CartHandler implements CartProcessor, CartModifier {
 
 
     @Autowired
-    public CartHandler(CustomerFinder customerFinder, Payment payment, AdvantagePayment advantagePayment, Scheduler scheduler, SkiPass skiPass) {
+    public CartHandler(CustomerFinder customerFinder, Payment payment, Scheduler scheduler, SkiPass skiPass) {
         this.customerFinder = customerFinder;
         this.payment = payment;
         this.scheduler = scheduler;
@@ -37,12 +38,11 @@ public class CartHandler implements CartProcessor, CartModifier {
     @Transactional
     public TimeSlotItem timeSlotUpdate(Long customerId, Activity activity, String date) throws NonValidDateForActivity, IdNotFoundException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
-        Set<Item> items = customer.getCaddy().getLeisure();
+        Set<Item> items = customer.getCaddy().getCatalogItem();
         if (!scheduler.checkAvailability(activity, date)) {
             throw new NonValidDateForActivity(activity);
         }
         Optional<TimeSlotItem> existingItem = items.stream()
-                .filter(item -> item.getLeisure().equals(activity))
                 .filter(item -> item.getType().equals(ReservationType.TIME_SLOT))
                 .map(TimeSlotItem.class::cast).findFirst();
         if (existingItem.isPresent()) {
@@ -57,9 +57,8 @@ public class CartHandler implements CartProcessor, CartModifier {
     @Transactional
     public GroupItem groupUpdate(Long customerId, Activity activity, Group group) throws IdNotFoundException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
-        Set<Item> items = customer.getCaddy().getLeisure();
+        Set<Item> items = customer.getCaddy().getCatalogItem();
         Optional<GroupItem> existingItem = items.stream()
-                .filter(item -> item.getLeisure().equals(activity))
                 .filter(item -> item.getType().equals(ReservationType.GROUP))
                 .map(GroupItem.class::cast).findFirst();
         if (existingItem.isPresent()) {
@@ -74,9 +73,8 @@ public class CartHandler implements CartProcessor, CartModifier {
     @Transactional
     public SkiPassItem skiPassUpdate(Long customerId, Activity activity, String type, int duration) throws IdNotFoundException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
-        Set<Item> items = customer.getCaddy().getLeisure();
+        Set<Item> items = customer.getCaddy().getCatalogItem();
         Optional<SkiPassItem> existingItem = items.stream()
-                .filter(item -> item.getLeisure().equals(activity))
                 .filter(item -> item.getType().equals(ReservationType.SKI_PASS))
                 .map(SkiPassItem.class::cast).findFirst();
         if (existingItem.isPresent()) {
@@ -92,37 +90,47 @@ public class CartHandler implements CartProcessor, CartModifier {
     @Transactional
     public ServiceItem serviceUpdate(Long customerId, teamb.w4e.entities.catalog.Service service) throws IdNotFoundException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
-        Set<Item> items = customer.getCaddy().getLeisure();
+        Set<Item> items = customer.getCaddy().getCatalogItem();
         items.add(new ServiceItem(service));
         return new ServiceItem(service);
     }
 
     @Override
     @Transactional
-    public Advantage advantageUpdate(Long customerId, Advantage advantage) throws IdNotFoundException, AlreadyExistingException, NegativeAmountTransactionException {
+    public AdvantageItem advantageUpdate(Long customerId, Advantage advantage) throws IdNotFoundException, AlreadyExistingException, NegativeAmountTransactionException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         if (customer.getCard().getPoints() < advantage.getPoints()) {
             throw new NegativeAmountTransactionException(advantage.getPoints());
         }
-        Set<Advantage> advantages = customer.getAdvantageCaddy().getAdvantages();
-        if (advantages.contains(advantage)) {
+        Set<Item> items = customer.getCaddy().getCatalogItem();
+        Optional<AdvantageItem> existingItem = items.stream()
+                .filter(item -> item.getType().equals(ReservationType.NONE))
+                .map(AdvantageItem.class::cast)
+                .filter(item -> item.getAdvantage().equals(advantage))
+                .findFirst();
+        if (existingItem.isPresent()) {
             throw new AlreadyExistingException(advantage.getName());
         }
-        advantages.add(advantage);
-        return advantage;
+        items.add(new AdvantageItem(advantage));
+        return new AdvantageItem(advantage);
     }
 
     @Override
     @Transactional
-    public Set<Advantage> advantageCartContent(Long customerId) throws IdNotFoundException {
-        return customerFinder.retrieveCustomer(customerId).getAdvantageCaddy().getAdvantages();
+    public Set<AdvantageItem> advantageCartContent(Long customerId) throws IdNotFoundException {
+        return customerFinder.retrieveCustomer(customerId).getCaddy().getCatalogItem().stream()
+                .filter(item -> item.getType().equals(ReservationType.NONE))
+                .map(AdvantageItem.class::cast)
+                .collect(Collectors.toSet());
     }
 
 
     @Override
     @Transactional
     public Set<Item> cartContent(Long customerId) throws IdNotFoundException {
-        return customerFinder.retrieveCustomer(customerId).getCaddy().getLeisure();
+        return customerFinder.retrieveCustomer(customerId).getCaddy().getCatalogItem().stream()
+                .filter(item -> !item.getType().equals(ReservationType.NONE))
+                .collect(Collectors.toSet());
     }
 
 
@@ -130,45 +138,44 @@ public class CartHandler implements CartProcessor, CartModifier {
     @Transactional
     public Reservation validateActivity(Long customerId, Item item) throws EmptyCartException, PaymentException, NegativeAmountTransactionException, IdNotFoundException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
-        if (customer.getCaddy().getLeisure().isEmpty()) {
+        if (customer.getCaddy().getCatalogItem().isEmpty()) {
             throw new EmptyCartException(customer.getName());
         }
         if (item.getType().equals(ReservationType.TIME_SLOT)) {
             TimeSlotItem timeSlotItem = (TimeSlotItem) item;
-            if (scheduler.reserve((Activity) timeSlotItem.getLeisure(), timeSlotItem.getTimeSlot())) {
+            if (scheduler.reserve(timeSlotItem.getActivity(), timeSlotItem.getTimeSlot())) {
                 TimeSlotReservation reservation = (TimeSlotReservation) payment.payReservationFromCart(customer, timeSlotItem);
-                customer.getCaddy().getLeisure().remove(item);
+                customer.getCaddy().getCatalogItem().remove(item);
                 return reservation;
             }
         }
         if (item.getType().equals(ReservationType.GROUP)) {
             GroupItem groupItem = (GroupItem) item;
-
             GroupReservation reservation = (GroupReservation) payment.payReservationFromCart(customer, groupItem);
-            customer.getCaddy().getLeisure().remove(item);
+            customer.getCaddy().getCatalogItem().remove(item);
             return reservation;
 
         }
         if (item.getType().equals(ReservationType.SKI_PASS)) {
             SkiPassItem skiPassItem = (SkiPassItem) item;
-            if (skiPass.reserve(skiPassItem.getLeisure().getName(), skiPassItem.getSkiPassType(), skiPassItem.getDuration()).isPresent()) {
+            if (skiPass.reserve(skiPassItem.getActivity().getName(), skiPassItem.getSkiPassType(), skiPassItem.getDuration()).isPresent()) {
                 SkiPassReservation reservation = (SkiPassReservation) payment.payReservationFromCart(customer, skiPassItem);
-                customer.getCaddy().getLeisure().remove(item);
+                customer.getCaddy().getCatalogItem().remove(item);
                 return reservation;
             }
         }
-        throw new PaymentException(customer.getName(), item.getLeisure().getPrice());
+        throw new PaymentException(customer.getName(), item.getAmount());
     }
 
     @Override
     @Transactional
     public Transaction validateService(Long customerId, ServiceItem item) throws EmptyCartException, PaymentException, NegativeAmountTransactionException, IdNotFoundException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
-        if (customer.getCaddy().getLeisure().isEmpty()) {
+        if (customer.getCaddy().getCatalogItem().isEmpty()) {
             throw new EmptyCartException(customer.getName());
         }
         Transaction transaction = payment.payServiceFromCart(customer, item);
-        customer.getCaddy().getLeisure().remove(item);
+        customer.getCaddy().getCatalogItem().remove(item);
         return transaction;
     }
 }

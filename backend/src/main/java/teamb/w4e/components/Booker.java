@@ -53,15 +53,15 @@ public class Booker implements ReservationCreator, ReservationFinder {
 
     @Override
     public GroupReservation createGroupReservation(Customer customer, GroupItem item, Transaction transaction) {
-        return reservationRepository.save(new GroupReservation((Activity) item.getLeisure(), item.getGroup(), customer.getCard(), transaction));
+        return reservationRepository.save(new GroupReservation(item.getActivity(), item.getGroup(), customer.getCard(), transaction));
     }
     @Override
     public TimeSlotReservation createTimeSlotReservation(Customer customer, TimeSlotItem item, Transaction transaction) {
-        return reservationRepository.save(new TimeSlotReservation((Activity) item.getLeisure(), item.getTimeSlot(), customer.getCard(), transaction));
+        return reservationRepository.save(new TimeSlotReservation(item.getActivity(), item.getTimeSlot(), customer.getCard(), transaction));
     }
 
     @Override
     public SkiPassReservation createSkiPassReservation(Customer customer, SkiPassItem item, Transaction transaction) {
-        return reservationRepository.save(new SkiPassReservation((Activity) item.getLeisure(), item.getSkiPassType(), item.getDuration(), customer.getCard(), transaction));
+        return reservationRepository.save(new SkiPassReservation(item.getActivity(), item.getSkiPassType(), item.getDuration(), customer.getCard(), transaction));
     }
 }
