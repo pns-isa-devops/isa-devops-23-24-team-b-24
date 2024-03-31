@@ -4,6 +4,7 @@ pipeline {
     
     stages {
         stage('Feature Branch') {
+            // For all branches except master and staging (i.e. feature branches)
             when { not { anyOf { branch 'master'; branch 'staging' } } }
             steps {
                 // Run unit tests
@@ -22,9 +23,8 @@ pipeline {
                 
                 // Run end to end tests
                 sh 'docker compose up -d --scale tcf-cli=0'
-                sh 'cd cli && docker compose run tcf-cli script demo.txt && exit'
-                sh 'cd cli && docker compose run tcf-cli script demo2.txt && exit'
-                sh 'docker compose down -v --remove-orphans'
+                sh 'cd cli && docker compose run tcf-cli script populate.txt && exit'
+                sh 'cd cli && docker compose run tcf-cli script script.txt && exit'
 
                 // Build artifacts
                 sh './artifacts.sh'
@@ -43,12 +43,15 @@ pipeline {
             }
         }
 
-
     }
 
     post {
         always {
-            sh 'docker compose down -v --remove-orphans'
+            script {
+                if (env.BRANCH_NAME == 'staging') {
+                    sh 'docker compose down -v --remove-orphans'
+                }
+            }
         }
     }
 }
