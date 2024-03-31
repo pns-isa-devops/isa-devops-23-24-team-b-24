@@ -11,6 +11,7 @@ import teamb.w4e.entities.catalog.Advantage;
 import teamb.w4e.entities.catalog.AdvantageType;
 import teamb.w4e.entities.catalog.Leisure;
 import teamb.w4e.entities.customers.Customer;
+import teamb.w4e.exceptions.AlreadyExistingException;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.exceptions.NegativeAmountTransactionException;
 import teamb.w4e.exceptions.group.NotEnoughException;
@@ -44,7 +45,7 @@ public class PointController {
 
 
     @PostMapping(path = "/{customerId}/advantage-cart", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<PointTransactionDTO> useAdvantage(@PathVariable("customerId") Long customerId, @RequestBody @Valid AppliedAdvantageDTO appliedAdvantageDTO) throws IdNotFoundException, NegativeAmountTransactionException {
+    public ResponseEntity<PointTransactionDTO> useAdvantage(@PathVariable("customerId") Long customerId, @RequestBody @Valid AppliedAdvantageDTO appliedAdvantageDTO) throws IdNotFoundException, NegativeAmountTransactionException, AlreadyExistingException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         Advantage advantage = customer.getAdvantageCaddy().getAdvantages().stream()
                 .filter(adv -> adv.getId().equals(appliedAdvantageDTO.advantage().id()))

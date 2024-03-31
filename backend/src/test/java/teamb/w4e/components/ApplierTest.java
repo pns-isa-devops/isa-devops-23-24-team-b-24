@@ -78,7 +78,7 @@ class ApplierTest {
     }
 
     @Test
-    void testApply() throws NegativeAmountTransactionException, AlreadyExistingException {
+    void testApply() throws NegativeAmountTransactionException, AlreadyExistingException, IdNotFoundException {
         customer.getCard().addPoints(10);
         customer.getAdvantageCaddy().addAdvantage(localSpeciality);
         assertFalse(customer.getAdvantageCaddy().getAdvantages().isEmpty());

@@ -18,7 +18,7 @@ public abstract class Item {
     private ReservationType type;
 
     @NotNull
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     private Leisure leisure;
 
     protected Item() {

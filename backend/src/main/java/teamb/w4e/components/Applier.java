@@ -7,9 +7,12 @@ import teamb.w4e.entities.customers.Customer;
 import teamb.w4e.entities.items.Item;
 import teamb.w4e.entities.items.ServiceItem;
 import teamb.w4e.entities.transactions.PointTransaction;
+import teamb.w4e.exceptions.AlreadyExistingException;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.exceptions.NegativeAmountTransactionException;
 import teamb.w4e.interfaces.*;
+import teamb.w4e.interfaces.leisure.ServiceFinder;
+import teamb.w4e.interfaces.leisure.ServiceRegistration;
 
 import java.util.Set;
 
@@ -18,18 +21,24 @@ public class Applier implements AdvantageApplier {
 
     private final AdvantagePayment advantagePayment;
     private final PointAdder pointAdder;
+    private final ServiceRegistration serviceRegistration;
+    private final ServiceFinder serviceFinder;
 
-    public Applier(AdvantagePayment advantagePayment, PointAdder pointAdder) {
+    public Applier(AdvantagePayment advantagePayment, PointAdder pointAdder, ServiceRegistration serviceRegistration, ServiceFinder serviceFinder) {
         this.advantagePayment = advantagePayment;
         this.pointAdder = pointAdder;
+        this.serviceRegistration = serviceRegistration;
+        this.serviceFinder = serviceFinder;
     }
 
     @Override
-    public PointTransaction apply(Customer customer, Advantage advantage, Leisure leisure) throws NegativeAmountTransactionException {
+    public PointTransaction apply(Customer customer, Advantage advantage, Leisure leisure) throws NegativeAmountTransactionException, AlreadyExistingException, IdNotFoundException {
         PointTransaction pointTransaction = advantagePayment.payAdvantageFromCart(customer, advantage, advantage.getPartner());
         customer.getAdvantageCaddy().getAdvantages().remove(advantage);
         Set<Item> items = customer.getCaddy().getLeisure();
-        items.add(new ServiceItem((new teamb.w4e.entities.catalog.Service(advantage.getPartner(), advantage.getName(), advantage.getType().getName(), 0.0))));
+        teamb.w4e.entities.catalog.Service service = serviceFinder.findServiceByName(advantage.getName())
+                .orElse(serviceRegistration.registerService(advantage.getPartner().getId(), advantage.getName(), advantage.getType().getName(), 0.0));
+        items.add(new ServiceItem(service));
         return pointTransaction;
     }
 
