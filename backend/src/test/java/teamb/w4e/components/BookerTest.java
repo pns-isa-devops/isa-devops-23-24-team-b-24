@@ -105,7 +105,7 @@ class BookerTest {
     void testFindGroupReservationByCard() {
         reservationRepository.save(groupReservation);
         assertTrue(reservationRepository.findGroupReservationByCard(customer.getId(), groupReservation.getType()).contains(groupReservation));
-        assertFalse(reservationRepository.findGroupReservationByCard(15L, groupReservation.getType()).contains(groupReservation));
+        assertFalse(reservationRepository.findGroupReservationByCard(-15L, groupReservation.getType()).contains(groupReservation));
     }
 
     @Test
