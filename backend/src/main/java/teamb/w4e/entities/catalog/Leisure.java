@@ -2,7 +2,6 @@ package teamb.w4e.entities.catalog;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import teamb.w4e.entities.Partner;
 
@@ -106,6 +105,6 @@ public abstract class Leisure {
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return name != null ? name.hashCode() : 0;
     }
 }
