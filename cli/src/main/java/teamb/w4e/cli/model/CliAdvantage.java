@@ -5,11 +5,13 @@ public class CliAdvantage {
     private String name;
     private AdvantageType type;
     private int points;
+    private String partner;
 
     public CliAdvantage() {
     }
 
-    public CliAdvantage(String advantageName, AdvantageType advantageType, int points) {
+    public CliAdvantage(String partner, String advantageName, AdvantageType advantageType, int points) {
+        this.partner = partner;
         this.name = advantageName;
         this.type = advantageType;
         this.points = points;
@@ -45,6 +47,14 @@ public class CliAdvantage {
 
     public void setPoints(int points) {
         this.points = points;
+    }
+
+    public String getPartner() {
+        return partner;
+    }
+
+    public void setPartner(String partner) {
+        this.partner = partner;
     }
 
     @Override

@@ -7,6 +7,8 @@ import org.springframework.web.client.RestTemplate;
 import teamb.w4e.cli.CliContext;
 import teamb.w4e.cli.model.AdvantageType;
 import teamb.w4e.cli.model.CliAdvantage;
+import teamb.w4e.cli.model.CliLeisure;
+import teamb.w4e.cli.model.CliPartner;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -32,9 +34,10 @@ public class AdvantageCommands {
         this.cliContext = cliContext;
     }
 
-    @ShellMethod("Create an advantage (register-advantage ADVANTAGE_NAME ADVANTAGE_TYPE NB_POINTS)")
-    public CliAdvantage registerAdvantage(String name, AdvantageType type, int points) {
-        CliAdvantage res = restTemplate.postForObject(BASE_URI, new CliAdvantage(name, type, points), CliAdvantage.class);
+    @ShellMethod("Register an advantage (register-advantage PARTNER_NAME ADVANTAGE_NAME ADVANTAGE_TYPE NB_POINTS)")
+    public CliAdvantage registerAdvantage(String partnerName, String advantageName, AdvantageType type, int points) {
+        CliPartner partner = Objects.requireNonNull(restTemplate.getForEntity(getUriForPartner(partnerName), CliPartner.class).getBody());
+        CliAdvantage res = restTemplate.postForObject(BASE_URI, new CliAdvantage(partner.getName(), advantageName, type, points), CliAdvantage.class);
         cliContext.getAdvantages().put(Objects.requireNonNull(res).getName(), res);
         return res;
     }
@@ -64,5 +67,9 @@ public class AdvantageCommands {
         activityMap.putAll(Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(BASE_URI, CliAdvantage[].class)
                 .getBody())).collect(toMap(CliAdvantage::getName, Function.identity())));
         return activityMap.toString();
+    }
+
+    private String getUriForPartner(String partnerName) {
+        return PartnerCommands.BASE_URI + "/" + cliContext.getPartners().get(partnerName).getId();
     }
 }

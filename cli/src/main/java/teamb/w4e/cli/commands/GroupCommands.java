@@ -10,8 +10,6 @@ import org.springframework.web.client.RestTemplate;
 import teamb.w4e.cli.CliContext;
 import teamb.w4e.cli.model.CliCustomer;
 import teamb.w4e.cli.model.CliGroup;
-import teamb.w4e.cli.model.CliPointTransaction;
-import teamb.w4e.cli.model.PointTrade;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -22,11 +20,8 @@ import java.util.stream.Collectors;
 @ShellComponent
 public class GroupCommands {
 
-    public static final String BASE_URI = "/customers";
     public static final String GROUP_URI = "/groups";
-
     private final RestTemplate restTemplate;
-
     private final CliContext cliContext;
 
     @Autowired
@@ -61,23 +56,15 @@ public class GroupCommands {
 
     @ShellMethod("List all known groups")
     public Set<CliGroup> groups() {
-        return Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(BASE_URI + GROUP_URI, CliGroup[].class)
+        return Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(CustomerCommands.BASE_URI + GROUP_URI, CliGroup[].class)
                 .getBody())).collect(Collectors.toSet());
     }
 
-    @ShellMethod("Trade points between two members of a group (trade-points SENDER_NAME RECEIVER_NAME AMOUNT)")
-    public CliPointTransaction tradePoints(String senderName, String receiverName, int amount) {
-        CliCustomer sender = restTemplate.getForEntity(getUriForCustomer(senderName), CliCustomer.class).getBody();
-        CliCustomer receiver = restTemplate.getForEntity(getUriForCustomer(receiverName), CliCustomer.class).getBody();
-        PointTrade pointTrade = new PointTrade(sender, receiver, amount);
-        return restTemplate.postForObject(BASE_URI + GROUP_URI + "/trade", pointTrade, CliPointTransaction.class);
-    }
-
-    public String getUriForGroup(String name) {
-        return BASE_URI + GROUP_URI + "/" + cliContext.getCustomers().get(name).getId() + "/group";
+    private String getUriForGroup(String name) {
+        return CustomerCommands.BASE_URI + GROUP_URI + "/" + cliContext.getCustomers().get(name).getId() + "/group";
     }
 
     private String getUriForCustomer(String name) {
-        return BASE_URI + "/" + cliContext.getCustomers().get(name).getId();
+        return CustomerCommands.BASE_URI + "/" + cliContext.getCustomers().get(name).getId();
     }
 }

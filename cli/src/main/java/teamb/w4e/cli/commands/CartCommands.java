@@ -19,9 +19,8 @@ import static java.util.stream.Collectors.toSet;
 
 @ShellComponent
 public class CartCommands {
-    public static final String CATALOG_URI = "/catalog";
     public static final String BASE_URI = "/customers";
-
+    public static final String CATALOG_URI = "/catalog";
     private final RestTemplate restTemplate;
     private final CliContext cliContext;
 
@@ -35,6 +34,12 @@ public class CartCommands {
     @ShellMethod("Show cart content of customer (show-cart CUSTOMER_NAME)")
     public Set<CartElement> showCart(String name) {
         return Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(getUriForCustomer(name), CartElement[].class)
+                .getBody())).collect(toSet());
+    }
+
+    @ShellMethod("Show advantage content of customer (show-advantages-cart CUSTOMER_NAME)")
+    public Set<CliAdvantage> showAdvantagesCart(String name) {
+        return Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(getUriForCustomer(name) + "/advantage", CliAdvantage[].class)
                 .getBody())).collect(toSet());
     }
 
@@ -77,6 +82,12 @@ public class CartCommands {
         throw new IllegalArgumentException("Invalid combination of options.");
     }
 
+    @ShellMethod("Add advantage to cart of customer (add-advantage-to-cart CUSTOMER_NAME ADVANTAGE_NAME)")
+    public CliAdvantage addAdvantageToCart(String customerName, String advantageName) {
+        ResponseEntity<CliAdvantage> advantageResponse = restTemplate.getForEntity(getUriForAdvantage(advantageName), CliAdvantage.class);
+        return restTemplate.postForObject(getUriForCustomer(customerName) + "/advantage", Objects.requireNonNull(advantageResponse).getBody(), CliAdvantage.class);
+    }
+
 
     @ShellMethod("Add service to cart of customer (add-service-to-cart CUSTOMER_NAME LEISURE_NAME)")
     public CartElement addServiceToCart(String customerName, String leisureName) {
@@ -109,6 +120,10 @@ public class CartCommands {
         return restTemplate.postForObject(getUriForCustomer(customerName) + "/use-service", showCart(customerName).stream()
                 .filter(element -> element.getLeisure().getName().equals(serviceName))
                 .findFirst().orElseThrow(), CliTransaction.class);
+    }
+
+    private String getUriForAdvantage(String name) {
+        return CATALOG_URI + "/advantages/" + cliContext.getAdvantages().get(name).getId();
     }
 
     private String getUriForActivity(String name) {
