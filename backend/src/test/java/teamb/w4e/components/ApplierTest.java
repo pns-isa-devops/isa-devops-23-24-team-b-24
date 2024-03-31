@@ -14,7 +14,6 @@ import teamb.w4e.entities.customers.Customer;
 import teamb.w4e.entities.items.AdvantageItem;
 import teamb.w4e.entities.items.Item;
 import teamb.w4e.entities.items.TimeSlotItem;
-import teamb.w4e.entities.reservations.ReservationType;
 import teamb.w4e.entities.transactions.PointTransaction;
 import teamb.w4e.exceptions.*;
 import teamb.w4e.interfaces.*;
@@ -109,7 +108,7 @@ class ApplierTest {
     }
 
     @Test
-    void testReduction() throws NegativeAmountTransactionException, IdNotFoundException, AlreadyExistingException, NonValidDateForActivity, NotFoundException {
+    void testReduction() throws NegativeAmountTransactionException, IdNotFoundException, NotFoundException {
         int point = 10;
         customer.getCard().addPoints(point);
         TimeSlotItem timeSlotItem = new TimeSlotItem(activity, "07-11 21:30");
@@ -128,7 +127,7 @@ class ApplierTest {
     }
 
     @Test
-    void testReductionWithEmptyCart() throws AlreadyExistingException, NegativeAmountTransactionException, IdNotFoundException, NonValidDateForActivity {
+    void testReductionWithEmptyCart() throws AlreadyExistingException, NegativeAmountTransactionException, IdNotFoundException {
         customer.getCard().addPoints(10);
         cartModifier.advantageUpdate(customer.getId(), reduction);
         TimeSlotItem timeSlotItem = new TimeSlotItem(activity, "07-11 21:30");
