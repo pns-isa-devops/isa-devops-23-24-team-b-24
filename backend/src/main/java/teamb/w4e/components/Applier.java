@@ -3,7 +3,6 @@ package teamb.w4e.components;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.catalog.Advantage;
-import teamb.w4e.entities.catalog.Leisure;
 import teamb.w4e.entities.customers.Customer;
 import teamb.w4e.entities.items.AdvantageItem;
 import teamb.w4e.entities.items.Item;
@@ -14,22 +13,23 @@ import teamb.w4e.exceptions.AlreadyExistingException;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.exceptions.NegativeAmountTransactionException;
 import teamb.w4e.exceptions.NotFoundException;
-import teamb.w4e.interfaces.*;
+import teamb.w4e.interfaces.AdvantageApplier;
+import teamb.w4e.interfaces.Payment;
+import teamb.w4e.interfaces.PointAdder;
 import teamb.w4e.interfaces.leisure.ServiceFinder;
 import teamb.w4e.interfaces.leisure.ServiceRegistration;
 
-import java.util.Optional;
 import java.util.Set;
 
 @Service
 public class Applier implements AdvantageApplier {
 
-    private final AdvantagePayment advantagePayment;
+    private final Payment advantagePayment;
     private final PointAdder pointAdder;
     private final ServiceRegistration serviceRegistration;
     private final ServiceFinder serviceFinder;
 
-    public Applier(AdvantagePayment advantagePayment, PointAdder pointAdder, ServiceRegistration serviceRegistration, ServiceFinder serviceFinder) {
+    public Applier(Payment advantagePayment, PointAdder pointAdder, ServiceRegistration serviceRegistration, ServiceFinder serviceFinder) {
         this.advantagePayment = advantagePayment;
         this.pointAdder = pointAdder;
         this.serviceRegistration = serviceRegistration;

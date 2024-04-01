@@ -64,7 +64,7 @@ class ApplierTest {
 
 
     @BeforeEach
-    void setUp() throws AlreadyExistingException, IdNotFoundException {
+    void setUp() throws AlreadyExistingException, IdNotFoundException, NotFoundException {
         partnerRegistration.register("partner");
         Partner partner = partnerFinder.findByName("partner").orElseThrow(() -> new IdNotFoundException(1L));
 
@@ -74,10 +74,10 @@ class ApplierTest {
         activityRegistration.registerActivity(partner.getId(), "Tennis", "Tennis court", 10);
         activity = activityFinder.findActivityByName("Tennis").orElseThrow(() -> new IdNotFoundException(1L));
 
-        advantageRegistration.register(partner, "Thé citroné", AdvantageType.LOCAL_SPECIALITY, 2);
+        advantageRegistration.register(partner.getName(), "Thé citroné", AdvantageType.LOCAL_SPECIALITY, 2);
         localSpeciality = advantageFinder.findByName("Thé citroné").orElseThrow(() -> new IdNotFoundException(1L));
 
-        advantageRegistration.register(partner, "Réduction", AdvantageType.REDUCTION, 5);
+        advantageRegistration.register(partner.getName(), "Réduction", AdvantageType.REDUCTION, 5);
         reduction = advantageFinder.findByName("Réduction").orElseThrow(() -> new IdNotFoundException(2L));
 
 

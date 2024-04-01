@@ -9,16 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import teamb.w4e.dto.AdvantageDTO;
 import teamb.w4e.dto.ErrorDTO;
 import teamb.w4e.dto.LeisureDTO;
-import teamb.w4e.entities.Partner;
 import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.catalog.Advantage;
 import teamb.w4e.entities.catalog.AdvantageType;
 import teamb.w4e.entities.catalog.Service;
 import teamb.w4e.exceptions.IdNotFoundException;
-import teamb.w4e.exceptions.NotFoundException;
 import teamb.w4e.interfaces.AdvantageFinder;
 import teamb.w4e.interfaces.AdvantageRegistration;
-import teamb.w4e.interfaces.PartnerFinder;
 import teamb.w4e.interfaces.leisure.ActivityFinder;
 import teamb.w4e.interfaces.leisure.ActivityRegistration;
 import teamb.w4e.interfaces.leisure.ServiceFinder;
@@ -41,20 +38,16 @@ public class LeisureController {
     private final ActivityFinder activityFinder;
     private final ServiceFinder serviceFinder;
 
-    private final PartnerFinder partnerFinder;
-
     @Autowired
     public LeisureController(AdvantageRegistration advantageRegistry, AdvantageFinder advantageFinder,
                              ActivityRegistration activityRegistry, ServiceRegistration serviceRegistry,
-                             ActivityFinder activityFinder, ServiceFinder serviceFinder,
-                             PartnerFinder partnerFinder) {
+                             ActivityFinder activityFinder, ServiceFinder serviceFinder) {
         this.advantageRegistry = advantageRegistry;
         this.activityRegistry = activityRegistry;
         this.advantageFinder = advantageFinder;
         this.serviceRegistry = serviceRegistry;
         this.activityFinder = activityFinder;
         this.serviceFinder = serviceFinder;
-        this.partnerFinder = partnerFinder;
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -66,9 +59,8 @@ public class LeisureController {
     @PostMapping(path = "/advantages", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<AdvantageDTO> registerAdvantage(@RequestBody @Valid AdvantageDTO advantage) {
         try {
-            Partner partner = partnerFinder.findByName(advantage.partner()).orElseThrow(() -> new NotFoundException("Partner " + advantage.partner() + " not found" ));
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(convertAdvantageToDto(advantageRegistry.register(partner, advantage.name(), advantage.type(), advantage.points())));
+                    .body(convertAdvantageToDto(advantageRegistry.register(advantage.partner(), advantage.name(), advantage.type(), advantage.points())));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
         }

@@ -7,16 +7,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import teamb.w4e.dto.CustomerDTO;
 import teamb.w4e.dto.GroupDTO;
-import teamb.w4e.entities.customers.Customer;
+import teamb.w4e.dto.PointTradeDTO;
+import teamb.w4e.dto.PointTransactionDTO;
 import teamb.w4e.entities.customers.Group;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.exceptions.group.AlreadyLeaderException;
 import teamb.w4e.exceptions.group.NotEnoughException;
-import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.GroupCreator;
 import teamb.w4e.interfaces.GroupFinder;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,27 +26,19 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class GroupController {
 
     public static final String BASE_URI = "/customers/groups";
-    private final CustomerFinder customerFinder;
     private final GroupCreator createGroup;
     private final GroupFinder groupFinder;
 
     @Autowired
-    public GroupController(CustomerFinder finder, GroupCreator createGroup, GroupFinder groupFinder) {
-        this.customerFinder = finder;
+    public GroupController(GroupCreator createGroup, GroupFinder groupFinder) {
         this.createGroup = createGroup;
         this.groupFinder = groupFinder;
     }
 
     @PostMapping(path = "/{leaderId}/group", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<GroupDTO> createGroup(@PathVariable("leaderId") Long leaderId, @RequestBody @Valid GroupDTO groupDTO) throws IdNotFoundException, NotEnoughException {
-        Customer leader = customerFinder.retrieveCustomer(leaderId);
-        Set<Customer> members = new HashSet<>();
-        for (CustomerDTO member : groupDTO.members()) {
-            members.add(customerFinder.retrieveCustomer(member.id()));
-        }
-        try {
+    public ResponseEntity<GroupDTO> createGroup(@PathVariable("leaderId") Long leaderId, @RequestBody @Valid GroupDTO groupDTO) throws IdNotFoundException, NotEnoughException {        try {
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(convertGroupToDto(createGroup.createGroup(leader, members)));
+                    .body(convertGroupToDto(createGroup.createGroup(leaderId, groupDTO.members().stream().map(CustomerDTO::id).collect(Collectors.toSet()))));
         } catch (AlreadyLeaderException e) {
             // Note: Returning 409 (Conflict) can also be seen a security/privacy vulnerability, exposing a service for account enumeration
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -61,6 +52,12 @@ public class GroupController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.ok(createGroup.deleteGroup(leaderId));
+    }
+
+    @PostMapping(path = "/trade", consumes = APPLICATION_JSON_VALUE)
+    public ResponseEntity<PointTransactionDTO> tradePoints(@RequestBody @Valid PointTradeDTO pointTradeDTO) throws IdNotFoundException, NotEnoughException {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(TransactionController.convertPointTransactionToDto(createGroup.createTrade(pointTradeDTO.sender().id(), pointTradeDTO.receiver().id(), pointTradeDTO.points())));
     }
 
     @GetMapping(path = "/{leaderId}/group")

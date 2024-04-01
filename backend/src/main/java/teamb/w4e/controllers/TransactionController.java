@@ -5,11 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import teamb.w4e.dto.*;
+import teamb.w4e.dto.ErrorDTO;
+import teamb.w4e.dto.PointTransactionDTO;
+import teamb.w4e.dto.TransactionDTO;
 import teamb.w4e.entities.transactions.PointTransaction;
 import teamb.w4e.entities.transactions.Transaction;
-import teamb.w4e.exceptions.IdNotFoundException;
-import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.TransactionFinder;
 
 import java.util.List;
@@ -23,13 +23,11 @@ public class TransactionController {
     public static final String TRANSACTION_URI = "/transactions";
     public static final String POINT_TRANSACTION_URI = "/point-transactions";
     private final TransactionFinder transactionFinder;
-    private final CustomerFinder customerFinder;
 
 
     @Autowired
-    public TransactionController(TransactionFinder transactionFinder, CustomerFinder customerFinder) {
+    public TransactionController(TransactionFinder transactionFinder) {
         this.transactionFinder = transactionFinder;
-        this.customerFinder = customerFinder;
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -39,16 +37,14 @@ public class TransactionController {
     }
 
     @GetMapping(path = TRANSACTION_URI + "/{idCustomer}/transaction")
-    public ResponseEntity<List<TransactionDTO>> getTransactionOfCustomer(@PathVariable Long idCustomer) throws IdNotFoundException {
-        CustomerDTO customer = CustomerController.convertCustomerToDto(customerFinder.retrieveCustomer(idCustomer));
-        List<TransactionDTO> transactionDTOs = transactionFinder.findTransactionsByCustomer(customer.id()).stream().map(TransactionController::convertTransactionToDto).toList();
+    public ResponseEntity<List<TransactionDTO>> getTransactionOfCustomer(@PathVariable Long idCustomer) {
+        List<TransactionDTO> transactionDTOs = transactionFinder.findTransactionsByCustomer(idCustomer).stream().map(TransactionController::convertTransactionToDto).toList();
         return ResponseEntity.ok(transactionDTOs);
     }
 
     @GetMapping(path = POINT_TRANSACTION_URI + "/{idCustomer}/transaction")
-    public ResponseEntity<List<PointTransactionDTO>> getPointTransactionOfCustomer(@PathVariable Long idCustomer) throws IdNotFoundException {
-        CustomerDTO customer = CustomerController.convertCustomerToDto(customerFinder.retrieveCustomer(idCustomer));
-        List<PointTransactionDTO> pointTransactionDTOs = transactionFinder.findPointTransactionsByCustomer(customer.id()).stream().map(TransactionController::convertPointTransactionToDto).toList();
+    public ResponseEntity<List<PointTransactionDTO>> getPointTransactionOfCustomer(@PathVariable Long idCustomer) {
+        List<PointTransactionDTO> pointTransactionDTOs = transactionFinder.findPointTransactionsByCustomer(idCustomer).stream().map(TransactionController::convertPointTransactionToDto).toList();
         return ResponseEntity.ok(pointTransactionDTOs);
     }
 

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TransactionRegistry implements TransactionFinder, TransactionCreator, PointTransactionCreator, PointTransactionFinder {
+public class TransactionRegistry implements TransactionFinder, TransactionCreator {
 
     private final TransactionRepository transactionRepository;
 

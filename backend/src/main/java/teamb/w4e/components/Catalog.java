@@ -8,6 +8,7 @@ import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.catalog.Advantage;
 import teamb.w4e.entities.catalog.AdvantageType;
 import teamb.w4e.exceptions.IdNotFoundException;
+import teamb.w4e.exceptions.NotFoundException;
 import teamb.w4e.interfaces.AdvantageFinder;
 import teamb.w4e.interfaces.AdvantageRegistration;
 import teamb.w4e.interfaces.PartnerFinder;
@@ -45,10 +46,11 @@ public class Catalog implements AdvantageRegistration, AdvantageFinder, Activity
 
     @Override
     @Transactional
-    public Advantage register(Partner partner, String name, AdvantageType type, int points) {
+    public Advantage register(String partnerName, String name, AdvantageType type, int points) throws NotFoundException {
         if (type == null || points < 1) {
             throw new IllegalArgumentException("Invalid Advantage");
         }
+        Partner partner = partnerFinder.findByName(partnerName).orElseThrow(() -> new NotFoundException("Partner " + partnerName + " not found"));
         Advantage newAdvantage = new Advantage(partner, name, type, points);
         return advantageCatalogRepository.save(newAdvantage);
     }

@@ -1,6 +1,5 @@
 package teamb.w4e.entities.items;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
@@ -10,7 +9,6 @@ import jakarta.validation.constraints.Positive;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import teamb.w4e.entities.catalog.Activity;
-import teamb.w4e.entities.catalog.Leisure;
 import teamb.w4e.entities.reservations.ReservationType;
 
 

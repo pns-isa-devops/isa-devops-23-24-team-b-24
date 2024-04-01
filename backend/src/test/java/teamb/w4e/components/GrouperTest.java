@@ -13,6 +13,8 @@ import teamb.w4e.exceptions.group.AlreadyLeaderException;
 import teamb.w4e.exceptions.group.NotEnoughException;
 import teamb.w4e.interfaces.CustomerFinder;
 import teamb.w4e.interfaces.CustomerRegistration;
+import teamb.w4e.interfaces.TransactionFinder;
+import teamb.w4e.repositories.customers.CustomerRepository;
 
 import java.util.Set;
 
@@ -30,7 +32,13 @@ class GrouperTest {
     private CustomerRegistration customerRegistration;
 
     @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
     private CustomerFinder customerFinder;
+
+    @Autowired
+    private TransactionFinder transactionFinder;
 
     private final String john = "John";
     private final String jane = "Jane";
@@ -42,7 +50,7 @@ class GrouperTest {
         Customer johnCustomer = customerRegistration.register(john, creditCard);
         Customer janeCustomer = customerRegistration.register(jane, creditCard);
 
-        Group newGroup = grouper.createGroup(johnCustomer, Set.of(janeCustomer));
+        Group newGroup = grouper.createGroup(johnCustomer.getId(), Set.of(janeCustomer.getId()));
 
         assertEquals(johnCustomer, newGroup.getLeader());
         assertEquals(Set.of(janeCustomer), newGroup.getMembers());
@@ -54,7 +62,7 @@ class GrouperTest {
         Customer johnCustomer = customerRegistration.register(john, creditCard);
         Customer janeCustomer = customerRegistration.register(jane, creditCard);
 
-        Assertions.assertThrows(AlreadyLeaderException.class, () -> grouper.createGroup(johnCustomer, Set.of(janeCustomer, johnCustomer)));
+        Assertions.assertThrows(AlreadyLeaderException.class, () -> grouper.createGroup(johnCustomer.getId(), Set.of(janeCustomer.getId(), johnCustomer.getId())));
     }
 
     @Test
@@ -63,14 +71,14 @@ class GrouperTest {
         Customer janeCustomer = customerRegistration.register(jane, creditCard);
         Customer mattCustomer = customerRegistration.register(matt, creditCard);
 
-        grouper.createGroup(johnCustomer, Set.of(janeCustomer, mattCustomer));
-        Assertions.assertThrows(AlreadyLeaderException.class, () -> grouper.createGroup(johnCustomer, Set.of(janeCustomer)));
+        grouper.createGroup(johnCustomer.getId(), Set.of(janeCustomer.getId(), mattCustomer.getId()));
+        Assertions.assertThrows(AlreadyLeaderException.class, () -> grouper.createGroup(johnCustomer.getId(), Set.of(janeCustomer.getId())));
     }
 
     @Test
     void notEnoughMembers() throws AlreadyExistingException {
         Customer johnCustomer = customerRegistration.register(john, creditCard);
-        Assertions.assertThrows(NotEnoughException.class, () -> grouper.createGroup(johnCustomer, Set.of()));
+        Assertions.assertThrows(NotEnoughException.class, () -> grouper.createGroup(johnCustomer.getId(), Set.of()));
     }
 
     @Test
@@ -80,8 +88,37 @@ class GrouperTest {
         Customer mattCustomer = customerRegistration.register(matt, creditCard);
         assertEquals(customerFinder.findById(johnCustomer.getId()).get(), johnCustomer);
 
-        Group newGroup = grouper.createGroup(johnCustomer, Set.of(janeCustomer, mattCustomer));
+        Group newGroup = grouper.createGroup(johnCustomer.getId(), Set.of(janeCustomer.getId(), mattCustomer.getId()));
         assertEquals(newGroup, grouper.findGroupByLeader(johnCustomer.getId()).get());
+    }
+
+    @Test
+    void pointTradeOutOfGroup() throws NotEnoughException, IdNotFoundException {
+        Customer sender = new Customer("John", "1234567890");
+        Customer receiver = new Customer("Jane", "0987654321");
+        customerRepository.save(sender);
+        customerRepository.save(receiver);
+        sender.getCard().setPoints(100);
+        grouper.createTrade(sender.getId(), receiver.getId(), 60);
+        assertEquals(40, sender.getCard().getPoints());
+        assertEquals(30, receiver.getCard().getPoints());
+        assertEquals(1, transactionFinder.findPointTransactionsByCustomer(sender.getId()).size());
+        assertEquals(1, transactionFinder.findPointTransactionsByCustomer(receiver.getId()).size());
+    }
+
+    @Test
+    void pointTradeInGroup() throws NotEnoughException, AlreadyLeaderException, IdNotFoundException {
+        Customer sender = new Customer("John", "1234567890");
+        Customer receiver = new Customer("Jane", "0987654321");
+        customerRepository.save(sender);
+        customerRepository.save(receiver);
+        grouper.createGroup(sender.getId(), Set.of(receiver.getId()));
+        sender.getCard().setPoints(100);
+        grouper.createTrade(sender.getId(), receiver.getId(), 60);
+        assertEquals(40, sender.getCard().getPoints());
+        assertEquals(60, receiver.getCard().getPoints());
+        assertEquals(1, transactionFinder.findPointTransactionsByCustomer(sender.getId()).size());
+        assertEquals(1, transactionFinder.findPointTransactionsByCustomer(receiver.getId()).size());
     }
 
 }

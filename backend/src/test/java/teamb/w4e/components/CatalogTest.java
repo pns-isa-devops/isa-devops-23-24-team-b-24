@@ -12,6 +12,7 @@ import teamb.w4e.entities.catalog.AdvantageType;
 import teamb.w4e.entities.catalog.Service;
 import teamb.w4e.exceptions.AlreadyExistingException;
 import teamb.w4e.exceptions.IdNotFoundException;
+import teamb.w4e.exceptions.NotFoundException;
 import teamb.w4e.interfaces.AdvantageFinder;
 import teamb.w4e.interfaces.AdvantageRegistration;
 import teamb.w4e.interfaces.PartnerFinder;
@@ -31,9 +32,6 @@ class CatalogTest {
 
     @Autowired
     private Catalog catalog;
-
-    @Autowired
-    private AdvantageRegistration advantageRegistration;
 
     @Autowired
     private ActivityRegistration activityRegistration;
@@ -65,18 +63,18 @@ class CatalogTest {
     }
 
     @Test
-    void registerAdvantageSuccess() {
+    void registerAdvantageSuccess() throws NotFoundException {
 
-        Advantage advantage = catalog.register(partner, "name", AdvantageType.VIP, 10);
+        Advantage advantage = catalog.register(partner.getName(), "name", AdvantageType.VIP, 10);
         Optional<Advantage> found = advantageFinder.findByName(advantage.getName());
         assertTrue(found.isPresent());
     }
 
     @Test
     void registerAdvantageFailure() {
-        assertThrows(Exception.class, () -> catalog.register(partner,"name", AdvantageType.VIP, -10));
-        assertThrows(Exception.class, () -> catalog.register(partner,"name", AdvantageType.VIP, 0));
-        assertThrows(Exception.class, () -> catalog.register(partner,"name", null, 1001));
+        assertThrows(Exception.class, () -> catalog.register(partner.getName(),"name", AdvantageType.VIP, -10));
+        assertThrows(Exception.class, () -> catalog.register(partner.getName(),"name", AdvantageType.VIP, 0));
+        assertThrows(Exception.class, () -> catalog.register(partner.getName(),"name", null, 1001));
     }
 
     @Test
