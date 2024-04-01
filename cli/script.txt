@@ -1,0 +1,66 @@
+echo "Start of demo script"
+echo "add activities to cart"
+add-activity-to-cart Duolingo Yoga -t --day 29-01 --hour 17:00
+add-activity-to-cart Duolingo Ski -p --ski day --duration 3
+add-activity-to-cart Emma Yoga -t --day 07-11 --hour 21:30
+add-activity-to-cart Emma Pilates -t --day 04-07 --hour 13:00
+add-activity-to-cart Jul Pilates -t --day 15-09 --hour 19:00
+add-activity-to-cart Horloge Ski -p --ski hourly --duration 4
+add-activity-to-cart Naps Yoga -t --day 12-12 --hour 20:00
+add-activity-to-cart Naps Ski -g --ski day --duration 7
+add-activity-to-cart Jul Yoga -t --day 12-12 --hour 20:00
+echo "add services to cart"
+add-service-to-cart MaxiBestOff KinderGarden
+add-service-to-cart Naps SpaResort
+add-service-to-cart Jul SkiRental
+echo "add advantages to cart"
+add-advantage-to-cart Jul cookies
+add-advantage-to-cart Naps resort
+echo "show Emma's cart"
+show-cart Emma
+echo "show Duolingo's cart"
+show-cart Duolingo
+echo "show Jul's cart"
+show-cart Jul
+echo "show MaxiBestOff's cart"
+show-cart MaxiBestOff
+echo "show Naps's cart"
+show-cart Naps
+echo "show Horloge's cart"
+show-cart Horloge
+echo "show Naps's advantages cart"
+show-advantages-cart Naps
+echo "show Jul's advantages cart"
+show-advantages-cart Jul
+echo "use all services"
+use-service MaxiBestOff KinderGarden
+use-service Naps SpaResort
+use-service Jul SkiRental
+echo "use advantages"
+use-advantage Jul cookies Yoga -a
+use-advantage Naps resort SpaResort
+echo "show Naps and Jul advantages cart (must be empty)"
+show-advantages-cart Naps
+show-advantages-cart Jul
+echo "reserve all activities"
+reserve Emma
+reserve Duolingo
+reserve MaxiBestOff
+reserve Horloge
+reserve Jul
+reserve Naps
+echo "show reservations"
+show-reservations Emma
+show-reservations Duolingo
+show-reservations Jul
+show-reservations MaxiBestOff
+show-reservations Naps
+show-reservations Horloge
+echo "trade of points"
+trade-points Niki Duolingo 1
+trade-points ChipiChapa Duolingo 2
+trade-points Soso Naps 3
+echo "show transactions"
+transactions
+echo "END OF DEMO"
+

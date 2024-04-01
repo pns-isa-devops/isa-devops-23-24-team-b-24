@@ -47,7 +47,7 @@ public class GroupCommands {
         return restTemplate.postForObject(getUriForGroup(leaderName), group, CliGroup.class);
     }
 
-    @ShellMethod("Create a group in the backend (delete-group LEADER_NAME)")
+    @ShellMethod("Delete a group in the backend (delete-group LEADER_NAME)")
     public String deleteGroup(String leaderName) {
         restTemplate.delete(getUriForGroup(leaderName) + "/delete");
         return "Group deleted";
