@@ -16,6 +16,7 @@ public class Group {
 
     @OneToOne
     @JoinColumn(name = "leader_id", referencedColumnName = "id")
+    @Fetch(FetchMode.JOIN)
     private Customer leader;
 
     @ManyToMany(fetch = FetchType.LAZY)
