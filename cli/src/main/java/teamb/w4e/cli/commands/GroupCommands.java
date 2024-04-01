@@ -20,10 +20,8 @@ import java.util.stream.Collectors;
 @ShellComponent
 public class GroupCommands {
 
-    public static final String BASE_URI = "/customers";
-
+    public static final String GROUP_URI = "/groups";
     private final RestTemplate restTemplate;
-
     private final CliContext cliContext;
 
     @Autowired
@@ -33,7 +31,7 @@ public class GroupCommands {
     }
 
     @ShellMethod("Create a group in the backend (create-group LEADER_NAME --m MEMBER1 MEMBER2...)")
-    public CliGroup createGroup(String leaderName,@ShellOption(arity = -1) String... m) {
+    public CliGroup createGroup(String leaderName, @ShellOption(arity = -1) String... m) {
         if (m.length == 0) {
             throw new IllegalArgumentException("At least one member is required");
         }
@@ -49,24 +47,24 @@ public class GroupCommands {
         return restTemplate.postForObject(getUriForGroup(leaderName), group, CliGroup.class);
     }
 
-    @ShellMethod
-    public String fetch(@ShellOption(arity = -1) String... tickets) {
-        return String.format("Number of tickets is %d.", tickets.length);
+    @ShellMethod("Create a group in the backend (delete-group LEADER_NAME)")
+    public String deleteGroup(String leaderName) {
+        restTemplate.delete(getUriForGroup(leaderName) + "/delete");
+        return "Group deleted";
     }
+
 
     @ShellMethod("List all known groups")
     public Set<CliGroup> groups() {
-        return Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(BASE_URI + "/groups", CliGroup[].class)
+        return Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(CustomerCommands.BASE_URI + GROUP_URI, CliGroup[].class)
                 .getBody())).collect(Collectors.toSet());
     }
 
-    public String getUriForGroup(String name) {
-        return BASE_URI + "/groups/" + cliContext.getCustomers().get(name).getId() + "/group";
+    private String getUriForGroup(String name) {
+        return CustomerCommands.BASE_URI + GROUP_URI + "/" + cliContext.getCustomers().get(name).getId() + "/group";
     }
 
     private String getUriForCustomer(String name) {
-        return BASE_URI + "/" + cliContext.getCustomers().get(name).getId();
+        return CustomerCommands.BASE_URI + "/" + cliContext.getCustomers().get(name).getId();
     }
-
-
 }

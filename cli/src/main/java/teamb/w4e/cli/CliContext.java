@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import teamb.w4e.cli.model.CliAdvantage;
 import teamb.w4e.cli.model.CliCustomer;
 import teamb.w4e.cli.model.CliLeisure;
+import teamb.w4e.cli.model.CliPartner;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,11 +14,16 @@ import java.util.stream.Collectors;
 public class CliContext {
 
     private final Map<String, CliCustomer> customers;
+    private final Map<String, CliPartner> partners;
     private final Map<String, CliLeisure> leisure;
     private final Map<String, CliAdvantage> advantages;
 
     public Map<String, CliCustomer> getCustomers() {
         return customers;
+    }
+
+    public Map<String, CliPartner> getPartners() {
+        return partners;
     }
 
     public Map<String, CliAdvantage> getAdvantages() {
@@ -30,15 +36,19 @@ public class CliContext {
 
     public CliContext() {
         customers = new HashMap<>();
+        partners = new HashMap<>();
         advantages = new HashMap<>();
         leisure = new HashMap<>();
     }
 
     @Override
     public String toString() {
-        return customers.keySet().stream()
-                .map(key -> key + "=" + customers.get(key))
-                .collect(Collectors.joining(", ", "{", "}"));
+        return "CliContext{" +
+                "customers=" + customers.entrySet().stream().map(e -> e.getKey() + " -> " + e.getValue()).collect(Collectors.joining(", ")) +
+                ", partners=" + partners.entrySet().stream().map(e -> e.getKey() + " -> " + e.getValue()).collect(Collectors.joining(", ")) +
+                ", advantages=" + advantages.entrySet().stream().map(e -> e.getKey() + " -> " + e.getValue()).collect(Collectors.joining(", ")) +
+                ", leisure=" + leisure.entrySet().stream().map(e -> e.getKey() + " -> " + e.getValue()).collect(Collectors.joining(", ")) +
+                '}';
     }
 
 }

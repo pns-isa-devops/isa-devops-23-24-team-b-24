@@ -1,26 +1,22 @@
 package teamb.w4e.cli.model;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Set;
-
 public class CliLeisure {
     private Long id;
+    private String partnerName;
     private String name;
     private String description;
     private double price;
     private boolean booked; // activity (true) service (false)
-    private Set<CliAdvantage> advantages;
 
     public CliLeisure() {
     }
 
-    public CliLeisure(String name, String description, double price, boolean booked, Set<CliAdvantage> advantages) {
+    public CliLeisure(String partnerName, String name, String description, double price, boolean booked) {
+        this.partnerName = partnerName;
         this.name = name;
         this.description = description;
         this.price = price;
         this.booked = booked;
-        this.advantages = Objects.requireNonNullElseGet(advantages, Set::of);
     }
 
     public Long getId() {
@@ -29,6 +25,14 @@ public class CliLeisure {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getPartnerName() {
+        return partnerName;
+    }
+
+    public void setPartnerName(String partnerName) {
+        this.partnerName = partnerName;
     }
 
     public String getName() {
@@ -63,24 +67,16 @@ public class CliLeisure {
         this.booked = booked;
     }
 
-    public Set<CliAdvantage> getAdvantages() {
-        return advantages;
-    }
-
-    public void setAdvantages(Set<CliAdvantage> advantages) {
-        this.advantages = advantages;
-    }
-
     @Override
     public String toString() {
         String type = booked ? "Activity" : "Service";
         return type + "{" +
                 "id='" + id + '\'' +
+                ", partnerName='" + partnerName + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", isBooked=" + booked +
-                ", advantages=" + Arrays.toString(advantages.toArray()) +
                 '}';
     }
 }

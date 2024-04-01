@@ -110,7 +110,6 @@ public class CartElement {
         } else if (type.equals(ReservationType.GROUP)) {
             return "GroupElement{" +
                     base +
-                    ", date='" + date + '\'' +
                     ", group='" + group + '\'' +
                     '}';
         } else if (type.equals(ReservationType.TIME_SLOT)) {

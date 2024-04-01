@@ -4,37 +4,42 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import teamb.w4e.entities.items.Item;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Embeddable
 public class Caddy {
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<Item> leisure;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Fetch(FetchMode.JOIN)
+    private Set<Item> catalogItem = new HashSet<>();
 
-    public Set<Item> getLeisure() {
-        return leisure;
+    public Set<Item> getCatalogItem() {
+        return catalogItem;
     }
 
-    public void setLeisure(Set<Item> leisure) {
-        this.leisure = leisure;
+    public void setCatalogItem(Set<Item> catalogItem) {
+        this.catalogItem = catalogItem;
     }
 
     public void clear() {
-        this.leisure.clear();
+        this.catalogItem.clear();
     }
 
     @Override
     public String toString() {
         return "Caddy{" +
-                ", leisure=" + leisure +
+                ", leisure=" + catalogItem +
                 '}';
     }
 
     public Caddy() {
     }
 
-    public Caddy(Set<Item> activities) {
-        this.leisure = activities;
+    public Caddy(Set<Item> catalogItem) {
+        this.catalogItem = catalogItem;
     }
 }

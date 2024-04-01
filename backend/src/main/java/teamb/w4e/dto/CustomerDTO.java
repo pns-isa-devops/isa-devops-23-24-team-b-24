@@ -2,7 +2,6 @@ package teamb.w4e.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import teamb.w4e.entities.Card;
 
 // Same DTO as input and output (no id in the input)
 public record CustomerDTO(

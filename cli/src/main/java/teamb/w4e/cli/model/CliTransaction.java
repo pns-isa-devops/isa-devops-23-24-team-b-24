@@ -1,11 +1,9 @@
 package teamb.w4e.cli.model;
 
 public class CliTransaction {
-
     private Long id;
     private CliCustomer customer;
     private double amount;
-
     private String paymentId;
 
     public CliTransaction() {
@@ -42,6 +40,10 @@ public class CliTransaction {
 
     public String getPaymentId() {
         return paymentId;
+    }
+
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
     }
 
     @Override

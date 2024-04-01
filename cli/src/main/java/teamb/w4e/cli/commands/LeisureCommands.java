@@ -1,17 +1,18 @@
 package teamb.w4e.cli.commands;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import org.springframework.web.client.RestTemplate;
 import teamb.w4e.cli.CliContext;
-import teamb.w4e.cli.model.CliAdvantage;
 import teamb.w4e.cli.model.CliLeisure;
+import teamb.w4e.cli.model.CliPartner;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -28,31 +29,24 @@ public class LeisureCommands {
         this.cliContext = cliContext;
     }
 
-    @ShellMethod("Register leisure(register-leisure NAME DESCRIPTION PRICE [ADVANTAGE_NAME,ADVANTAGE_NAME,...])")
+    @ShellMethod("Register leisure(register-leisure PARTNER_NAME, LEISURE_NAME DESCRIPTION PRICE)")
     public CliLeisure registerLeisure(
-            String name,
+            String partnerName,
+            String leisureName,
             String description,
             double price,
-            @ShellOption(value = "-a", defaultValue = "false") boolean isActivity,
-            @ShellOption(value = "--ad", defaultValue = "") String advantageNames) {
-        Set<CliAdvantage> advantagesSet = new HashSet<>();
-        if (!advantageNames.isEmpty()) {
-            String[] advantageNameArray = advantageNames.split(",");
-            for (String advantageName : advantageNameArray) {
-                ResponseEntity<CliAdvantage> response = restTemplate.getForEntity(getUriForAdvantage(advantageName), CliAdvantage.class);
-                if (response.getStatusCode() == HttpStatus.OK) {
-                    advantagesSet.add(convertToCliAdvantage(Objects.requireNonNull(response.getBody())));
-                }
-            }
-        }
+            @ShellOption(value = "-a", defaultValue = "false") boolean isActivity) {
+
+        CliPartner partner = restTemplate.getForEntity(gerUriForPartner(partnerName), CliPartner.class).getBody();
+        assert partner != null;
         if (isActivity) {
-            CliLeisure newActivity = new CliLeisure(name, description, price, true, advantagesSet);
-            CliLeisure res = restTemplate.postForObject(BASE_URI + "/activities", newActivity, CliLeisure.class);
+            CliLeisure newActivity = new CliLeisure(partner.getName(), leisureName, description, price, true);
+            CliLeisure res = restTemplate.postForObject(BASE_URI + "/" + partner.getId() + "/activities", newActivity, CliLeisure.class);
             cliContext.getLeisure().put(Objects.requireNonNull(res).getName(), res);
             return res;
         } else {
-            CliLeisure newService = new CliLeisure(name, description, price, false, advantagesSet);
-            CliLeisure res = restTemplate.postForObject(BASE_URI + "/services", newService, CliLeisure.class);
+            CliLeisure newService = new CliLeisure(partner.getName(), leisureName, description, price, false);
+            CliLeisure res = restTemplate.postForObject(BASE_URI + "/" + partner.getId() + "/services", newService, CliLeisure.class);
             cliContext.getLeisure().put(Objects.requireNonNull(res).getName(), res);
             return res;
         }
@@ -81,12 +75,7 @@ public class LeisureCommands {
         return activityMap.toString();
     }
 
-
-    private String getUriForAdvantage(String name) {
-        return AdvantageCommands.BASE_URI + "/" + cliContext.getAdvantages().get(name).getId();
-    }
-
-    private CliAdvantage convertToCliAdvantage(CliAdvantage advantage) {
-        return new CliAdvantage(advantage.getName(), advantage.getType(), advantage.getPoints());
+    private String gerUriForPartner(String name) {
+        return PartnerCommands.BASE_URI + "/" + cliContext.getPartners().get(name).getId();
     }
 }

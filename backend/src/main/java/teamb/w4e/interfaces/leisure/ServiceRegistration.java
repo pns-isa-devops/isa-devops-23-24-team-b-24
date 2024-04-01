@@ -1,10 +1,9 @@
 package teamb.w4e.interfaces.leisure;
 
-import teamb.w4e.entities.catalog.Advantage;
 import teamb.w4e.entities.catalog.Service;
-
-import java.util.Set;
+import teamb.w4e.exceptions.AlreadyExistingException;
+import teamb.w4e.exceptions.IdNotFoundException;
 
 public interface ServiceRegistration {
-    Service registerService(String name, String description, double price, Set<Advantage> advantages);
+    Service registerService(Long partnerId, String name, String description, double price) throws IdNotFoundException, AlreadyExistingException;
 }

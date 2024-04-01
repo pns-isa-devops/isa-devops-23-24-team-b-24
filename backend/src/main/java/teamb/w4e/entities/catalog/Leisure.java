@@ -2,11 +2,8 @@ package teamb.w4e.entities.catalog;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
-import java.util.Set;
+import jakarta.validation.constraints.PositiveOrZero;
+import teamb.w4e.entities.Partner;
 
 @Entity(name = "leisure")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -16,29 +13,28 @@ public abstract class Leisure {
     @Id
     @GeneratedValue
     private Long id;
+    @ManyToOne
+    @JoinColumn(name = "partner_id", referencedColumnName = "id")
+    private Partner partner;
     @NotBlank
     @Column(unique = true)
     private String name;
     @NotBlank
     private String description;
-    @Positive
+    @PositiveOrZero
     private double price;
 
     private boolean booked;
 
-    @ManyToMany
-    @Fetch(FetchMode.JOIN)
-    private Set<Advantage> advantages;
-
     protected Leisure() {
     }
 
-    protected Leisure(String name, String description, double price, boolean booked, Set<Advantage> advantages) {
+    protected Leisure(Partner partner, String name, String description, double price, boolean booked) {
+        this.partner = partner;
         this.name = name;
         this.description = description;
         this.price = price;
         this.booked = booked;
-        this.advantages = advantages;
     }
 
     public Long getId() {
@@ -47,6 +43,14 @@ public abstract class Leisure {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Partner getPartner() {
+        return partner;
+    }
+
+    public void setPartner(Partner partner) {
+        this.partner = partner;
     }
 
     public String getName() {
@@ -81,14 +85,6 @@ public abstract class Leisure {
         this.booked = booked;
     }
 
-    public Set<Advantage> getAdvantages() {
-        return advantages;
-    }
-
-    public void setAdvantages(Set<Advantage> advantages) {
-        this.advantages = advantages;
-    }
-
     @Override
     public String toString() {
         String type = booked ? "Activity" : "Service";
@@ -97,7 +93,6 @@ public abstract class Leisure {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
-                ", advantages=" + advantages +
                 '}';
     }
 
@@ -110,6 +105,6 @@ public abstract class Leisure {
 
     @Override
     public int hashCode() {
-        return id.hashCode() + name.hashCode();
+        return name != null ? name.hashCode() : 0;
     }
 }

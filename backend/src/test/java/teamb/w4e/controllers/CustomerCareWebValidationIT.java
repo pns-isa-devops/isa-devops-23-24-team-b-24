@@ -2,7 +2,7 @@ package teamb.w4e.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import teamb.w4e.dto.CustomerDTO;
-import teamb.w4e.repositories.CustomerRepository;
+import teamb.w4e.repositories.customers.CustomerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

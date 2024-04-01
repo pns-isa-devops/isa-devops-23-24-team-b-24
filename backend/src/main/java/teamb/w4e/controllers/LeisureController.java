@@ -6,32 +6,31 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import teamb.w4e.dto.*;
+import teamb.w4e.dto.AdvantageDTO;
+import teamb.w4e.dto.ErrorDTO;
+import teamb.w4e.dto.LeisureDTO;
 import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.catalog.Advantage;
 import teamb.w4e.entities.catalog.AdvantageType;
 import teamb.w4e.entities.catalog.Service;
 import teamb.w4e.exceptions.IdNotFoundException;
-import teamb.w4e.interfaces.leisure.ActivityFinder;
-import teamb.w4e.interfaces.leisure.ActivityRegistration;
 import teamb.w4e.interfaces.AdvantageFinder;
 import teamb.w4e.interfaces.AdvantageRegistration;
+import teamb.w4e.interfaces.leisure.ActivityFinder;
+import teamb.w4e.interfaces.leisure.ActivityRegistration;
 import teamb.w4e.interfaces.leisure.ServiceFinder;
 import teamb.w4e.interfaces.leisure.ServiceRegistration;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping(path = LeisureController.BASE_URI, produces = APPLICATION_JSON_VALUE)
 public class LeisureController {
-
     public static final String BASE_URI = "/catalog";
-
     private final AdvantageRegistration advantageRegistry;
     private final ActivityRegistration activityRegistry;
     private final ServiceRegistration serviceRegistry;
@@ -40,7 +39,9 @@ public class LeisureController {
     private final ServiceFinder serviceFinder;
 
     @Autowired
-    public LeisureController(AdvantageRegistration advantageRegistry, AdvantageFinder advantageFinder, ActivityRegistration activityRegistry, ServiceRegistration serviceRegistry, ActivityFinder activityFinder, ServiceFinder serviceFinder) {
+    public LeisureController(AdvantageRegistration advantageRegistry, AdvantageFinder advantageFinder,
+                             ActivityRegistration activityRegistry, ServiceRegistration serviceRegistry,
+                             ActivityFinder activityFinder, ServiceFinder serviceFinder) {
         this.advantageRegistry = advantageRegistry;
         this.activityRegistry = activityRegistry;
         this.advantageFinder = advantageFinder;
@@ -56,10 +57,10 @@ public class LeisureController {
     }
 
     @PostMapping(path = "/advantages", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<AdvantageDTO> register(@RequestBody @Valid AdvantageDTO advantage) {
+    public ResponseEntity<AdvantageDTO> registerAdvantage(@RequestBody @Valid AdvantageDTO advantage) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(convertAdvantageToDto(advantageRegistry.register(advantage.name(), advantage.type(), advantage.points())));
+                    .body(convertAdvantageToDto(advantageRegistry.register(advantage.partner(), advantage.name(), advantage.type(), advantage.points())));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
         }
@@ -85,13 +86,10 @@ public class LeisureController {
         return ResponseEntity.ok(advantageFinder.findByType(type).stream().map(LeisureController::convertAdvantageToDto).toList());
     }
 
-    @PostMapping(path = "/activities", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<LeisureDTO> registerActivity(@RequestBody @Valid LeisureDTO activityDTO) {
-        Set<Advantage> advantages = activityDTO.advantages().stream()
-                .map(advantage -> advantageFinder.findByName(advantage.name()).orElseThrow())
-                .collect(Collectors.toSet());
+    @PostMapping(path = "/{partnerId}/activities", consumes = APPLICATION_JSON_VALUE)
+    public ResponseEntity<LeisureDTO> registerActivity(@RequestBody @Valid LeisureDTO activityDTO, @PathVariable Long partnerId) {
         try {
-            Activity activity = activityRegistry.register(activityDTO.name(), activityDTO.description(), activityDTO.price(), advantages);
+            Activity activity = activityRegistry.registerActivity(partnerId, activityDTO.name(), activityDTO.description(), activityDTO.price());
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(convertActivityToDto(activityFinder.retrieveActivity(activity.getId())));
         } catch (Exception e) {
@@ -109,14 +107,13 @@ public class LeisureController {
         return ResponseEntity.ok(convertActivityToDto(activityFinder.retrieveActivity(activityId)));
     }
 
-    @PostMapping(path = "/services", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<LeisureDTO> registerService(@RequestBody @Valid LeisureDTO serviceDTO) {
-        Set<Advantage> advantages = serviceDTO.advantages().stream()
-                .map(advantage -> advantageFinder.findByName(advantage.name()).orElseThrow())
-                .collect(Collectors.toSet());
+    @PostMapping(path = "/{partnerId}/services", consumes = APPLICATION_JSON_VALUE)
+    public ResponseEntity<LeisureDTO> registerService(@RequestBody @Valid LeisureDTO serviceDTO, @PathVariable Long partnerId) {
         try {
+            Service service = serviceRegistry.registerService(partnerId, serviceDTO.name(), serviceDTO.description(), serviceDTO.price());
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(convertServiceToDto(serviceRegistry.registerService(serviceDTO.name(), serviceDTO.description(), serviceDTO.price(), advantages)));
+                    .body(convertServiceToDto(serviceFinder.retrieveService(service.getId())));
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
         }
@@ -140,16 +137,16 @@ public class LeisureController {
         return ResponseEntity.ok(leisure);
     }
 
-    private static AdvantageDTO convertAdvantageToDto(Advantage advantage) {
-        return new AdvantageDTO(advantage.getId(), advantage.getName(), advantage.getType(), advantage.getPoints());
+    public static AdvantageDTO convertAdvantageToDto(Advantage advantage) {
+        return new AdvantageDTO(advantage.getId(), advantage.getName(), advantage.getType(), advantage.getPoints(), advantage.getPartner().getName());
     }
 
     public static LeisureDTO convertActivityToDto(Activity activity) {
-        return new LeisureDTO(activity.getId(), activity.getName(), activity.getDescription(), activity.getPrice(), true, activity.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
+        return new LeisureDTO(activity.getId(), activity.getPartner().getName(), activity.getName(), activity.getDescription(), activity.getPrice(), true);
     }
 
     public static LeisureDTO convertServiceToDto(Service service) {
-        return new LeisureDTO(service.getId(), service.getName(), service.getDescription(), service.getPrice(), false, service.getAdvantages().stream().map(LeisureController::convertAdvantageToDto).collect(Collectors.toSet()));
+        return new LeisureDTO(service.getId(), service.getPartner().getName(), service.getName(), service.getDescription(), service.getPrice(), false);
     }
 
 }

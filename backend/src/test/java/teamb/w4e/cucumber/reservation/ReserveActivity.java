@@ -5,41 +5,63 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import teamb.w4e.entities.Customer;
-import teamb.w4e.entities.Transaction;
-import teamb.w4e.entities.cart.Item;
-import teamb.w4e.entities.cart.TimeSlotItem;
+import teamb.w4e.entities.Partner;
 import teamb.w4e.entities.catalog.Activity;
+import teamb.w4e.entities.customers.Customer;
+import teamb.w4e.entities.items.Item;
+import teamb.w4e.entities.items.TimeSlotItem;
 import teamb.w4e.entities.reservations.Reservation;
 import teamb.w4e.entities.reservations.ReservationType;
-import teamb.w4e.entities.reservations.TimeSlotReservation;
+import teamb.w4e.entities.transactions.Transaction;
 import teamb.w4e.exceptions.*;
 import teamb.w4e.interfaces.*;
+import teamb.w4e.interfaces.leisure.ActivityFinder;
 import teamb.w4e.interfaces.leisure.ActivityRegistration;
 import teamb.w4e.interfaces.reservation.ReservationFinder;
-import teamb.w4e.repositories.CustomerRepository;
-import teamb.w4e.repositories.TransactionRepository;
+import teamb.w4e.repositories.PartnerRepository;
 import teamb.w4e.repositories.catalog.ActivityCatalogRepository;
-import teamb.w4e.repositories.reservation.ReservationRepository;
+import teamb.w4e.repositories.customers.CustomerRepository;
+import teamb.w4e.repositories.reservations.ReservationRepository;
+import teamb.w4e.repositories.transactions.TransactionRepository;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest
 @Transactional
 public class ReserveActivity {
 
-    // We autowire the mock here because there are some bugs with the cucumber/spring integration
-    @MockBean
-    private Bank bankMock;
+    @Autowired
+    private CustomerRegistration customerRegistration;
 
+    @Autowired
+    private CustomerFinder customerFinder;
+
+    @Autowired
+    private PartnerRegistration partnerRegistration;
+
+    @Autowired
+    private PartnerFinder partnerFinder;
+
+    @Autowired
+    private ActivityRegistration activityRegistration;
+
+    @Autowired
+    private ActivityFinder activityFinder;
+
+    @Autowired
+    private Scheduler schedulerMock;
+
+    @Autowired
+    private Bank bankMock;
+    @Autowired
+    private PartnerRepository partnerRepository;
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -50,11 +72,6 @@ public class ReserveActivity {
     @Autowired
     private ReservationRepository reservationRepository;
 
-    @Autowired
-    private CustomerRegistration customerRegistration;
-
-    @Autowired
-    private ActivityRegistration activityRegistration;
 
     @Autowired
     private ActivityCatalogRepository activityRepository;
@@ -71,9 +88,9 @@ public class ReserveActivity {
     @Autowired
     private ReservationFinder reservationFinder;
 
+    private Customer customer;
+    private Partner partner;
     private Activity activity;
-    private String timeSlot;
-    private Transaction transaction;
 
     @Before
     public void settingUpContext() {
@@ -81,78 +98,64 @@ public class ReserveActivity {
         transactionRepository.deleteAll();
         reservationRepository.deleteAll();
         activityRepository.deleteAll();
+        partnerRepository.deleteAll();
+        when(schedulerMock.checkAvailability(any(Activity.class), eq("07-11 21:30"))).thenReturn(true);
+        when(schedulerMock.reserve(any(Activity.class), eq("07-11 21:30"))).thenReturn(true);
+        when(bankMock.pay(any(Customer.class), anyDouble())).thenReturn(Optional.of("playReceiptOKId"));
     }
-    
 
-    @Given("^a customer named \"([^\"]*)\" with the credit card number \"([^\"]*)\"$")
-    public void aCustomerNamedWithTheCreditCardNumber(String customerName, String creditCardNumber) throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
+    @Given("a Customer named {string} with the credit card {string}")
+    public void setupCustomer(String customerName, String creditCardNumber) throws AlreadyExistingException {
         customerRegistration.register(customerName, creditCardNumber);
+        customer = customerFinder.findByName(customerName).get();
+
     }
 
-    @And("^a Activity named \"([^\"]*)\" with the description \"([^\"]*)\" and the price (\\d+) without advantages$")
-    public void aActivityNamedWithTheDescriptionAndThePriceWithoutAdvantages(String activityName, String activityDescription, int price) throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        activityRegistration.register(activityName, activityDescription, price, null);
+    @And("a Partner named {string}")
+    public void setupPartner(String partnerName) throws AlreadyExistingException {
+        partnerRegistration.register(partnerName);
+        partner = partnerFinder.findByName(partnerName).get();
     }
 
-    // Dans votre test
-    @When("^he adds the Activity \"([^\"]*)\" for the date \"([^\"]*)\" to his cart$")
-    public void heAddsTheActivityForTheDateToHisCart(String activityName, String date) throws Throwable {
-        cartModifier = Mockito.mock(CartModifier.class);
-        timeSlot = date;
-        Customer customer = customerRepository.findCustomerByName("John").orElse(null);
-        activity = activityRepository.findActivityByName(activityName).orElse(null);
-        assertNotNull(customer);
-        assertNotNull(activity);
-        when(cartModifier.timeSlotUpdate(anyLong(), any(Activity.class), anyString())).thenReturn(new TimeSlotItem(activity, date));
+    @And("a Activity named {string}, {string} with a price of {double}")
+    public void setupActivity(String activityName, String description, double price) throws AlreadyExistingException, IdNotFoundException {
+        activityRegistration.registerActivity(partner.getId(), activityName, description, price);
+        activity = activityFinder.findActivityByName(activityName).get();
 
-        TimeSlotItem result = cartModifier.timeSlotUpdate(customer.getId(), activity, date);
-        if (result != null) {
-            customer.getCaddy().getLeisure().add(result);
-        }
-        assertEquals(1, customer.getCaddy().getLeisure().size());
+    }
+
+    @When("he adds this activity to his cart for the date {string}")
+    public void heAddsTheActivityForTheDateToHisCart(String date) throws Throwable {
+        TimeSlotItem timeSlotItem = cartModifier.timeSlotUpdate(customer.getId(), activity, date);
+        customer.getCaddy().getCatalogItem().add(timeSlotItem);
+        assertEquals(1, customer.getCaddy().getCatalogItem().size());
     }
 
 
     @And("^he proceeds to checkout$")
-    public void heProceedsToCheckout() throws EmptyCartException, NegativeAmountTransactionException, PaymentException, IdNotFoundException, CustomerIdNotFoundException {
-        cartProcessor = Mockito.mock(CartProcessor.class);
-        bankMock = Mockito.mock(Bank.class);
-        Customer customer = customerRepository.findCustomerByName("John").orElse(null);
-        assert customer != null;
-        when(bankMock.pay(any(Customer.class), anyDouble())).thenReturn(Optional.of("playReceiptOKId"));
-        when(cartProcessor.validateActivity(anyLong(), any(Item.class))).thenReturn(new TimeSlotReservation(activity,timeSlot, customer.getCard(), new Transaction(customer, activity.getPrice(), "playReceiptOKId")));
-        // to simplify I take the first item in the cart
-        Item item = customer.getCaddy().getLeisure().iterator().next();
-
+    public void heProceedsToCheckout() throws EmptyCartException, NegativeAmountTransactionException, PaymentException, IdNotFoundException {
+        Item item = customer.getCaddy().getCatalogItem().iterator().next();
         Reservation reservation = cartProcessor.validateActivity(customer.getId(), item);
-        if (reservation != null) {
-            customer.getCaddy().getLeisure().remove(item);
-            transaction = reservation.getTransaction();
-            transactionRepository.save(transaction);
-            reservationRepository.save(reservation);
-        }
-        assertTrue(customer.getCaddy().getLeisure().isEmpty());
+        customer.getCaddy().getCatalogItem().remove(item);
+        Transaction transaction = reservation.getTransaction();
+        transactionRepository.save(transaction);
+        reservationRepository.save(reservation);
+        assertTrue(customer.getCaddy().getCatalogItem().isEmpty());
     }
 
-    @Then("^a transaction of (\\d+) should appear on the Transaction History of \"([^\"]*)\"$")
-    public void aTransactionOfShouldAppearOnTheTransactionHistoryOf(int transactionAmount, String amount) throws Throwable {
-        Customer customer = customerRepository.findCustomerByName("John").orElse(null);
-        assert customer != null;
+    @Then("a transaction of {double} should appear on the Transaction History of {string}")
+    public void aTransactionOfShouldAppearOnTheTransactionHistoryOf(double transactionAmount, String customerName) {
+        assertEquals(customerName, customer.getName());
         assertEquals(1, transactionFinder.findTransactionsByCustomer(customer.getId()).size());
         Transaction transaction = transactionFinder.findTransactionsByCustomer(customer.getId()).get(0);
         assertEquals(transactionAmount, transaction.getAmount());
     }
 
-    @And("^the Activity \"([^\"]*)\" should be reserved$")
-    public void theActivityShouldBeReserved(String activityName) throws Throwable {
-        Customer customer = customerRepository.findCustomerByName("John").orElse(null);
-        Activity activity = activityRepository.findActivityByName(activityName).orElse(null);
-        assert customer != null;
-        assert activity != null;
+    @And("the Activity {string} should be reserved")
+    public void theActivityShouldBeReserved(String activityName) {
+        assertEquals(activityName, activity.getName());
         Reservation reservation = reservationFinder.findTimeSlotReservationByCard(customer.getCard().getId(), ReservationType.TIME_SLOT).get(0);
-        assert reservation != null;
+        assertNotNull(reservation);
         assertEquals(customer.getId(), reservation.getCard().getId());
     }
 }

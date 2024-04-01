@@ -5,7 +5,8 @@ import jakarta.validation.constraints.Positive;
 
 public record TransactionDTO(
         Long id,
-        @NotNull CustomerDTO customer,
+        @NotNull
+        CustomerDTO customer,
         @Positive double amount,
         String paymentId) {
 }
