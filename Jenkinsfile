@@ -25,13 +25,15 @@ pipeline {
                         sh 'mvn clean package -f backend/pom.xml'
                         sh 'mvn clean verify -f backend/pom.xml'
                     } else if (branchName.contains('staging')) { // execution of e2e tests
-                        sh 'cd cli && docker compose run tcf-cli script demo.txt && exit'
-                        sh 'cd cli && docker compose run tcf-cli script demo2.txt && exit'
+                        //sh 'cd cli && docker compose run tcf-cli script demo.txt && exit'
+                        //sh 'cd cli && docker compose run tcf-cli script demo2.txt && exit'
+                        sh 'cd cli && docker compose run tcf-cli script script.txt && exit'
                     } else if (branchName == 'master') { //execution of all tests
                         sh 'mvn clean package -f backend/pom.xml'
                         sh 'mvn clean verify -f backend/pom.xml'
-                        sh 'cd cli && docker compose run tcf-cli script demo.txt && exit'
-                        sh 'cd cli && docker compose run tcf-cli script demo2.txt && exit'
+                        //sh 'cd cli && docker compose run tcf-cli script demo.txt && exit'
+                        //sh 'cd cli && docker compose run tcf-cli script demo2.txt && exit'
+                        sh 'cd cli && docker compose run tcf-cli script script.txt && exit'
                     }
                 }
             }
