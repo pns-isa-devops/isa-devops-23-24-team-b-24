@@ -43,7 +43,7 @@ public class CartHandler implements CartProcessor, CartModifier {
             throw new NonValidDateForActivity(activity);
         }
         Optional<TimeSlotItem> existingItem = items.stream()
-                .filter(item -> item.getType().equals(ReservationType.TIME_SLOT))
+                .filter(item -> item.getType().equals(ReservationType.TIME_SLOT) && ((TimeSlotItem) item).getActivity().equals(activity))
                 .map(TimeSlotItem.class::cast).findFirst();
         if (existingItem.isPresent()) {
             existingItem.get().setTimeSlot(date);
@@ -59,7 +59,7 @@ public class CartHandler implements CartProcessor, CartModifier {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         Set<Item> items = customer.getCaddy().getCatalogItem();
         Optional<GroupItem> existingItem = items.stream()
-                .filter(item -> item.getType().equals(ReservationType.GROUP))
+                .filter(item -> item.getType().equals(ReservationType.GROUP) && ((GroupItem) item).getActivity().equals(activity))
                 .map(GroupItem.class::cast).findFirst();
         if (existingItem.isPresent()) {
             existingItem.get().setGroup(group);
@@ -75,7 +75,7 @@ public class CartHandler implements CartProcessor, CartModifier {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         Set<Item> items = customer.getCaddy().getCatalogItem();
         Optional<SkiPassItem> existingItem = items.stream()
-                .filter(item -> item.getType().equals(ReservationType.SKI_PASS))
+                .filter(item -> item.getType().equals(ReservationType.SKI_PASS) && ((SkiPassItem) item).getActivity().equals(activity))
                 .map(SkiPassItem.class::cast).findFirst();
         if (existingItem.isPresent()) {
             existingItem.get().setSkiPassType(type);
@@ -104,7 +104,7 @@ public class CartHandler implements CartProcessor, CartModifier {
         }
         Set<Item> items = customer.getCaddy().getCatalogItem();
         Optional<AdvantageItem> existingItem = items.stream()
-                .filter(item -> item.getType().equals(ReservationType.NONE))
+                .filter(item -> item.getType().equals(ReservationType.NONE) && item.getName().equals(advantage.getName()))
                 .map(AdvantageItem.class::cast)
                 .filter(item -> item.getAdvantage().equals(advantage))
                 .findFirst();
@@ -136,7 +136,7 @@ public class CartHandler implements CartProcessor, CartModifier {
 
     @Override
     @Transactional
-    public Reservation validateActivity(Long customerId, Item item) throws EmptyCartException, PaymentException, NegativeAmountTransactionException, IdNotFoundException {
+    public Reservation validateActivity(Long customerId, Item item) throws EmptyCartException, PaymentException, NegativeAmountTransactionException, IdNotFoundException, CannotReserveException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         if (customer.getCaddy().getCatalogItem().isEmpty()) {
             throw new EmptyCartException(customer.getName());
@@ -164,7 +164,7 @@ public class CartHandler implements CartProcessor, CartModifier {
                 return reservation;
             }
         }
-        throw new PaymentException(customer.getName(), item.getAmount());
+        throw new CannotReserveException(item.getType().getType());
     }
 
     @Override

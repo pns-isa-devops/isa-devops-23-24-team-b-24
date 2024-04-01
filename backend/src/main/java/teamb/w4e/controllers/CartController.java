@@ -97,7 +97,7 @@ public class CartController {
     }
 
     @PostMapping(path = CART_URI + "/reservation", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<ReservationDTO> reserve(@PathVariable("customerId") Long customerId, @RequestBody @Valid CartElementDTO cartElementDTO) throws EmptyCartException, PaymentException, IdNotFoundException, NegativeAmountTransactionException {
+    public ResponseEntity<ReservationDTO> reserve(@PathVariable("customerId") Long customerId, @RequestBody @Valid CartElementDTO cartElementDTO) throws EmptyCartException, PaymentException, IdNotFoundException, NegativeAmountTransactionException, CannotReserveException {
         ReservationType type = cartElementDTO.getType();
         return switch (type) {
             case TIME_SLOT ->

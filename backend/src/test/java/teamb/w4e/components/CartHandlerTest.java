@@ -9,18 +9,20 @@ import org.springframework.transaction.annotation.Transactional;
 import teamb.w4e.entities.Partner;
 import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.customers.Customer;
+import teamb.w4e.entities.customers.Group;
 import teamb.w4e.entities.items.Item;
 import teamb.w4e.entities.items.TimeSlotItem;
+import teamb.w4e.entities.reservations.GroupReservation;
 import teamb.w4e.exceptions.*;
 import teamb.w4e.interfaces.*;
 import teamb.w4e.repositories.catalog.ActivityCatalogRepository;
 import teamb.w4e.repositories.customers.CustomerRepository;
+import teamb.w4e.repositories.customers.GroupRepository;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -36,8 +38,20 @@ class CartHandlerTest {
     @Autowired
     private ActivityCatalogRepository activityCatalogRepository;
 
+    @Autowired
+    private GroupRepository groupRepository;
+
+    @Autowired
+    private CartModifier cartModifier;
+
+    @Autowired
+    private CartProcessor cartProcessor;
+
     @MockBean
     private Scheduler scheduler;
+
+    @MockBean
+    private Bank bank;
 
     @MockBean
     private SkiPass skiPass;
@@ -74,5 +88,21 @@ class CartHandlerTest {
         when(skiPass.reserve("ski", "half_day", -3)).thenReturn(java.util.Optional.empty());
     }
 
-
+    @Test
+    void TestTimeSlotUpdate() throws NonValidDateForActivity, IdNotFoundException, EmptyCartException, NegativeAmountTransactionException, PaymentException, CannotReserveException {
+        Customer customer = new Customer("Moi", "1230896983");
+        Customer customer1 = new Customer("Toi", "1230896983");
+        customerRepository.save(customer);
+        customerRepository.save(customer1);
+        Group group = new Group(customer, Set.of(customer1));
+        groupRepository.save(group);
+        when(scheduler.checkAvailability(activity, "07-11 21:30")).thenReturn(true);
+        TimeSlotItem timeSlotItem = cartModifier.timeSlotUpdate(customer.getId(), activity, "07-11 21:30");
+        assertNotNull(timeSlotItem);
+        assertEquals(customer.getCaddy().getCatalogItem().size(), 1);
+        when(bank.pay(customer, 123)).thenReturn(java.util.Optional.of("123"));
+        when(scheduler.reserve(activity, "07-11 21:30")).thenReturn(true);
+        cartProcessor.validateActivity(customer.getId(), timeSlotItem);
+        assertEquals(customer.getCaddy().getCatalogItem().size(), 0);
+    }
 }

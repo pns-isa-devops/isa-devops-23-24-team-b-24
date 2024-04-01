@@ -133,7 +133,7 @@ public class ReserveActivity {
 
 
     @And("^he proceeds to checkout$")
-    public void heProceedsToCheckout() throws EmptyCartException, NegativeAmountTransactionException, PaymentException, IdNotFoundException {
+    public void heProceedsToCheckout() throws EmptyCartException, NegativeAmountTransactionException, PaymentException, IdNotFoundException, CannotReserveException {
         Item item = customer.getCaddy().getCatalogItem().iterator().next();
         Reservation reservation = cartProcessor.validateActivity(customer.getId(), item);
         customer.getCaddy().getCatalogItem().remove(item);
