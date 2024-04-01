@@ -2,6 +2,8 @@ package teamb.w4e.entities.reservations;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import teamb.w4e.entities.catalog.Activity;
 import teamb.w4e.entities.customers.Card;
 import teamb.w4e.entities.customers.Group;
@@ -12,6 +14,7 @@ import teamb.w4e.entities.transactions.Transaction;
 public class GroupReservation extends Reservation {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
+    @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "group_id", referencedColumnName = "id")
     private Group group;
 

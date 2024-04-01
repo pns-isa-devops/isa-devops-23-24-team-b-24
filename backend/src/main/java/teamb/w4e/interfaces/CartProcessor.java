@@ -4,13 +4,10 @@ import teamb.w4e.entities.items.Item;
 import teamb.w4e.entities.items.ServiceItem;
 import teamb.w4e.entities.reservations.Reservation;
 import teamb.w4e.entities.transactions.Transaction;
-import teamb.w4e.exceptions.EmptyCartException;
-import teamb.w4e.exceptions.IdNotFoundException;
-import teamb.w4e.exceptions.NegativeAmountTransactionException;
-import teamb.w4e.exceptions.PaymentException;
+import teamb.w4e.exceptions.*;
 
 public interface CartProcessor {
 
-    Reservation validateActivity(Long customerId, Item item) throws EmptyCartException, PaymentException, IdNotFoundException, NegativeAmountTransactionException;
+    Reservation validateActivity(Long customerId, Item item) throws EmptyCartException, PaymentException, IdNotFoundException, NegativeAmountTransactionException, CannotReserveException;
     Transaction validateService(Long customerId, ServiceItem item) throws EmptyCartException, PaymentException, IdNotFoundException, NegativeAmountTransactionException;
 }

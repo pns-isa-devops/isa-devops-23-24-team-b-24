@@ -53,8 +53,6 @@ services:
       tcf-server:
         condition: service_healthy
     volumes:
-      - ./cli/demo.txt:/opt/app/demo.txt
-      - ./cli/demo2.txt:/opt/app/demo2.txt
       - ./cli/populate.txt:/opt/app/populate.txt
       - ./cli/script.txt:/opt/app/script.txt
     stdin_open: true
