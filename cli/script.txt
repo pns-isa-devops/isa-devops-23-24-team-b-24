@@ -1,3 +1,82 @@
+echo "start of demo"
+echo "populate : creations and filling of the database"
+echo "register good users"
+register-customer Emma 0110896983
+register-customer John 0110896983
+register-customer ChipaChapa 8969830110
+register-customer Niki 8969837856
+register-customer Duolingo 0110896983
+register-customer MaxiBestOff 8969830110
+register-customer Horloge 0110896983
+register-customer Jul 3265896983
+register-customer Naps 8969830110
+register-customer Soso 8969837856
+
+echo " "
+echo "register bad users (bad credit card number)"
+register-customer Jack 0110372451
+register-customer Jill 3724510110
+
+echo " "
+echo "list of registered users"
+customers
+
+echo " "
+echo "register partners"
+register-partner Mario
+register-partner Gontrand
+register-partner Machette
+
+echo " "
+echo "list of registered partners"
+partners
+
+echo " "
+echo "register advantages"
+register-advantage Mario free-juice COCKTAIL 2
+register-advantage Mario cookies LOCAL_SPECIALITY 1
+register-advantage Gontrand free-wine REDUCTION 4
+register-advantage Machette resort COCKTAIL 2
+
+echo " "
+echo "list of registered advantages"
+advantages
+
+echo " "
+echo "register activities"
+register-leisure Mario Yoga relaxing 20 -a
+register-leisure Mario Ski hard 30 -a
+register-leisure Gontrand Pilates hard 30 -a
+
+echo " "
+echo "list of registered activities"
+activities
+
+echo " "
+echo "register services"
+register-leisure Gontrand KinderGarden kids 10
+register-leisure Machette SpaResort relaxing 20
+register-leisure Gontrand SkiRental hard 30
+
+echo " "
+echo "list of registered services"
+services
+
+echo " "
+echo "register groups"
+create-group Emma --m John
+create-group ChipaChapa --m Niki Duolingo
+create-group MaxiBestOff --m Horloge Jul
+create-group Naps --m Soso
+
+echo " "
+echo "list of registered groups"
+groups
+
+echo " "
+echo "end of populate"
+
+echo " "
 echo "Start of demo script"
 echo "add activities to cart"
 add-activity-to-cart Duolingo Yoga -t --day 29-01 --hour 17:00
