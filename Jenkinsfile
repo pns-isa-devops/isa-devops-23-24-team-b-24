@@ -1,6 +1,10 @@
 pipeline {
     agent { label 'agent1' }
     tools { maven 'Maven' }
+
+    environment {
+        AF_ACCESS_TOKEN = 'eyJ2ZXIiOiIyIiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJ1UHNyUmtpVVk1U2dPSnh2OEs2Mk1HNDhsNy1vVzhYRi1nWlViVUt0TzlNIn0.eyJleHQiOiJ7XCJyZXZvY2FibGVcIjpcInRydWVcIn0iLCJzdWIiOiJqZmFjQDAxaHNnNzNobmZuam5qMDI0c3Fxd2Mxa3Y5XC91c2Vyc1wvYWRtaW4iLCJzY3AiOiJhcHBsaWVkLXBlcm1pc3Npb25zXC9hZG1pbiIsImF1ZCI6IipAKiIsImlzcyI6ImpmZmVAMDAwIiwiaWF0IjoxNzExNzEyMDI2LCJqdGkiOiI2Nzg1YjliNC1kMjI5LTRlYTMtYWYzYy0zNjM0MmVmOTBmZDkifQ.u3ZyTnN19g4ohEGNVT4OAYi7XHcRq_Qze-DXzmhi2nFofZzS8vWRr4Z0S5YDJy42e025YLXndEEP1ahG2odSmNryeDdCvOf3-Esi6vm7gDp3xQuatH8xSZMefY8hzXPNMwRtgpicvEgzFXCIQEoea-xzmJJl50aRm7oWHAlwPIvYnj6wjG1RJmg5vAPmy5TGX-wnqpL-NP-_vxbIv8bNsEWM3GVtMga4Y5i5hiQXRC9LwFNVJaqTg9JUGdyJMLsULznA4wzFwZwL5-bXDHM6pbxUX9qIYiiOHtA_n-7V2yvpZj2ZZtvWRpBQao_CS3FvtJuWWd4F5MU_Y_h4h7tkpg'
+    }
     
     stages {
         stage('Feature Branch') {
@@ -28,6 +32,14 @@ pipeline {
 
                 // Build artifacts
                 sh './artifacts.sh'
+
+                // Push artifacts to Artifactory
+                sh 'jf rt upload \
+                        --url=http://localhost:8081/artifactory \
+                        --access-token=$AF_ACCESS_TOKEN \
+                        --archive=zip \
+                    "artifacts-temp/*" \
+                    TeamB/w4e.zip'
             }
         }
         
