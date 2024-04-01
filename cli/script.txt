@@ -1,92 +1,12 @@
-echo "start of demo"
-echo "populate : creations and filling of the database"
-echo "register good users"
-register-customer Emma 0110896983
-register-customer John 0110896983
-register-customer ChipiChapa 8969830110
-register-customer Niki 8969837856
-register-customer Duolingo 0110896983
-register-customer MaxiBestOff 8969830110
-register-customer Horloge 0110896983
-register-customer Jul 3265896983
-register-customer Naps 8969830110
-register-customer Soso 8969837856
-
-echo " "
-echo "register bad users (bad credit card number)"
-register-customer Jack 0110372451
-register-customer Jill 3724510110
-
-echo " "
-echo "list of registered users"
-customers
-
-echo " "
-echo "register partners"
-register-partner Mario
-register-partner Gontrand
-register-partner Machette
-
-echo " "
-echo "list of registered partners"
-partners
-
-echo " "
-echo "register advantages"
-register-advantage Mario free-juice COCKTAIL 4
-register-advantage Mario cookies LOCAL_SPECIALITY 1
-register-advantage Gontrand free-wine REDUCTION 1
-register-advantage Machette resort COCKTAIL 2
-
-echo " "
-echo "list of registered advantages"
-advantages
-
-echo " "
-echo "register activities"
-register-leisure Mario Yoga relaxing 20 -a
-register-leisure Mario Ski hard 30 -a
-register-leisure Gontrand Pilates hard 30 -a
-
-echo " "
-echo "list of registered activities"
-activities
-
-echo " "
-echo "register services"
-register-leisure Gontrand KinderGarden kids 10
-register-leisure Machette SpaResort relaxing 20
-register-leisure Gontrand SkiRental hard 30
-
-echo " "
-echo "list of registered services"
-services
-
-echo " "
-echo "register groups"
-create-group Emma --m John
-create-group ChipiChapa --m Niki Duolingo
-create-group MaxiBestOff --m Horloge Jul
-create-group Naps --m Soso
-
-echo " "
-echo "list of registered groups"
-groups
-
-echo " "
-echo "end of populate"
-
-echo " "
 echo "Start of demo script"
 echo "add activities to cart"
 add-activity-to-cart Duolingo Yoga -t --day 29-01 --hour 17:00
-add-activity-to-cart Emma Ski -p --ski hourly --duration 2
+add-activity-to-cart Duolingo Ski -p --ski day --duration 3
 add-activity-to-cart Emma Pilates -t --day 04-07 --hour 13:00
 add-activity-to-cart Horloge Ski -p --ski hourly --duration 4
 add-activity-to-cart Naps Yoga -t --day 12-12 --hour 20:00
-add-activity-to-cart Jul Yoga -t --day 31-12 --hour 23:59
 add-activity-to-cart Jul Ski -p --ski day --duration 4
-add-activity-to-cart ChipiChapa Ski -g
+add-activity-to-cart Naps Ski -g
 
 echo " "
 echo "add services to cart"
@@ -119,10 +39,6 @@ echo "show Horloge's cart"
 show-cart Horloge
 
 echo " "
-echo "show ChipiChapa's cart"
-show-cart ChipiChapa
-
-echo " "
 echo "reserve all activities"
 reserve Emma
 reserve Duolingo
@@ -130,7 +46,6 @@ reserve MaxiBestOff
 reserve Horloge
 reserve Jul
 reserve Naps
-reserve ChipiChapa
 
 echo " "
 echo "show reservations"
@@ -141,8 +56,17 @@ show-reservations Horloge
 show-reservations Jul
 show-reservations Naps
 
+
+
+echo " "
+echo "set up advantage usage"
+add-activity-to-cart Jul Yoga -t --day 31-12 --hour 23:59
+
 echo " "
 echo "add advantages to cart"
+add-advantage-to-cart Jul free-juice
+add-advantage-to-cart Jul cookies
+
 add-advantage-to-cart Naps resort
 
 echo " "
@@ -150,8 +74,18 @@ echo "show Naps's advantages cart"
 show-advantages-cart Naps
 
 echo " "
+echo "show Jul's advantages cart"
+show-advantages-cart Jul
+
+echo " "
 echo "use advantages"
+use-advantage Jul cookies Yoga -a
 use-advantage Naps resort SpaResort
+
+echo " "
+echo "show Naps and Jul advantages cart (must be empty)"
+show-advantages-cart Naps
+show-advantages-cart Jul
 
 echo " "
 echo "use all services"
@@ -162,11 +96,6 @@ use-service Jul SkiRental
 echo " "
 echo "trade of points"
 trade-points Naps Soso 1
-trade-points Jul Horloge 1
-
-echo " "
-echo "show points transactions"
-point-transactions
 
 echo " "
 echo "show transactions"
@@ -174,4 +103,3 @@ transactions
 
 echo " "
 echo "END OF DEMO"
-
