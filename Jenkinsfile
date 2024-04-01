@@ -24,7 +24,6 @@ pipeline {
                     if (branchName.contains('feat')) { // execution of unit/it tests
                         sh 'mvn clean package -f backend/pom.xml'
                         sh 'mvn clean verify -f backend/pom.xml'
-                        sh 'cd cli && docker compose run tcf-cli script script.txt && exit'
                     } else if (branchName.contains('staging')) { // execution of e2e tests
                         sh 'cd cli && docker compose run tcf-cli script script.txt && exit'
                     } else if (branchName == 'master') { //execution of all tests
