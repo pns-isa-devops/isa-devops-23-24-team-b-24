@@ -1,7 +1,7 @@
 echo "start of demo2"
 echo "SCENARIO: create Service"
-register-customers Emma 0110896983
-register-customers John 0110896983
+register-customer Emma 0110896983
+register-customer John 0110896983
 register-partner Marta
 customers
 advantages
