@@ -53,7 +53,6 @@ services:
       tcf-server:
         condition: service_healthy
     volumes:
-      - ./cli/populate.txt:/opt/app/populate.txt
       - ./cli/script.txt:/opt/app/script.txt
     stdin_open: true
     tty: true
