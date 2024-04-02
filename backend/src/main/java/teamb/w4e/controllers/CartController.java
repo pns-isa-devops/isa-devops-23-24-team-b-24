@@ -2,6 +2,7 @@ package teamb.w4e.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import teamb.w4e.dto.AdvantageDTO;
@@ -51,24 +52,35 @@ public class CartController {
     }
 
     @PostMapping(path = CART_URI, consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<CartElementDTO> updateCustomerCart(@PathVariable("customerId") Long customerId, @RequestBody @Valid CartElementDTO cartDTO) throws IdNotFoundException, NonValidDateForActivity {
-        if (cartDTO.getType().equals(ReservationType.SERVICE)) {
-            Service service = serviceFinder.retrieveService(cartDTO.getLeisure().id());
-            return ResponseEntity.ok(convertServiceElementToDTO(cart.serviceUpdate(customerId, service)));
-        } else if (cartDTO.getType().equals(ReservationType.TIME_SLOT)) {
-            Activity activity = activityFinder.retrieveActivity(cartDTO.getLeisure().id());
-            return ResponseEntity.ok(convertTimeSlotElementToDTO(cart.timeSlotUpdate(customerId, activity, cartDTO.getDate())));
-        } else if (cartDTO.getType().equals(ReservationType.GROUP)) {
-            Activity activity = activityFinder.retrieveActivity(cartDTO.getLeisure().id());
-            return ResponseEntity.ok(convertGroupElementToDTO(cart.groupUpdate(customerId, activity, groupFinder.retrieveGroup(customerId))));
-        } else {
-            Activity activity = activityFinder.retrieveActivity(cartDTO.getLeisure().id());
-            return ResponseEntity.ok(convertSkiPassElementToDTO(cart.skiPassUpdate(customerId, activity, cartDTO.getSkiPassType(), cartDTO.getDuration())));
+    public ResponseEntity<CartElementDTO> updateCustomerCart(@PathVariable("customerId") Long customerId, @RequestBody @Valid CartElementDTO cartDTO) {
+        try {
+            if (cartDTO.getType().equals(ReservationType.SERVICE)) {
+                Service service = serviceFinder.retrieveService(cartDTO.getLeisure().id());
+                return ResponseEntity.ok(convertServiceElementToDTO(cart.serviceUpdate(customerId, service)));
+            } else if (cartDTO.getType().equals(ReservationType.TIME_SLOT)) {
+                Activity activity = activityFinder.retrieveActivity(cartDTO.getLeisure().id());
+                return ResponseEntity.ok(convertTimeSlotElementToDTO(cart.timeSlotUpdate(customerId, activity, cartDTO.getDate())));
+            } else if (cartDTO.getType().equals(ReservationType.GROUP)) {
+                Activity activity = activityFinder.retrieveActivity(cartDTO.getLeisure().id());
+                return ResponseEntity.ok(convertGroupElementToDTO(cart.groupUpdate(customerId, activity, groupFinder.retrieveGroup(customerId))));
+            } else {
+                Activity activity = activityFinder.retrieveActivity(cartDTO.getLeisure().id());
+                return ResponseEntity.ok(convertSkiPassElementToDTO(cart.skiPassUpdate(customerId, activity, cartDTO.getSkiPassType(), cartDTO.getDuration())));
+            }
+        } catch (NonValidDateForActivity e) {
+            return ResponseEntity.badRequest().build();
+        } catch (IdNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping(path = CART_URI)
     public ResponseEntity<Set<CartElementDTO>> getCustomerCartContents(@PathVariable("customerId") Long customerId) throws IdNotFoundException {
+        try {
+            cart.cartContent(customerId);
+        } catch (IdNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
         Set<CartElementDTO> cartElements = cart.cartContent(customerId).stream().map(item -> {
             ReservationType type = item.getType();
             return switch (type) {
@@ -83,10 +95,18 @@ public class CartController {
     }
 
     @PostMapping(path = CART_URI + "/advantage", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<AdvantageDTO> updateAdvantageCart(@PathVariable("customerId") Long customerId, @RequestBody @Valid AdvantageDTO advantageDTO) throws IdNotFoundException, AlreadyExistingException, NegativeAmountTransactionException {
-        Advantage advantage = advantageFinder.retrieveAdvantage(advantageDTO.id());
-        return ResponseEntity.ok()
-                .body(convertAdvantageElementToDTO(cart.advantageUpdate(customerId, advantage)));
+    public ResponseEntity<AdvantageDTO> updateAdvantageCart(@PathVariable("customerId") Long customerId, @RequestBody @Valid AdvantageDTO advantageDTO) {
+        try {
+            Advantage advantage = advantageFinder.retrieveAdvantage(advantageDTO.id());
+            return ResponseEntity.ok()
+                    .body(convertAdvantageElementToDTO(cart.advantageUpdate(customerId, advantage)));
+        } catch (NegativeAmountTransactionException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (AlreadyExistingException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } catch (IdNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping(path = CART_URI + "/advantage")
@@ -97,17 +117,26 @@ public class CartController {
     }
 
     @PostMapping(path = CART_URI + "/reservation", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<ReservationDTO> reserve(@PathVariable("customerId") Long customerId, @RequestBody @Valid CartElementDTO cartElementDTO) throws EmptyCartException, PaymentException, IdNotFoundException, NegativeAmountTransactionException, CannotReserveException {
-        ReservationType type = cartElementDTO.getType();
-        return switch (type) {
-            case TIME_SLOT ->
-                    ResponseEntity.ok().body(ReservationController.convertReservationToDTO(processor.validateActivity(customerId, new TimeSlotItem(activityFinder.retrieveActivity(cartElementDTO.getLeisure().id()), cartElementDTO.getDate()))));
-            case GROUP ->
-                    ResponseEntity.ok().body(ReservationController.convertReservationToDTO(processor.validateActivity(customerId, new GroupItem(activityFinder.retrieveActivity(cartElementDTO.getLeisure().id()), groupFinder.retrieveGroup(customerId)))));
-            case SKI_PASS ->
-                    ResponseEntity.ok().body(ReservationController.convertReservationToDTO(processor.validateActivity(customerId, new SkiPassItem(activityFinder.retrieveActivity(cartElementDTO.getLeisure().id()), cartElementDTO.getSkiPassType(), cartElementDTO.getDuration()))));
-            case SERVICE, NONE -> ResponseEntity.noContent().build();
-        };
+    public ResponseEntity<ReservationDTO> reserve(@PathVariable("customerId") Long customerId, @RequestBody @Valid CartElementDTO cartElementDTO) throws EmptyCartException {
+        try {
+            ReservationType type = cartElementDTO.getType();
+            return switch (type) {
+                case TIME_SLOT ->
+                        ResponseEntity.ok().body(ReservationController.convertReservationToDTO(processor.validateActivity(customerId, new TimeSlotItem(activityFinder.retrieveActivity(cartElementDTO.getLeisure().id()), cartElementDTO.getDate()))));
+                case GROUP ->
+                        ResponseEntity.ok().body(ReservationController.convertReservationToDTO(processor.validateActivity(customerId, new GroupItem(activityFinder.retrieveActivity(cartElementDTO.getLeisure().id()), groupFinder.retrieveGroup(customerId)))));
+                case SKI_PASS ->
+                        ResponseEntity.ok().body(ReservationController.convertReservationToDTO(processor.validateActivity(customerId, new SkiPassItem(activityFinder.retrieveActivity(cartElementDTO.getLeisure().id()), cartElementDTO.getSkiPassType(), cartElementDTO.getDuration()))));
+                case SERVICE, NONE -> ResponseEntity.noContent().build();
+            };
+        } catch (CannotReserveException | NegativeAmountTransactionException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (IdNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (PaymentException e) {
+            return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).build();
+        }
+
     }
 
     @PostMapping(path = CART_URI + "/use-service", consumes = APPLICATION_JSON_VALUE)
@@ -137,6 +166,6 @@ public class CartController {
     }
 
     private static AdvantageDTO convertAdvantageElementToDTO(AdvantageItem item) {
-        return new AdvantageDTO(item.getAdvantage().getId(), item.getAdvantage().getName(), item.getAdvantage().getType(), item.getAdvantage().getPoints(),  item.getAdvantage().getPartner().getName());
+        return new AdvantageDTO(item.getAdvantage().getId(), item.getAdvantage().getName(), item.getAdvantage().getType(), item.getAdvantage().getPoints(), item.getAdvantage().getPartner().getName());
     }
 }
