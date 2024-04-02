@@ -1,60 +1,63 @@
-# Livrable DevOps Team B
+# DevOps Team B Deliverable
 
 ## Workflow
 
-Nous avons mis en place un workflow qui nous permet :
+We have set up a workflow that allows us to:
 
-- De toujours avoir la branche master livrable et fonctionnelle
-- De travailler sur des branches de features qui permettent de rapidement integrer des changements
-- Et d'avoir une branche de Staging qui permet de tester les changements avant de les mettre en production sur la branche master
+- Always have a deliverable and functional master branch
+- Work on feature branches that allow for quick integration of changes
+- Have a Staging branch to test changes before deploying them to the master branch
 
-Pour ce faire nous utilisons une pipeline miltibranching Jenkins qui permet de :
-
-- Lancer des tests unitaires et d'intégration sur les branches de features sur chaque push afin de s'assurer que les changements ne cassent pas le code
-- Une fois les tests passés, si l'on souhaite intégrer les changements sur la branche de Staging, la meme pipeline va lancé un build-all de notre projet et les test E2E pour s'assurer que les changements ne cassent pas l'application
-- Si les tests E2E passent, nous generons des artefacts que nous stockons sur JFrog Artifactory
-- Enfin au moment de mettre les changements de staging sur master, on transforme les artefacts en Docker images et on les push sur DockerHub
+To do this, we use a Jenkins multi-branching pipeline that allows us to:
+- Run unit and integration tests on feature branches on each push to ensure that changes do not break the code
+- Once the tests have passed, if we want to integrate the changes into the Staging branch, the same pipeline will run a full build of our project and the E2E tests to ensure that the changes do not break macro-level functionalities
+- If the E2E tests pass, we generate artifacts that we store in JFrog Artifactory
+- Finally, when it's time to move the changes from Staging to master, we upload image artifacts to Dockerhub
 
 ## Justification
 
-- Nous etions dans un premier temps partie sur une strategie de branching Trunk Based Development, mais nous avons décidé de l'abandonner, pour cause elle ne permettait pas de garder une branche master toujours fonctionnelle et de tester les changements avant de les mettre en production. Ainsi nous avons opté de travailler avec une branche intermediaire de Staging qui permet de s'assurer que les changements ne cassent pas l'application avant de les mettre en production. 
+- We initially started with a Trunk Based Development branching strategy, but we decided to abandon it because it did not allow us to keep the master branch always functional and to test the changes before putting them into production. So we opted to work with an intermediate Staging branch that allows us to ensure that the changes do not break the application before putting them into production.
 
-- Notre projet est assez imposant, en effet les builds complets peuvent prendre plusieurs minutes (4-6 minutes), de ce fait nous ne pouvons pas les lancer a chaque commit sur notre projet, car cela ralentirai l'intégration de nos changement. C'est pour cela que, grace au pipeline MultiBranching, nous avons décidé de ne lancer que les tests unitaires et d'intégrations sur les branches de features, et donc ne lancent pas de construction de notre projet. 
+- Our project is quite large, indeed the full builds can take several minutes (4-6 minutes), so we cannot run them on every commit to our project, as this would slow down the integration of our changes. That's why, thanks to the Multi-Branching pipeline, we have decided to only run the unit and integration tests on the feature branches, and not run the full build of our project
+.
+## Tools implemented
 
-## Outils mis en place
+To carry out this DevOps part, we have set up the following tools for our project:
 
-Pour réaliser cette partie Devops nous avons mis en place pour notre projet les outils suivants :
-
-- **Jenkins**  
+- **Jenkins**
 - **JFrog Artifactory**
 
-Tout ces outils sont déployés a travers des docker-compose sur notre mahcine virtuelle **vmpx02.polytech.unice.fr** et stockées dans dossier au niveau du repertoire /opt/project.
+All these tools are deployed through docker-compose on our virtual machine **vmpx02.polytech.unice.fr** and stored in a directory in the /opt/project directory.
 
 ### Jenkins
 
-Le Jenkins est accessible via l'url suivante : http://vmpx02.polytech.unice.fr:8000/. Pour se connecter il faut utiliser les identifiants suivants : 
-- **Login** : jenkins_teamb
-- **Password** : C*Wb2)4_c$Xzr^"
+Jenkins is accessible via the following URL: http://vmpx02.polytech.unice.fr:8000/. To connect, you need to use the following credentials:
 
-Nous avons configurer un utilisateur Jenkins avec droit sudo sur notre machine virtuelle pour qu'il puisse jouer le role d'agent Jenkins. 
-Pour s'y connecter il faut effectuer la commande ssh suivante : 
+- **Login**: jenkins_teamb
+- **Password**: C*Wb2)4_c$Xzr^"
+
+We have configured a Jenkins user with sudo rights on our virtual machine so that it can play the role of a Jenkins agent.
+
+To connect to it, you need to run the following SSH command:
+
 ```bash
 ssh jenkins@vmpx02.polytech.unice.fr
-Password : 123456
+Password: 123456
 ```
 
 ### JFrog Artifactory
 
-Le JFrog Artifactory est accessible via l'url suivante : http://vmpx02.polytech.unice.fr:8001/. Pour se connecter il faut utiliser les identifiants suivants :
-- **Login** : admin
-- **Password** : Teambjfrog1*
+JFrog Artifactory is accessible via the following URL: http://vmpx02.polytech.unice.fr:8001/. To connect, you need to use the following credentials:
 
-Sur Jfrog Artifactory nous avons mis en place un repository pour stocker les artefacts de notre projet, il s'appelle **TeamB**
+- **Login**: admin
+- **Password**: Teambjfrog1*
 
-Jfrog utilise les ports 8001 pour l'interface web et 8081 pour la communication et pour push les artefacts. 
+On JFrog Artifactory, we have set up a repository to store the artifacts of our project, it's called **TeamB**
+JFrog uses ports 8001 for the web interface and 8081 for communication and to push artifacts.
+To add artifacts, we don't use the Maven plugin but the JfrogCLI. For this, we have installed the JfrogCLI on our virtual machine with the following command:
 
-Pour ajouter des artefacts nous ne passons pas par le plugin maven mais par la JfrogCLI. Pour cela nous avons installer la JfrogCLI sur notre machine virtuelle avec la commande suivante :
 ```bash
 sudo apt-get install jfrog-cli-v2-jf
 ```
-Et nous avons configurer le fichier de configuration pour qu'il puisse se connecter a notre Jfrog Artifactory et que nous puissions ajouter les artefacts sur le repository TeamB.
+
+And we have configured the configuration file so that it can connect to our JFrog Artifactory and we can add the artifacts to the TeamB repository.
