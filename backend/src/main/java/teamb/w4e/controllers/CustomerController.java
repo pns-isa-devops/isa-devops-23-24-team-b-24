@@ -63,8 +63,12 @@ public class CustomerController {
     }
 
     @GetMapping(path = "/{customerId}")
-    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable("customerId") Long customerId) throws IdNotFoundException {
-        return ResponseEntity.ok(convertCustomerToDto(customerFinder.retrieveCustomer(customerId)));
+    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable("customerId") Long customerId) {
+        try {
+            return ResponseEntity.ok(convertCustomerToDto(customerFinder.retrieveCustomer(customerId)));
+        } catch (IdNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 
