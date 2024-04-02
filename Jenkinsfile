@@ -51,6 +51,17 @@ pipeline {
                 sh 'docker compose up -d'
                 
                 // Docker tag and push to Docker Hub
+                sh 'docker tag teamb/w4e-spring-backend:latest quietrocket/teamb-w4e-spring-backend:latest'
+                sh 'docker tag teamb/w4e-spring-cli:latest quietrocket/teamb-w4e-spring-cli:latest'
+                sh 'docker tag teamb/w4e-bank-service:latest quietrocket/teamb-w4e-bank-service:latest'
+                sh 'docker tag teamb/w4e-scheduler-service:latest quietrocket/teamb-w4e-scheduler-service:latest'
+                sh 'docker tag teamb/w4e-skipass-service:latest quietrocket/teamb-w4e-skipass-service:latest'
+                
+                sh 'docker push quietrocket/teamb-w4e-spring-backend:latest'
+                sh 'docker push quietrocket/teamb-w4e-spring-cli:latest'
+                sh 'docker push quietrocket/teamb-w4e-bank-service:latest'
+                sh 'docker push quietrocket/teamb-w4e-scheduler-service:latest'
+                sh 'docker push quietrocket/teamb-w4e-skipass-service:latest'
             }
         }
 
