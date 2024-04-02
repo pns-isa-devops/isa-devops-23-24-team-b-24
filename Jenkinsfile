@@ -27,7 +27,6 @@ pipeline {
                 
                 // Run end to end tests
                 sh 'docker compose up -d --scale tcf-cli=0'
-                sh 'cd cli && docker compose run tcf-cli script populate.txt && exit'
                 sh 'cd cli && docker compose run tcf-cli script script.txt && exit'
 
                 // Build artifacts
