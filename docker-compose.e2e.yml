@@ -1,0 +1,97 @@
+version: "3.9"
+
+services:
+  # The Cookie Factory backend in SpringBoot
+  tcf-server-e2e:
+    image: teamb/w4e-spring-backend
+    container_name: backend-e2e
+    environment:
+      - BANK_WITH_PORT=bank-system-e2e:9090
+      - SCHEDULER_WITH_PORT=scheduler-system-e2e:9091
+      - SKIPASS_WITH_PORT=skipass-system-e2e:9092
+      - POSTGRES_HOST=postgres-e2e:5432
+    entrypoint: "java -jar /opt/app/app.jar --bank.host.baseurl=http://$${BANK_WITH_PORT} --scheduler.host.baseurl=http://$${SCHEDULER_WITH_PORT} --skipass.host.baseurl=http://$${SKIPASS_WITH_PORT}"
+    restart: always
+    depends_on:
+      bank-system-e2e:
+        condition: service_healthy
+      postgres-e2e:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --silent --fail localhost:8080/actuator/health | grep UP || exit 1"
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  # the postgres-e2e DB to be connected to the backend (watch out: no volume specified, everything can be lost)
+  postgres-e2e:
+    image: postgres:16.1
+    container_name: db-e2e
+    environment:
+      - POSTGRES_PASSWORD=postgrespass
+      - POSTGRES_USER=postgresuser
+      - POSTGRES_DB=tcf-db
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d tcf-db -U $$POSTGRES_USER" ]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  # A simple java CLI
+  tcf-cli-e2e:
+    image: teamb/w4e-spring-cli
+    container_name: cli-e2e
+    environment:
+      - SERVER_WITH_PORT=tcf-server-e2e:8080
+    entrypoint: "java -jar /opt/app/app.jar"
+    depends_on:
+      tcf-server-e2e:
+        condition: service_healthy
+    volumes:
+      - ./cli/script.txt:/opt/app/script.txt
+    stdin_open: true
+    tty: true
+    healthcheck:
+      test: "curl --silent --fail localhost:8081/actuator/health | grep UP || exit 1"
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  # An external bank service in NestJs
+  bank-system-e2e:
+    image: teamb/w4e-bank-service
+    container_name: bank-e2e
+    healthcheck:
+      test: [ "CMD", "/nodejs/bin/node" , "healthcheck.js" ]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  scheduler-system-e2e:
+    image: teamb/w4e-scheduler-service
+    container_name: scheduler-e2e
+    healthcheck:
+      test: [ "CMD", "/nodejs/bin/node" , "healthcheck.js" ]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  skipass-system-e2e:
+    image: teamb/w4e-skipass-service
+    container_name: skipass-e2e
+    healthcheck:
+      test: [ "CMD", "/nodejs/bin/node" , "healthcheck.js" ]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+networks:
+  default:
+    name: teamb-e2e
