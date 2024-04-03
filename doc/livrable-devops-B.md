@@ -29,6 +29,8 @@ To carry out this DevOps part, we have set up the following tools for our projec
 
 All these tools are deployed through docker-compose on our virtual machine **vmpx02.polytech.unice.fr** and stored in a directory in the /opt/project directory.
 
+We also use **Dockerhub** to store the images of our project.
+
 ### Jenkins
 
 Jenkins is accessible via the following URL: http://vmpx02.polytech.unice.fr:8000/. To connect, you need to use the following credentials:
@@ -160,6 +162,12 @@ sudo apt install default-jre
 sudo apt install default-jdk
 ```
 
+- Install zip
+
+```bash
+sudo apt-get install zip
+```
+
 #### Smee
 
 - Install Smee by creating a Smee directory in `/opt/project` and adding a docker-compose file like the one in `doc/smee`, then start it.
@@ -208,4 +216,13 @@ docker compose up -d
 
 ```bash
 sudo apt-get install jfrog-cli-v2-jf
+```
+
+#### Dockerhub
+
+- Docker is already installed on the VM, before logging you need to generate a token on DockerHub. 
+- To log in, run the following command and enter your DockerHub credentials, the password is the token generated on DockerHub
+
+```bash
+docker login 
 ```
