@@ -45,8 +45,10 @@ pipeline {
         stage('Master') {
             when { branch 'master' }
             steps {
-                // Pull artifacts of modules from Artifactory
+                // TODO: Pull artifacts of modules from Artifactory
                 
+                // Shut down the previous production deployment
+                sh 'docker compose down -v --remove-orphans'
                 // Deploy to prod with docker compose up
                 sh 'docker compose up -d'
                 
