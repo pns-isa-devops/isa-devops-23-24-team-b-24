@@ -4,15 +4,14 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import teamb.w4e.dto.CustomerDTO;
-import teamb.w4e.dto.GroupDTO;
-import teamb.w4e.dto.PointTradeDTO;
-import teamb.w4e.dto.PointTransactionDTO;
+import teamb.w4e.dto.*;
 import teamb.w4e.entities.customers.Group;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.exceptions.group.AlreadyLeaderException;
 import teamb.w4e.exceptions.group.NotEnoughException;
+import teamb.w4e.exceptions.group.NotInTheSameGroupException;
 import teamb.w4e.interfaces.GroupCreator;
 import teamb.w4e.interfaces.GroupFinder;
 
@@ -29,6 +28,12 @@ public class GroupController {
     private final GroupCreator createGroup;
     private final GroupFinder groupFinder;
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({NotInTheSameGroupException.class})
+    public ErrorDTO handleExceptions() {
+        return new ErrorDTO("Trade failed : ", "The sender and receiver are not in the same group");
+    }
+
     @Autowired
     public GroupController(GroupCreator createGroup, GroupFinder groupFinder) {
         this.createGroup = createGroup;
@@ -36,7 +41,8 @@ public class GroupController {
     }
 
     @PostMapping(path = "/{leaderId}/group", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<GroupDTO> createGroup(@PathVariable("leaderId") Long leaderId, @RequestBody @Valid GroupDTO groupDTO) throws IdNotFoundException, NotEnoughException {        try {
+    public ResponseEntity<GroupDTO> createGroup(@PathVariable("leaderId") Long leaderId, @RequestBody @Valid GroupDTO groupDTO) throws IdNotFoundException, NotEnoughException {
+        try {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(convertGroupToDto(createGroup.createGroup(leaderId, groupDTO.members().stream().map(CustomerDTO::id).collect(Collectors.toSet()))));
         } catch (AlreadyLeaderException e) {
@@ -55,7 +61,7 @@ public class GroupController {
     }
 
     @PostMapping(path = "/trade", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<PointTransactionDTO> tradePoints(@RequestBody @Valid PointTradeDTO pointTradeDTO) throws IdNotFoundException, NotEnoughException {
+    public ResponseEntity<PointTransactionDTO> tradePoints(@RequestBody @Valid PointTradeDTO pointTradeDTO) throws IdNotFoundException, NotEnoughException, NotInTheSameGroupException {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(TransactionController.convertPointTransactionToDto(createGroup.createTrade(pointTradeDTO.sender().id(), pointTradeDTO.receiver().id(), pointTradeDTO.points())));
     }

@@ -82,8 +82,10 @@ public class TransactionRegistry implements TransactionFinder, TransactionCreato
 
     @Override
     public PointTransaction createPointTransaction(Customer sender, Customer receiver, int amount) {
+        int points = receiver.getCard().getPoints();
         PointTransaction senderTransaction = new PointTransaction(sender, amount, "Give " + amount + " points to " + receiver.getName());
-        PointTransaction receiverTransaction = new PointTransaction(receiver, amount, "Receive " + amount + " points from " + sender.getName());
+        int tradePoints =  receiver.getCard().getPoints()  - points;
+        PointTransaction receiverTransaction = new PointTransaction(receiver, amount, "Receive " + tradePoints + " points from " + sender.getName());
         pointTransactionRepository.save(senderTransaction);
         pointTransactionRepository.save(receiverTransaction);
         return senderTransaction;

@@ -9,6 +9,7 @@ import teamb.w4e.entities.transactions.PointTransaction;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.exceptions.group.AlreadyLeaderException;
 import teamb.w4e.exceptions.group.NotEnoughException;
+import teamb.w4e.exceptions.group.NotInTheSameGroupException;
 import teamb.w4e.interfaces.*;
 import teamb.w4e.repositories.customers.GroupRepository;
 
@@ -71,7 +72,7 @@ public class Grouper implements GroupCreator, GroupFinder {
     }
 
     @Override
-    public PointTransaction createTrade(Long senderId, Long receiverId, int points) throws NotEnoughException, IdNotFoundException {
+    public PointTransaction createTrade(Long senderId, Long receiverId, int points) throws NotEnoughException, IdNotFoundException, NotInTheSameGroupException {
         Customer sender = customerFinder.findById(senderId).orElseThrow(() -> new IdNotFoundException(senderId));
         Customer receiver = customerFinder.findById(receiverId).orElseThrow(() -> new IdNotFoundException(receiverId));
         if (sender.getCard().getPoints() < points) {
@@ -80,11 +81,11 @@ public class Grouper implements GroupCreator, GroupFinder {
         if (areInSameGroup(sender, receiver)) {
             sender.getCard().setPoints(sender.getCard().getPoints() - points);
             receiver.getCard().setPoints(receiver.getCard().getPoints() + points);
-        } else {
-            sender.getCard().setPoints(sender.getCard().getPoints() - points);
-            receiver.getCard().setPoints(receiver.getCard().getPoints() + (int) (points * 0.5));
+            return transactionCreator.createPointTransaction(sender, receiver, points);
         }
-        return transactionCreator.createPointTransaction(sender, receiver, points);
+        else {
+            throw new NotInTheSameGroupException(sender.getName() + " and " + receiver.getName() + " are not in the same group");
+        }
     }
 
     @Override
