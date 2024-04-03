@@ -26,7 +26,7 @@ class CustomerRegistryTest {
     private CustomerFinder customerFinder;
 
     private final String name = "John";
-    private final String creditCard = "1234567890";
+    private final String creditCard = "123456789";
 
     @Test
     void unknownCustomer() {
