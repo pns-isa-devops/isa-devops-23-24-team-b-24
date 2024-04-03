@@ -26,8 +26,8 @@ pipeline {
                 sh './build-all.sh'
                 
                 // Run end to end tests
-                sh 'docker compose up -d --scale tcf-cli=0'
-                sh 'cd cli && docker compose run tcf-cli script script.txt && exit'
+                sh 'docker compose -f ./docker-compose.e2e.yml up -d --scale tcf-cli-e2e=0'
+                sh 'cd cli && docker compose -f ./docker-compose.e2e.yml run tcf-cli-e2e script script.txt && exit'
 
                 // Build artifacts
                 sh './artifacts.sh'
@@ -73,7 +73,7 @@ pipeline {
         always {
             script {
                 if (env.BRANCH_NAME == 'staging') {
-                    sh 'docker compose down -v --remove-orphans'
+                    sh 'docker compose -f ./docker-compose.e2e.yml down -v --remove-orphans'
                 }
             }
         }
