@@ -54,7 +54,7 @@ activities
 
 echo " "
 echo "register services"
-register-leisure Gontrand KinderGarden kids
+register-leisure Gontrand KinderGarden kids 10
 register-leisure Machette SpaResort relaxing 20
 register-leisure Gontrand SkiRental hard 30
 
