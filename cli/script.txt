@@ -173,11 +173,6 @@ use-service Naps SpaResort
 use-service Jul SkiRental
 
 echo " "
-echo "trade of points"
-trade-points Naps Soso 1
-trade-points Duolingo MaxiBestOff 2
-
-echo " "
 echo "show transactions"
 transactions
 
