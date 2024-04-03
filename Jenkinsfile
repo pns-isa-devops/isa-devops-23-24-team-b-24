@@ -27,7 +27,7 @@ pipeline {
                 
                 // Run end to end tests
                 sh 'docker compose -f ./docker-compose.e2e.yml up -d --scale tcf-cli-e2e=0'
-                sh 'cd cli && docker compose -f ./docker-compose.e2e.yml run tcf-cli-e2e script script.txt && exit'
+                sh 'docker compose -f ./docker-compose.e2e.yml run tcf-cli-e2e script script.txt && exit'
 
                 // Build artifacts
                 sh './artifacts.sh'
