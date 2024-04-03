@@ -1,0 +1,34 @@
+package teamb.w4e.aspects;
+
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+@Aspect
+@Component
+public class ComponentLogger {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ComponentLogger.class);
+
+    @Pointcut("execution(public * teamb.w4e.components..*(..))")
+    private void allControllerMethods() {
+    } // This enables to attach the pointcut to a method name we can reuse below
+
+    @Before("allControllerMethods()")
+    public void logMethodNameAndParametersAtEntry(JoinPoint joinPoint) {
+        LOG.info("TCFS:Component: {}:Called {} {}", joinPoint.getThis(), joinPoint.getSignature().getName(), joinPoint.getArgs());
+    }
+
+    @AfterReturning(pointcut = "allControllerMethods()", returning = "resultVal")
+    public void logMethodReturningProperly(JoinPoint joinPoint, Object resultVal) {
+        LOG.info("TCFS:Component: {}:Returned {} with value {}", joinPoint.getThis(), joinPoint.getSignature().getName(), resultVal);
+    }
+
+    @AfterThrowing(pointcut = "allControllerMethods()", throwing = "exception")
+    public void logMethodException(JoinPoint joinPoint, Exception exception) {
+        LOG.warn("TCFS:Component: {}:Exception from {} with exception {}", joinPoint.getThis(), joinPoint.getSignature().getName(), exception.getMessage());
+    }
+
+}

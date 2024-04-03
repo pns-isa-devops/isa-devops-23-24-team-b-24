@@ -6,6 +6,7 @@ import teamb.w4e.entities.transactions.PointTransaction;
 import teamb.w4e.exceptions.IdNotFoundException;
 import teamb.w4e.exceptions.group.AlreadyLeaderException;
 import teamb.w4e.exceptions.group.NotEnoughException;
+import teamb.w4e.exceptions.group.NotInTheSameGroupException;
 
 import java.util.Set;
 
@@ -14,7 +15,7 @@ public interface GroupCreator {
 
     String deleteGroup(Long id) throws IdNotFoundException;
 
-    PointTransaction createTrade(Long senderId, Long receiverId, int points) throws NotEnoughException, IdNotFoundException;
+    PointTransaction createTrade(Long senderId, Long receiverId, int points) throws NotEnoughException, IdNotFoundException, NotInTheSameGroupException;
 
     boolean areInSameGroup(Customer sender, Customer receiver);
 
