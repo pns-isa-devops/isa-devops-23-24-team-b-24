@@ -51,10 +51,10 @@ public class TransactionCommands {
     }
 
     private String getUriForTransaction(String name) {
-        return CustomerCommands.BASE_URI + TRANSACTION_URI + "/" + cliContext.getCustomers().get(name).getId() + "/transaction";
+        return CustomerCommands.BASE_URI + TRANSACTION_URI + "/" + cliContext.getCustomers().get(name).getId();
     }
 
     private String getUriForPointTransaction(String name) {
-        return CustomerCommands.BASE_URI + POINT_TRANSACTION_URI + "/" + cliContext.getCustomers().get(name).getId() + "/transaction";
+        return CustomerCommands.BASE_URI + POINT_TRANSACTION_URI + "/" + cliContext.getCustomers().get(name).getId();
     }
 }

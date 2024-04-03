@@ -31,7 +31,7 @@ public class PointController {
         this.advantageApplier = advantageApplier;
     }
 
-    @PostMapping(path = "/{customerId}/advantage-cart", consumes = APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/{customerId}/using-advantages", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<PointTransactionDTO> useAdvantage(@PathVariable("customerId") Long customerId, @RequestBody @Valid AppliedAdvantageDTO appliedAdvantageDTO) throws IdNotFoundException, NegativeAmountTransactionException, AlreadyExistingException, NotFoundException {
         Customer customer = customerFinder.retrieveCustomer(customerId);
         Advantage advantage = customer.getCaddy().getCatalogItem().stream()

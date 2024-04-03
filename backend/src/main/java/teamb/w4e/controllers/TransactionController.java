@@ -36,13 +36,13 @@ public class TransactionController {
         return new ErrorDTO("Cannot process Transaction information", e.getMessage());
     }
 
-    @GetMapping(path = TRANSACTION_URI + "/{idCustomer}/transaction")
+    @GetMapping(path = TRANSACTION_URI + "/{idCustomer}")
     public ResponseEntity<List<TransactionDTO>> getTransactionOfCustomer(@PathVariable Long idCustomer) {
         List<TransactionDTO> transactionDTOs = transactionFinder.findTransactionsByCustomer(idCustomer).stream().map(TransactionController::convertTransactionToDto).toList();
         return ResponseEntity.ok(transactionDTOs);
     }
 
-    @GetMapping(path = POINT_TRANSACTION_URI + "/{idCustomer}/transaction")
+    @GetMapping(path = POINT_TRANSACTION_URI + "/{idCustomer}")
     public ResponseEntity<List<PointTransactionDTO>> getPointTransactionOfCustomer(@PathVariable Long idCustomer) {
         List<PointTransactionDTO> pointTransactionDTOs = transactionFinder.findPointTransactionsByCustomer(idCustomer).stream().map(TransactionController::convertPointTransactionToDto).toList();
         return ResponseEntity.ok(pointTransactionDTOs);

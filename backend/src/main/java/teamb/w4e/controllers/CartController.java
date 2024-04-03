@@ -94,7 +94,7 @@ public class CartController {
         return ResponseEntity.ok(cartElements);
     }
 
-    @PostMapping(path = CART_URI + "/advantage", consumes = APPLICATION_JSON_VALUE)
+    @PostMapping(path = CART_URI + "/advantages", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<AdvantageDTO> updateAdvantageCart(@PathVariable("customerId") Long customerId, @RequestBody @Valid AdvantageDTO advantageDTO) {
         try {
             Advantage advantage = advantageFinder.retrieveAdvantage(advantageDTO.id());
@@ -109,14 +109,14 @@ public class CartController {
         }
     }
 
-    @GetMapping(path = CART_URI + "/advantage")
+    @GetMapping(path = CART_URI + "/advantages")
     public ResponseEntity<Set<AdvantageDTO>> getAdvantageCartContents(@PathVariable("customerId") Long customerId) throws IdNotFoundException {
         return ResponseEntity.ok(cart.advantageCartContent(customerId).stream()
                 .map(CartController::convertAdvantageElementToDTO)
                 .collect(Collectors.toSet()));
     }
 
-    @PostMapping(path = CART_URI + "/reservation", consumes = APPLICATION_JSON_VALUE)
+    @PostMapping(path = CART_URI + "/reservations", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<ReservationDTO> reserve(@PathVariable("customerId") Long customerId, @RequestBody @Valid CartElementDTO cartElementDTO) throws EmptyCartException {
         try {
             ReservationType type = cartElementDTO.getType();
@@ -139,7 +139,7 @@ public class CartController {
 
     }
 
-    @PostMapping(path = CART_URI + "/use-service", consumes = APPLICATION_JSON_VALUE)
+    @PostMapping(path = CART_URI + "/services", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<TransactionDTO> serviceUtilisation(@PathVariable("customerId") Long customerId, @RequestBody @Valid CartElementDTO cartElementDTO) throws EmptyCartException, PaymentException, IdNotFoundException, NegativeAmountTransactionException {
         if (cartElementDTO.getType().equals(ReservationType.SERVICE)) {
             ServiceItem serviceItem = new ServiceItem(serviceFinder.retrieveService(cartElementDTO.getLeisure().id()));

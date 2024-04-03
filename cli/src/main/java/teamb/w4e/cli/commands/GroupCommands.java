@@ -49,7 +49,7 @@ public class GroupCommands {
 
     @ShellMethod("Delete a group in the backend (delete-group LEADER_NAME)")
     public String deleteGroup(String leaderName) {
-        restTemplate.delete(getUriForGroup(leaderName) + "/delete");
+        restTemplate.delete(getUriForGroup(leaderName));
         return "Group deleted";
     }
 
@@ -61,7 +61,7 @@ public class GroupCommands {
     }
 
     private String getUriForGroup(String name) {
-        return CustomerCommands.BASE_URI + GROUP_URI + "/" + cliContext.getCustomers().get(name).getId() + "/group";
+        return CustomerCommands.BASE_URI + GROUP_URI + "/" + cliContext.getCustomers().get(name).getId();
     }
 
     private String getUriForCustomer(String name) {
