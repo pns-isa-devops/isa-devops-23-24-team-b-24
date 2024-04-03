@@ -1,0 +1,11 @@
+# docker-compose.yaml
+version: '3.8'
+services:
+  smee:
+    build: .
+    container_name: smee
+
+networks:
+  default:
+    name: teamb
+    external: true
