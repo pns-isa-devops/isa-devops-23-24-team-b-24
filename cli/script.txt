@@ -54,7 +54,7 @@ activities
 
 echo " "
 echo "register services"
-register-leisure Gontrand KinderGarden kids 10
+register-leisure Gontrand KinderGarden kids
 register-leisure Machette SpaResort relaxing 20
 register-leisure Gontrand SkiRental hard 30
 
@@ -175,6 +175,7 @@ use-service Jul SkiRental
 echo " "
 echo "trade of points"
 trade-points Naps Soso 1
+trade-points Duolingo MaxiBestOff 2
 
 echo " "
 echo "show transactions"
