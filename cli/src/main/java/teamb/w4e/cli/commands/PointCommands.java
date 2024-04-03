@@ -27,13 +27,13 @@ public class PointCommands {
         CliCustomer sender = restTemplate.getForEntity(getUriForCustomer(senderName), CliCustomer.class).getBody();
         CliCustomer receiver = restTemplate.getForEntity(getUriForCustomer(receiverName), CliCustomer.class).getBody();
         PointTrade pointTrade = new PointTrade(sender, receiver, amount);
-        return restTemplate.postForObject(CustomerCommands.BASE_URI + GroupCommands.GROUP_URI + "/trade", pointTrade, CliPointTransaction.class);
+        return restTemplate.postForObject(CustomerCommands.BASE_URI + GroupCommands.GROUP_URI + "/trades", pointTrade, CliPointTransaction.class);
     }
 
     @ShellMethod("Use advantage for a leisure (use-advantage CUSTOMER_NAME ADVANTAGE_NAME LEISURE_NAME)")
     public CliPointTransaction useAdvantage(String customerName, String advantageName, String leisureName,
                                             @ShellOption(value = "-a", defaultValue = "false") boolean isActivity) {
-        CliAdvantage[] advantages = restTemplate.getForEntity(getUriForCustomer(customerName) + "/cart/advantage", CliAdvantage[].class).getBody();
+        CliAdvantage[] advantages = restTemplate.getForEntity(getUriForCustomer(customerName) + "/cart/advantages", CliAdvantage[].class).getBody();
         assert advantages != null;
         CliAdvantage advantage = Arrays.stream(advantages)
                 .filter(a -> a.getName().equals(advantageName))
@@ -42,7 +42,7 @@ public class PointCommands {
         CliLeisure leisure = isActivity ? restTemplate.getForEntity(getUriForActivity(leisureName), CliLeisure.class).getBody()
                 : restTemplate.getForEntity(getUriForService(leisureName), CliLeisure.class).getBody();
         AppliedAdvantage appliedAdvantage = new AppliedAdvantage(advantage, leisure);
-        return restTemplate.postForObject(getUriForCustomer(customerName) + "/advantage-cart", appliedAdvantage, CliPointTransaction.class);
+        return restTemplate.postForObject(getUriForCustomer(customerName) + "/using-advantages", appliedAdvantage, CliPointTransaction.class);
     }
 
 

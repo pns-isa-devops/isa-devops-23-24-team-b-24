@@ -40,7 +40,7 @@ public class GroupController {
         this.groupFinder = groupFinder;
     }
 
-    @PostMapping(path = "/{leaderId}/group", consumes = APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/{leaderId}", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<GroupDTO> createGroup(@PathVariable("leaderId") Long leaderId, @RequestBody @Valid GroupDTO groupDTO) throws IdNotFoundException, NotEnoughException {
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -51,7 +51,7 @@ public class GroupController {
         }
     }
 
-    @DeleteMapping(path = "/{leaderId}/group/delete")
+    @DeleteMapping(path = "/{leaderId}")
     public ResponseEntity<String> deleteGroup(@PathVariable("leaderId") Long leaderId) throws IdNotFoundException {
         Group group = groupFinder.retrieveGroup(leaderId);
         if (group == null) {
@@ -60,13 +60,13 @@ public class GroupController {
         return ResponseEntity.ok(createGroup.deleteGroup(leaderId));
     }
 
-    @PostMapping(path = "/trade", consumes = APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/trades", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<PointTransactionDTO> tradePoints(@RequestBody @Valid PointTradeDTO pointTradeDTO) throws IdNotFoundException, NotEnoughException, NotInTheSameGroupException {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(TransactionController.convertPointTransactionToDto(createGroup.createTrade(pointTradeDTO.sender().id(), pointTradeDTO.receiver().id(), pointTradeDTO.points())));
     }
 
-    @GetMapping(path = "/{leaderId}/group")
+    @GetMapping(path = "/{leaderId}")
     public ResponseEntity<GroupDTO> getGroup(@PathVariable("leaderId") Long leaderId) throws IdNotFoundException {
         return ResponseEntity.ok(convertGroupToDto(groupFinder.retrieveGroup(leaderId)));
     }
