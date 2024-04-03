@@ -173,7 +173,7 @@ class CartWebValidationIT {
         Advantage advantage = new Advantage(partner, "advantage", AdvantageType.REDUCTION, 12);
         advantageCatalogRepository.saveAndFlush(advantage);
         AdvantageDTO advantageElement = new AdvantageDTO(advantage.getId(), advantage.getName(), advantage.getType(), advantage.getPoints(), advantage.getPartner().getName());
-        mockMvc.perform(MockMvcRequestBuilders.post(CustomerController.BASE_URI + "/" + customer.getId() + "/cart/advantage", advantageElement)
+        mockMvc.perform(MockMvcRequestBuilders.post(CustomerController.BASE_URI + "/" + customer.getId() + "/cart/advantages", advantageElement)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(advantageElement)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -186,7 +186,7 @@ class CartWebValidationIT {
         Advantage advantage = new Advantage(partner, "advantage", AdvantageType.REDUCTION, 12);
         advantageCatalogRepository.saveAndFlush(advantage);
         AdvantageDTO advantageElement = new AdvantageDTO(advantage.getId(), advantage.getName(), advantage.getType(), advantage.getPoints(), advantage.getPartner().getName());
-        mockMvc.perform(MockMvcRequestBuilders.post(CustomerController.BASE_URI + "/" + customer.getId() + "/cart/advantage", advantageElement)
+        mockMvc.perform(MockMvcRequestBuilders.post(CustomerController.BASE_URI + "/" + customer.getId() + "/cart/advantages", advantageElement)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(advantageElement)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -198,10 +198,10 @@ class CartWebValidationIT {
         Advantage advantage = new Advantage(partner, "advantage", AdvantageType.REDUCTION, 12);
         advantageCatalogRepository.saveAndFlush(advantage);
         AdvantageDTO advantageElement = new AdvantageDTO(advantage.getId(), advantage.getName(), advantage.getType(), advantage.getPoints(), advantage.getPartner().getName());
-        mockMvc.perform(MockMvcRequestBuilders.post(CustomerController.BASE_URI + "/" + customer.getId() + "/cart/advantage", advantageElement)
+        mockMvc.perform(MockMvcRequestBuilders.post(CustomerController.BASE_URI + "/" + customer.getId() + "/cart/advantages", advantageElement)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(advantageElement)));
-        mockMvc.perform(MockMvcRequestBuilders.post(CustomerController.BASE_URI + "/" + customer.getId() + "/cart/advantage", advantageElement)
+        mockMvc.perform(MockMvcRequestBuilders.post(CustomerController.BASE_URI + "/" + customer.getId() + "/cart/advantages", advantageElement)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(advantageElement)))
                 .andExpect(MockMvcResultMatchers.status().isConflict());
@@ -213,10 +213,10 @@ class CartWebValidationIT {
         Advantage advantage = new Advantage(partner, "advantage", AdvantageType.REDUCTION, 12);
         advantageCatalogRepository.saveAndFlush(advantage);
         AdvantageDTO advantageElement = new AdvantageDTO(advantage.getId(), advantage.getName(), advantage.getType(), advantage.getPoints(), advantage.getPartner().getName());
-        mockMvc.perform(MockMvcRequestBuilders.post(CustomerController.BASE_URI + "/" + customer.getId() + "/cart/advantage", advantageElement)
+        mockMvc.perform(MockMvcRequestBuilders.post(CustomerController.BASE_URI + "/" + customer.getId() + "/cart/advantages", advantageElement)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(advantageElement)));
-        mockMvc.perform(MockMvcRequestBuilders.get(CustomerController.BASE_URI + "/" + customer.getId() + "/cart/advantage")
+        mockMvc.perform(MockMvcRequestBuilders.get(CustomerController.BASE_URI + "/" + customer.getId() + "/cart/advantages")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content()

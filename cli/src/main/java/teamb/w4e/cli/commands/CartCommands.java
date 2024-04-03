@@ -39,7 +39,7 @@ public class CartCommands {
 
     @ShellMethod("Show advantage content of customer (show-advantages-cart CUSTOMER_NAME)")
     public Set<CliAdvantage> showAdvantagesCart(String name) {
-        return Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(getUriForCustomer(name) + "/advantage", CliAdvantage[].class)
+        return Arrays.stream(Objects.requireNonNull(restTemplate.getForEntity(getUriForCustomer(name) + "/advantages", CliAdvantage[].class)
                 .getBody())).collect(toSet());
     }
 
@@ -85,7 +85,7 @@ public class CartCommands {
     @ShellMethod("Add advantage to cart of customer (add-advantage-to-cart CUSTOMER_NAME ADVANTAGE_NAME)")
     public CliAdvantage addAdvantageToCart(String customerName, String advantageName) {
         ResponseEntity<CliAdvantage> advantageResponse = restTemplate.getForEntity(getUriForAdvantage(advantageName), CliAdvantage.class);
-        return restTemplate.postForObject(getUriForCustomer(customerName) + "/advantage", Objects.requireNonNull(advantageResponse).getBody(), CliAdvantage.class);
+        return restTemplate.postForObject(getUriForCustomer(customerName) + "/advantages", Objects.requireNonNull(advantageResponse).getBody(), CliAdvantage.class);
     }
 
 
@@ -104,7 +104,7 @@ public class CartCommands {
             if (element.getType().equals(ReservationType.SERVICE)) {
                 continue;
             }
-            reservations.add(restTemplate.postForObject(getUriForCustomer(customerName) + "/reservation", element, CliReservation.class));
+            reservations.add(restTemplate.postForObject(getUriForCustomer(customerName) + "/reservations", element, CliReservation.class));
         }
         return reservations;
     }
@@ -117,7 +117,7 @@ public class CartCommands {
         if (showCart(customerName).stream().noneMatch(element -> element.getLeisure().getName().equals(serviceName))) {
             throw new IllegalArgumentException("Service not found in cart.");
         }
-        return restTemplate.postForObject(getUriForCustomer(customerName) + "/use-service", showCart(customerName).stream()
+        return restTemplate.postForObject(getUriForCustomer(customerName) + "/services", showCart(customerName).stream()
                 .filter(element -> element.getLeisure().getName().equals(serviceName))
                 .findFirst().orElseThrow(), CliTransaction.class);
     }
@@ -139,6 +139,6 @@ public class CartCommands {
     }
 
     private String getUriForGroup(String name) {
-        return BASE_URI + "/groups/" + cliContext.getCustomers().get(name).getId() + "/group";
+        return BASE_URI + "/groups/" + cliContext.getCustomers().get(name).getId();
     }
 }
