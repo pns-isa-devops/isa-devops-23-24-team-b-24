@@ -74,9 +74,13 @@ Currently, images we're sending off to Dockerhub are built using the `./build-al
 
 Currently, for both pushed Docker images and Artifactory artifacts, we overwrite the 'latest' tag on each release. This isn't how artifacts and images should be versioned. We should use a versioning scheme that allows us to distinguish between different versions of the same artifact or image. We could potentially look into incorporating semantic versioning (Semver) into our build process. This would provide clients of our system with more control over what they're pulling.
 
+### Implement commit ignoring for CI
+
+Certain commits, such as updates to documentation, do not merit a CI build. We could implement a commit ignoring mechanism to prevent these commits from triggering a build. This would probably require a change to the Jenkins pipeline.
+
 ### SonarQube integration
 
-In order to better
+In order to better guage the quality of our code and areas of improvement, we could integrate SonarQube into our build process. We would have rolling statistics on code smell, code coverage, and code quality.
 
 ## Business Continuity Plan
 
