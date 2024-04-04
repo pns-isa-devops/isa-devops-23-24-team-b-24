@@ -1,7 +1,7 @@
 echo "start of demo"
 echo "populate : creations and filling of the database"
 echo "register good users"
-register-customer Emma 0110896983
+register-customer Emma 0110896982
 register-customer John 0110896983
 register-customer ChipaChapa 8969830110
 register-customer Niki 8969837856
